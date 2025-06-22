@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <fstream>
 #include "Instruction.h"
 
 class ZX16_Simulator {

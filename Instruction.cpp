@@ -3,3 +3,8 @@
 //
 
 #include "Instruction.h"
+
+
+Instruction::Instruction(uint16_t value) {
+    Complete_Instruction = value;
+}
