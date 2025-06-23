@@ -3,8 +3,187 @@
 //
 
 #include "Instruction.h"
+#include <sstream>
+
+Instruction::Instruction(uint16_t value)
+    : Complete_Instruction(value), opcode(0), rd(0),  rs2(0), imm(0), type(InstructionType::INVALID) {
+    decode();
+}
+void Instruction::decode() {
+     opcode = Complete_Instruction & 0x7; // bits [2:0]
+
+    switch (opcode) {
+        case 0b000: { // R-Type
+            type = InstructionType::R_TYPE;
+            func4 = (Complete_Instruction >> 12) & 0xF;
+            rs2 = (Complete_Instruction >> 9) & 0x7;
+            rd = (Complete_Instruction >> 6) & 0x7;
+            func3 = (Complete_Instruction >> 3) & 0x7;
+            break;
+        }
+        case 0b001: { // I-Type
+            type = InstructionType::I_TYPE;
+
+            uint8_t rawImm = (Complete_Instruction >> 9) & 0x7F;  // bits [15:9]
+            // Sign-extend 7-bit immediate to 16 bits
+            if (rawImm & 0x40)  // if bit 6 (sign bit) is 1
+                imm = rawImm | 0xFF80; // set upper 9 bits to 1
+            else
+                imm = rawImm;
+
+            rd    = (Complete_Instruction >> 6) & 0x7;   // bits [8:6]
+            func3 = (Complete_Instruction >> 3) & 0x7;   // bits [5:3]
+
+            break;
+        }
+
+        case 0b010:  // B-Type (e.g., branch)
+            type = InstructionType::B_TYPE;
 
 
-Instruction::Instruction(uint16_t value) {
-    Complete_Instruction = value;
+            break;
+
+        case 0b011:  // S-Type (store)
+            type = InstructionType::S_TYPE;
+
+
+            break;
+
+        case 0b100:  // L-Type (load)
+            type = InstructionType::L_TYPE;
+
+
+            break;
+
+        case 0b101:  // J-Type (jump)
+            type = InstructionType::J_TYPE;
+
+
+            break;
+
+        case 0b110:  // U-Type
+            type = InstructionType::U_TYPE;
+
+
+            break;
+
+        case 0b111:  // SYS-Type (e.g., ecall)
+
+
+            type = InstructionType::SYS_Type;
+            break;
+
+        default:
+            type = InstructionType::INVALID;
+            break;
+    }
+
+    generateAssemblyString();
+}
+
+void Instruction::generateAssemblyString() {
+
+    static const std::string regs[8] = {
+        "t0", "ra", "sp", "s0", "s1", "t1", "a0", "a1"
+    };
+    std::ostringstream oss;
+
+    switch (type) {
+        case InstructionType::R_TYPE:
+            if (func4 == 0x0 && func3 == 0x0)
+                oss << "add " << regs[rd] << ", " << regs[rs2];
+            else if (func4 == 0x1 && func3 == 0x0)
+                oss << "sub " << regs[rd] << ", " << regs[rs2];
+            else if (func4 == 0x2 && func3 == 0x1)
+                oss << "slt " << regs[rd] << ", " << regs[rs2];
+            else if (func4 == 0x3 && func3 == 0x2)
+                oss << "sltu " << regs[rd] << ", " << regs[rs2];
+            else if (func4 == 0x4 && func3 == 0x3)
+                oss << "sll " << regs[rd] << ", " << regs[rs2];
+            else if (func4 == 0x5 && func3 == 0x3)
+                oss << "srl " << regs[rd] << ", " << regs[rs2];
+            else if (func4 == 0x6 && func3 == 0x3)
+                oss << "sra " << regs[rd] << ", " << regs[rs2];
+            else if (func4 == 0x7 && func3 == 0x4)
+                oss << "or " << regs[rd] << ", " << regs[rs2];
+            else if (func4 == 0x8 && func3 == 0x5)
+                oss << "and " << regs[rd] << ", " << regs[rs2];
+            else if (func4 == 0x9 && func3 == 0x6)
+                oss << "xor " << regs[rd] << ", " << regs[rs2];
+            else if (func4 == 0xA && func3 == 0x7)
+                oss << "mv " << regs[rd] << ", " << regs[rs2];
+            else if (func4 == 0xB && func3 == 0x0)
+                oss << "jr " << regs[rd];
+            else if (func4 == 0xC && func3 == 0x0)
+                oss << "jalr " << regs[rd] << ", " << regs[rs2];
+            else
+                oss << "unknown_rtype";
+        break;
+
+        case InstructionType::I_TYPE:
+            // TODO: Add logic for I-Type decoding
+                break;
+        case InstructionType::S_TYPE:
+            // TODO: Add logic for S-Type decoding
+                break;
+
+        case InstructionType::B_TYPE:
+            // TODO: Add logic for B-Type decoding
+                break;
+
+        case InstructionType::U_TYPE:
+            // TODO: Add logic for U-Type decoding
+                break;
+
+        case InstructionType::J_TYPE:
+            // TODO: Add logic for J-Type decoding
+                break;
+
+        case InstructionType::L_TYPE:
+            // TODO: Add logic for L-Type decoding
+                break;
+
+        case InstructionType::SYS_Type:
+            // TODO: Add logic for system instructions (e.g., ecall)
+                break;
+
+        case InstructionType::INVALID:
+            default:
+                oss << "invalid";
+        break;
+    }
+
+
+    Assembly_Code = oss.str();
+
+}
+
+// Getters
+InstructionType Instruction::getType() const {
+    return type;
+}
+
+std::string Instruction::AssemblyCode() const {
+    return Assembly_Code;
+}
+
+uint16_t Instruction::getRaw() const {
+    return Complete_Instruction;
+}
+
+uint8_t Instruction::getOpcode() const {
+    return opcode;
+}
+
+uint8_t Instruction::getRd() const {
+    return rd;
+}
+
+
+uint8_t Instruction::getRs2() const {
+    return rs2;
+}
+
+int16_t Instruction::getImmediate() const {
+    return imm;
 }

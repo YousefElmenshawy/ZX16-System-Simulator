@@ -16,6 +16,7 @@ enum class InstructionType {
     U_TYPE,
     J_TYPE,
     SYS_Type,
+    L_TYPE,
     INVALID
 };
 
@@ -27,9 +28,9 @@ private:
 
     // Decoded fields
     uint8_t opcode;
-    uint8_t rd, rs1, rs2;
+    uint8_t rd,  rs2, func3,func4;
     int16_t imm;
-
+    void generateAssemblyString();
 public:
     Instruction(uint16_t rawInstruction);
 
@@ -40,7 +41,6 @@ public:
     // Access decoded fields
     uint8_t getOpcode() const;
     uint8_t getRd() const;
-    uint8_t getRs1() const;
     uint8_t getRs2() const;
     int16_t getImmediate() const;
 
