@@ -35,6 +35,47 @@ void testIType(const std::string& label, int8_t imm, uint8_t func3) {
     std::cout << inst.AssemblyCode() << "\n";
 }
 
+uint16_t encodeLType(int8_t imm4, uint8_t rs2, uint8_t rd, uint8_t func3) {
+    uint16_t immPart = (imm4 & 0xF) << 12;  // Mask to 4 bits and shift
+    return immPart | (rs2 << 9) | (rd << 6) | (func3 << 3) | 0b100;
+}
+
+void testLType(const std::string& label, int8_t imm4, uint8_t func3) {
+    uint8_t rd = 1;   // x1
+    uint8_t rs2 = 2;  // x2
+
+    uint16_t raw = encodeLType(imm4, rs2, rd, func3);
+    Instruction inst(raw);
+    inst.decode();
+
+    std::cout << label << " (0x" << std::hex << raw << std::dec << "): ";
+    std::cout << inst.AssemblyCode() << "\n";
+}
+
+uint16_t encodeJType(int16_t imm, uint8_t rd, bool link) {
+    // Must be aligned (even number)
+    imm &= 0x3FE;  // keep bits [9:1], force imm[0] = 0
+
+    uint16_t imm_high = (imm >> 4) & 0x3F;  // bits [9:4]
+    uint16_t imm_low  = (imm >> 1) & 0x7;   // bits [3:1]
+
+    return (link << 15) |
+           (imm_high << 9) |
+           (rd << 6) |
+           (imm_low << 3) |
+           0b101;
+}
+
+void testJType(const std::string& label, int16_t imm, uint8_t rd, bool link) {
+    uint16_t raw = encodeJType(imm, rd, link);
+    Instruction inst(raw);
+    inst.decode();
+
+    std::cout << label << " (0x" << std::hex << raw << std::dec << "): ";
+    std::cout << inst.AssemblyCode() << "\n";
+}
+
+
 int main() {
     // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
     // <b>lang</b> variable name to see how CLion can help you rename it.
@@ -79,6 +120,18 @@ int main() {
     testIType("ANDI",   -2, 0b101);
     testIType("XORI",   12, 0b110);
     testIType("LI",     -69, 0b111);
+
+    // L-Type Tests
+    testLType("LB",   -3, 0b000);
+    testLType("LW",    5, 0b001);
+    testLType("LBU",   7, 0b010);
+
+    // J-Type Tests
+    testJType("J",     12, 0, false);
+    testJType("J",    -16, 0, false);
+    testJType("JAL",   10, 1, true);
+    testJType("JAL",  -14, 2, true);
+
     return 0;
 }
 

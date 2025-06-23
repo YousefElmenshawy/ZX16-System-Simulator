@@ -194,12 +194,22 @@ void Instruction::generateAssemblyString() {
                 break;
 
         case InstructionType::J_TYPE:
-            // TODO: Add logic for J-Type decoding
-                break;
+            if (flag == 0)
+                oss << "j " << imm;
+            else
+                oss << "jal " << regs[rd] << ", " << imm;
+        break;
 
         case InstructionType::L_TYPE:
-            // TODO: Add logic for L-Type decoding
-                break;
+            if (func3 == 0b000)
+                oss << "lb " << regs[rd] << ", " << imm << "(" << regs[rs2] << ")";
+            else if (func3 == 0b001)
+                oss << "lw " << regs[rd] << ", " << imm << "(" << regs[rs2] << ")";
+            else if (func3 == 0b010)
+                oss << "lbu " << regs[rd] << ", " << imm << "(" << regs[rs2] << ")";
+            else
+                oss << "unknown_ltype";
+        break;
 
         case InstructionType::SYS_Type:
             // TODO: Add logic for system instructions (e.g., ecall)
