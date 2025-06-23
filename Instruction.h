@@ -28,7 +28,7 @@ private:
 
     // Decoded fields
     uint8_t opcode;
-    uint8_t rd,  rs2, func3,func4;
+    uint8_t rd,rs1,  rs2, func3,func4;
     int16_t imm;
     void generateAssemblyString();
 public:
@@ -42,6 +42,7 @@ public:
     uint8_t getOpcode() const;
     uint8_t getRd() const;
     uint8_t getRs2() const;
+    uint8_t getRs1() const;
     int16_t getImmediate() const;
 
     void decode();  // Fills in fields like opcode, rd, etc.

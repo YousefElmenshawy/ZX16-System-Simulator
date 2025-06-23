@@ -3,8 +3,10 @@
 //
 
 #include "Instruction.h"
+#include<iostream>
 #include <sstream>
 
+using namespace std;
 Instruction::Instruction(uint16_t value)
     : Complete_Instruction(value), opcode(0), rd(0),  rs2(0), imm(0), type(InstructionType::INVALID) {
     decode();
@@ -26,10 +28,11 @@ void Instruction::decode() {
 
             uint8_t rawImm = (Complete_Instruction >> 9) & 0x7F;  // bits [15:9]
             // Sign-extend 7-bit immediate to 16 bits
-            if (rawImm & 0x40)  // if bit 6 (sign bit) is 1
-                imm = rawImm | 0xFF80; // set upper 9 bits to 1
+            if (rawImm & 0x40)  // if sign bit set
+                imm = static_cast<int16_t>(rawImm | 0xFF80);
             else
                 imm = rawImm;
+
 
             rd    = (Complete_Instruction >> 6) & 0x7;   // bits [8:6]
             func3 = (Complete_Instruction >> 3) & 0x7;   // bits [5:3]
@@ -121,8 +124,35 @@ void Instruction::generateAssemblyString() {
         break;
 
         case InstructionType::I_TYPE:
-            // TODO: Add logic for I-Type decoding
-                break;
+            if (func3 == 0b000)
+                oss << "addi " << regs[rd] << ", " << imm;
+            else if (func3 == 0b001)
+                oss << "slti " << regs[rd] << ", " << imm;
+            else if (func3 == 0b010)
+                oss << "sltui " << regs[rd] << ", " << imm;
+            else if (func3 == 0b011) {
+                uint8_t imm_Identifier = (imm >> 4) & 0b111; // imm[6:4]
+                if (imm_Identifier == 0b001)
+                    oss << "slli " << regs[rd] << ", " << (imm & 0xF);
+                else if (imm_Identifier == 0b010)
+                    oss << "srli " << regs[rd] << ", " << (imm & 0xF);
+                else if (imm_Identifier == 0b100)
+                    oss << "srai " << regs[rd] << ", " << (imm & 0xF);
+                else
+                    oss << "unknown_shift_imm";
+            }
+            else if (func3 == 0b100)
+                oss << "ori " << regs[rd] << ", " << imm;
+            else if (func3 == 0b101)
+                oss << "andi " << regs[rd] << ", " << imm;
+            else if (func3 == 0b110)
+                oss << "xori " << regs[rd] << ", " << imm;
+            else if (func3 == 0b111)
+                oss << "li " << regs[rd] << ", " << imm;
+            else
+                oss << "unknown_itype";
+        break;
+
         case InstructionType::S_TYPE:
             // TODO: Add logic for S-Type decoding
                 break;
@@ -179,7 +209,10 @@ uint8_t Instruction::getRd() const {
     return rd;
 }
 
+uint8_t Instruction:: getRs1 () const {
 
+    return rs1;
+}
 uint8_t Instruction::getRs2() const {
     return rs2;
 }

@@ -19,6 +19,22 @@ void testRType(const std::string& label, uint8_t func4, uint8_t func3) {
     std::cout << inst.AssemblyCode() << "\n";
 }
 
+uint16_t encodeIType(int8_t imm7, uint8_t rd, uint8_t func3) {
+    uint16_t imm = imm7 & 0x7F;
+    return (imm << 9) | (rd << 6) | (func3 << 3) | 0b001;
+}
+
+void testIType(const std::string& label, int8_t imm, uint8_t func3) {
+    uint8_t rd = 6; // a0
+
+    uint16_t raw = encodeIType(imm, rd, func3);
+    Instruction inst(raw);
+    inst.decode();
+
+    std::cout << label << " (0x" << std::hex << raw << std::dec << "): ";
+    std::cout << inst.AssemblyCode() << "\n";
+}
+
 int main() {
     // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
     // <b>lang</b> variable name to see how CLion can help you rename it.
@@ -29,7 +45,7 @@ int main() {
    // Sim.loadBinaryFile(file);// In ZX16_Simulator.cpp
 
 
-    std::cout << "Testing All R-Type Instructions:\n";
+    /*std::cout << "Testing All R-Type Instructions:\n";
 
     testRType("ADD",   0b0000, 0b000);
     testRType("SUB",   0b0001, 0b000);
@@ -44,6 +60,25 @@ int main() {
     testRType("MV",    0b1010, 0b111);
     testRType("JR",    0b1011, 0b000);  // rs2 ignored
     testRType("JALR",  0b1100, 0b000);
+
+    std::cout << "Testing All I-Type Instructions:\n";*/
+
+    testIType("ADDI",   -3, 0b000);
+    testIType("SLTI",    5, 0b001);
+    testIType("SLTUI",   7, 0b010);
+
+    // Shift Instructions use imm7[6:4] to distinguish type
+    // SLLI → imm7 = 0010000 (0x10), shift by 0
+    testIType("SLLI",  0b0010000, 0b011);
+    // SRLI → imm7 = 0100100 (0x24), shift by 4
+    testIType("SRLI",  0b0100100, 0b011);
+    // SRAI → imm7 = 1000011 (0x43), shift by 3
+    testIType("SRAI",  0b1000011, 0b011);
+
+    testIType("ORI",     8, 0b100);
+    testIType("ANDI",   -2, 0b101);
+    testIType("XORI",   12, 0b110);
+    testIType("LI",     -69, 0b111);
     return 0;
 }
 
