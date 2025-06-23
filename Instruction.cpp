@@ -52,18 +52,46 @@ void Instruction::decode() {
 
             break;
 
-        case 0b100:  // L-Type (load)
+        case 0b100: {
+            // L-Type (load)
             type = InstructionType::L_TYPE;
+            // Extract the raw 4-bit immediate from bits [15:12]
+            uint8_t rawImm = (Complete_Instruction >> 12) & 0xF;  // 4 bits
 
+            // Sign-extend 4-bit immediate to 16 bits
+            if (rawImm & 0x8)  // if sign bit (bit 3) is 1
+                imm = rawImm | 0xFFF0;  // fill upper bits with 1s
+            else
+                imm = rawImm;
 
+            rs2 = (Complete_Instruction >> 9) & 0x7;  //base register
+            rd = (Complete_Instruction >> 6) & 0x7;
+            func3 = (Complete_Instruction >> 3) & 0x7;
             break;
-
-        case 0b101:  // J-Type (jump)
+        }
+        case 0b101: {
+            // J-Type (jump)
             type = InstructionType::J_TYPE;
+            // Extract individual parts of the immediate
+            uint16_t imm_high = (Complete_Instruction >> 9) & 0x3F;  // bits [14:9] → imm[9:4]
+            uint16_t imm_low  = (Complete_Instruction >> 3) & 0x7;   // bits [5:3]  → imm[3:1]
+            // forming imm[9:1] and setting least bit to 0 by shifting
+            uint16_t combined_imm = (imm_high << 4) | (imm_low << 1);  // shift low by 1 because imm[0] = 0
 
+            // Sign-extend 10-bit immediate to 16 bits
+            if (combined_imm & (1 << 9))  // if imm[9] is 1 → negative
+                imm = combined_imm | 0xFC00;  // fill upper 6 bits with 1s
+            else
+                imm = combined_imm;
+
+            // Extract rd (only used if flag == 1)
+            rd = (Complete_Instruction >> 6) & 0x7;  // bits [8:6]
+
+            // Extract link flag (bit 15)
+            flag = (Complete_Instruction >> 15) &0x1;
 
             break;
-
+        }
         case 0b110:  // U-Type
             type = InstructionType::U_TYPE;
 

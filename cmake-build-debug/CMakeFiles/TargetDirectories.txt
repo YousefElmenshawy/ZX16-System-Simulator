@@ -1,3 +1,0 @@
-D:/ZX16-System-Simulator/cmake-build-debug/CMakeFiles/ZX16_System_Simulator.dir
-D:/ZX16-System-Simulator/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/ZX16-System-Simulator/cmake-build-debug/CMakeFiles/rebuild_cache.dir

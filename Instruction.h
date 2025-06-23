@@ -28,7 +28,7 @@ private:
 
     // Decoded fields
     uint8_t opcode;
-    uint8_t rd,rs1,  rs2, func3,func4;
+    uint8_t rd,rs1,  rs2, func3,func4, flag;
     int16_t imm;
     void generateAssemblyString();
 public:
