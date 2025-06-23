@@ -24,7 +24,7 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
         program.push_back(inst);
     }
 
-    // Use `data` as needed
+
 }
 void ZX16_Simulator::run ()
 {

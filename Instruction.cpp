@@ -8,7 +8,7 @@
 
 using namespace std;
 Instruction::Instruction(uint16_t value)
-    : Complete_Instruction(value), opcode(0), rd(0),  rs2(0), imm(0), type(InstructionType::INVALID) {
+    : Complete_Instruction(value), opcode(0), rd(0),  rs2(0), imm(0), svc(0), type(InstructionType::INVALID) {
     decode();
 }
 void Instruction::decode() {
@@ -91,19 +91,32 @@ void Instruction::decode() {
             flag = (Complete_Instruction >> 15) &0x1;
 
             break;
-        }
-        case 0b110:  // U-Type
+        }case 0b110: {
+            // U-Type
             type = InstructionType::U_TYPE;
+            flag = (Complete_Instruction >> 15) & 0x1;
+            uint16_t imm_high = (Complete_Instruction >> 9) & 0x3F; // [14:9] → imm[8:3]
+            rd = (Complete_Instruction >> 6) & 0x7;                 // [8:6] → rd
+            uint16_t imm_mid = (Complete_Instruction >> 3) & 0x7;   // [5:3] → imm[2:0]
 
+            // Reconstruct the 9-bit immediate
+            uint16_t imm9 = (imm_high << 3) | imm_mid;              // imm[8:0]
 
+            // Sign-extend from bit 8 (MSB of 9-bit immediate)
+            if (imm9 & 0x100)  // Test bit 8
+                imm9 |= 0xFE00; // Sign extend to 16 bits
+
+            imm = imm9;  // This is your final immediate value (e.g., 22)
             break;
-
-        case 0b111:  // SYS-Type (e.g., ecall)
-
+        }
+        case 0b111: {
+            // SYS-Type (e.g., ecall)
 
             type = InstructionType::SYS_Type;
-            break;
+            svc = (Complete_Instruction >> 6) & 0x3FF; // 10 bits no sign extension
 
+            break;
+        }
         default:
             type = InstructionType::INVALID;
             break;
@@ -190,7 +203,11 @@ void Instruction::generateAssemblyString() {
                 break;
 
         case InstructionType::U_TYPE:
-            // TODO: Add logic for U-Type decoding
+            if (flag == 0)
+                oss << "LUI " << regs[rd] << ", " << imm;
+            else if (flag == 1)
+                oss << "AUIPC " << regs[rd] << ", " << imm;
+
                 break;
 
         case InstructionType::J_TYPE:
@@ -212,7 +229,8 @@ void Instruction::generateAssemblyString() {
         break;
 
         case InstructionType::SYS_Type:
-            // TODO: Add logic for system instructions (e.g., ecall)
+            if (svc == 0) // ecall
+                oss << "ecall";
                 break;
 
         case InstructionType::INVALID:

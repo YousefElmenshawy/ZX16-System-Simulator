@@ -75,6 +75,40 @@ void testJType(const std::string& label, int16_t imm, uint8_t rd, bool link) {
     std::cout << inst.AssemblyCode() << "\n";
 }
 
+// U-Type encoding and test
+uint16_t encodeUType(int16_t imm, uint8_t rd, bool flag) {
+    int16_t shifted_imm = imm << 7;  // Shift to align with bits [15:7]
+
+    uint16_t imm_high = (shifted_imm >> 10) & 0x3F; // Extract imm[15:10]
+    uint16_t imm_mid  = (shifted_imm >> 7) & 0x7;   // Extract imm[9:7]
+
+    return (flag << 15) |                   // [15] flag
+           (imm_high << 9) |                // [14:9] imm[15:10]
+           (rd << 6) |                      // [8:6] rd
+           (imm_mid << 3) |                 // [5:3] imm[9:7]
+           0b110;                        // [2:0] opcode
+}
+
+void testUType(const std::string &label, uint16_t imm12, uint8_t rd, bool flag) {
+    uint16_t raw = encodeUType(imm12, rd, flag);
+    Instruction inst(raw);
+    inst.decode();
+    std::cout << label << " (0x" << std::hex << raw << std::dec << "): ";
+    std::cout << inst.AssemblyCode() << "\n";
+}
+
+// SYS-Type encoding and test
+uint16_t encodeSysType(uint16_t svc) {
+    return ((svc & 0x3FF) << 6) | (0b000 << 3) | 0b111;
+}
+
+void testSysType(const std::string& label, uint16_t svc) {
+    uint16_t raw = encodeSysType(svc);
+    Instruction inst(raw);
+    inst.decode();
+    std::cout << label << " (0x" << std::hex << raw << std::dec << "): ";
+    std::cout << inst.AssemblyCode() << "\n";
+}
 
 int main() {
     // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
@@ -104,6 +138,8 @@ int main() {
 
     std::cout << "Testing All I-Type Instructions:\n";*/
 
+
+
     testIType("ADDI",   -3, 0b000);
     testIType("SLTI",    5, 0b001);
     testIType("SLTUI",   7, 0b010);
@@ -131,6 +167,21 @@ int main() {
     testJType("J",    -16, 0, false);
     testJType("JAL",   10, 1, true);
     testJType("JAL",  -14, 2, true);
+
+
+
+    uint16_t rawtest = 0x436; // Example raw instruction for testing
+
+    Instruction inst(rawtest);
+
+    inst.decode();
+    std::cout << inst.AssemblyCode() << "\n";
+
+
+    testUType("LUI", 22, 2, 0);
+    testUType("AUIPC", 32, 3, 1);
+    testSysType("ECALL", 0x0);
+
 
     return 0;
 }
