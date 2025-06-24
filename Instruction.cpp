@@ -40,17 +40,36 @@ void Instruction::decode() {
             break;
         }
 
-        case 0b010:  // B-Type (e.g., branch)
+        case 0b010:  { // B-Type (e.g., branch)
             type = InstructionType::B_TYPE;
-
-
+            // high 4 bits of 5-bit signed offset, imm[0] = 0--> [15:12]
+            uint8_t rawImm = (Complete_Instruction >> 12) & 0xF;  // bits [15:12]
+            // Sign-extend 4-bit immediate to 16 bits
+            uint8_t shiftedImm = rawImm << 1; // shift left by 1 to set imm[0] = 0
+            if (shiftedImm & 0x10)  // if sign bit (bit 4) is 1
+                imm = shiftedImm | 0xFFF0;  // fill upper bits with 1s
+            else    
+                imm = shiftedImm;
+            rs2 = (Complete_Instruction >> 9) & 0x7;  // bits [11:9]
+            rs1 = (Complete_Instruction >> 6) & 0x7;  // bits [8:6]
+            func3 = (Complete_Instruction >> 3) & 0x7;  // bits [5:3]
             break;
+        }
 
-        case 0b011:  // S-Type (store)
+        case 0b011: {  // S-Type (store)
             type = InstructionType::S_TYPE;
-
-
+            // Extract the raw 4-bit immediate from bits [15:12]
+            uint8_t rawImm = (Complete_Instruction >> 12) & 0xF;  // bits [15:12]
+            // Sign-extend 4-bit immediate to 16 bits
+            if (rawImm & 0x8)  // if sign bit (bit 3) is 1
+                imm = rawImm | 0xFFF0;  // fill upper bits with 1s
+            else
+                imm = rawImm;
+            rs2 = (Complete_Instruction >> 9) & 0x7; // bits [11:9] --> data register
+            rs1 = (Complete_Instruction >> 6) & 0x7; // bits [8:6]  --> base register
+            func3 = (Complete_Instruction >> 3) & 0x7; // bits [5:3]
             break;
+        }
 
         case 0b100: {
             // L-Type (load)
@@ -194,12 +213,37 @@ void Instruction::generateAssemblyString() {
                 oss << "unknown_itype";
         break;
 
-        case InstructionType::S_TYPE:
-            // TODO: Add logic for S-Type decoding
-                break;
-
         case InstructionType::B_TYPE:
             // TODO: Add logic for B-Type decoding
+            if(func3 ==0b000)
+                oss << "beq " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+            else if(func3 ==0b001)
+                oss << "bne " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+            else if(func3 ==0b010)
+                oss << "bz " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+            else if(func3 ==0b011)
+                oss << "bnz " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+            else if(func3 ==0b100)
+                oss << "blt " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+            else if(func3 ==0b101)
+                oss << "bge " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+            else if(func3 ==0b110)
+                oss << "bltu " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+            else if(func3 ==0b111)
+                oss << "bgeu " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+            else
+                oss << "unknown_btype";
+           
+                break;
+
+        case InstructionType::S_TYPE:
+            // TODO: Add logic for S-Type decoding
+            if(func3 == 0b000)
+                oss << "sb " << regs[rs2] << ", " << imm << "(" << regs[rs1] << ")";
+            else if(func3 == 0b001) 
+                oss << "sw " << regs[rs2] << ", " << imm << "(" << regs[rs1] << ")";
+            else
+                oss << "unknown_stype";
                 break;
 
         case InstructionType::U_TYPE:
