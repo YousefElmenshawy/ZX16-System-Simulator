@@ -253,7 +253,7 @@ std::string Instruction::AssemblyCode() const {
     return Assembly_Code;
 }
 
-uint16_t Instruction::getRaw() const {
+uint16_t Instruction::get_CompleteInstruction() const {
     return Complete_Instruction;
 }
 
@@ -275,4 +275,12 @@ uint8_t Instruction::getRs2() const {
 
 int16_t Instruction::getImmediate() const {
     return imm;
+}
+
+uint8_t Instruction::getFunc3() const {
+    return func3;
+}
+
+uint8_t Instruction::getFunc4() const {
+    return func4;
 }

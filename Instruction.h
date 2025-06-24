@@ -38,7 +38,7 @@ public:
 
     InstructionType getType() const;
     std::string AssemblyCode() const;//Human-readable form (e.g., "add r1, r2, r3")
-    uint16_t getRaw() const;
+    uint16_t get_CompleteInstruction() const;  // 16-bit binary instruction
 
     // Access decoded fields
     uint8_t getOpcode() const;
@@ -46,7 +46,8 @@ public:
     uint8_t getRs2() const;
     uint8_t getRs1() const;
     int16_t getImmediate() const;
-
+    uint8_t getFunc3() const;
+    uint8_t getFunc4() const;
     void decode();  // Fills in fields like opcode, rd, etc.
 };
 

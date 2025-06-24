@@ -16,19 +16,18 @@ private:
     static const int NUM_REGISTERS = 8;//8 Registers
 
     uint8_t memory[MEMORY_SIZE];           // Main memory
-    int32_t registers[NUM_REGISTERS];      // General-purpose registers
+    int16_t registers[NUM_REGISTERS];      // General-purpose registers
 
     uint16_t pc;                            // Program counter
     bool running;                           // Execution state
 
     std::vector<Instruction> program;       // Loaded program
 
-    void executeInstruction(const Instruction& inst);
+    bool executeInstruction(const Instruction& inst);
     void handleEcall();
 
 public:
     ZX16_Simulator();
-
     void loadBinaryFile(const std::string& filename);
     void run();
     void dumpRegisters() const;

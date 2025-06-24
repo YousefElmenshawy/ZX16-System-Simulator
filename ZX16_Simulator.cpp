@@ -4,8 +4,13 @@
 
 #include "ZX16_Simulator.h"
 #include <iostream>
+#include<bitset>
 using namespace std;
 
+
+static const std::string regs[8] = {
+    "t0", "ra", "sp", "s0", "s1", "t1", "a0", "a1"
+};
 ZX16_Simulator::ZX16_Simulator() {
     // Initialize members here
 }
@@ -26,22 +31,131 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
 
 
 }
-void ZX16_Simulator::run ()
-{
-    pc = 0;
 
-    /*while (pc < program.size()) {
+bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
+        uint8_t rd = inst.getRd();
+        uint8_t rs2 = inst.getRs2();
+        uint8_t func4 = inst.getFunc4();
+        uint8_t func3 = inst.getFunc3();
+        int16_t imm = inst.getImmediate();
+
+    switch (inst.getType()) {
+
+        case InstructionType::R_TYPE: {
+            if (func4 == 0b0000 && func3 == 0b000) { // ADD
+                registers[rd] += registers[rs2];
+                std::cout << "Executed: ADD " << regs[rd] << ", " << regs[rs2] << "\n";
+
+            } else if (func4 == 0b0001 && func3 == 0b000) { // SUB
+                registers[rd] -= registers[rs2];
+                std::cout << "Executed: SUB " << regs[rd] << ", " << regs[rs2] << "\n";
+
+            } else if (func4 == 0b0010 && func3 == 0b001) { // SLT
+                registers[rd] = (registers[rd] < registers[rs2]) ? 1 : 0;
+                std::cout << "Executed: SLT " << regs[rd] << ", " << regs[rs2] << "\n";
+
+            } else if (func4 == 0b0011 && func3 == 0b010) { // SLTU
+                registers[rd] = (static_cast<uint16_t>(registers[rd]) < static_cast<uint16_t>(registers[rs2])) ? 1 : 0;
+                std::cout << "Executed: SLTU " << regs[rd] << ", " << regs[rs2] << "\n";
+
+            } else if (func4 == 0b0100 && func3 == 0b011) { // SLL
+                registers[rd] <<= (registers[rs2] & 0xF);
+                std::cout << "Executed: SLL " << regs[rd] << ", " << regs[rs2] << "\n";
+
+            } else if (func4 == 0b0101 && func3 == 0b011) { // SRL
+                registers[rd] = static_cast<uint16_t>(registers[rd]) >> (registers[rs2] & 0xF);
+                std::cout << "Executed: SRL " << regs[rd] << ", " << regs[rs2] << "\n";
+
+            } else if (func4 == 0b0110 && func3 == 0b011) { // SRA
+                registers[rd] >>= (registers[rs2] & 0xF);
+                std::cout << "Executed: SRA " << regs[rd] << ", " << regs[rs2] << "\n";
+
+            } else if (func4 == 0b0111 && func3 == 0b100) { // OR
+                registers[rd] |= registers[rs2];
+                std::cout << "Executed: OR " << regs[rd] << ", " << regs[rs2] << "\n";
+
+            } else if (func4 == 0b1000 && func3 == 0b101) { // AND
+                registers[rd] &= registers[rs2];
+                std::cout << "Executed: AND " << regs[rd] << ", " << regs[rs2] << "\n";
+
+            } else if (func4 == 0b1001 && func3 == 0b110) { // XOR
+                registers[rd] ^= registers[rs2];
+                std::cout << "Executed: XOR " << regs[rd] << ", " << regs[rs2] << "\n";
+
+            } else if (func4 == 0b1010 && func3 == 0b111) { // MV
+                registers[rd] = registers[rs2];
+                std::cout << "Executed: MV " << regs[rd] << ", " << regs[rs2] << "\n";
+
+            } else if (func4 == 0b1011 && func3 == 0b000) { // JR
+                pc = registers[rd];
+                std::cout << "Executed: JR " << regs[rd] << " → PC = " << pc << "\n";
+                return true; // manually changed PC
+
+            } else if (func4 == 0b1100 && func3 == 0b000) { // JALR
+                registers[rd] = pc + 1;
+                pc = registers[rs2];
+                std::cout << "Executed: JALR " << regs[rd] << ", " << regs[rs2] << " → PC = " << pc << "\n";
+                return true; // manually changed PC
+
+            } else {
+                std::cerr << "Unknown R-Type instruction with func4=" << std::bitset<4>(func4)
+                          << " func3=" << std::bitset<3>(func3) << " at PC=" << pc << "\n";
+            }
+            return false; // pc not manually changed
+        }
+
+        case InstructionType::I_TYPE:
+            // Implement I-type logic here
+            return false;
+
+        case InstructionType::S_TYPE:
+            // Implement S-type logic here
+            return false;
+
+        case InstructionType::B_TYPE:
+            // Implement B-type logic here
+            return false;
+
+        case InstructionType::J_TYPE:
+            // Implement J-type logic here
+            return false;
+
+        case InstructionType::U_TYPE:
+            // Implement U-type logic here
+            return false;
+
+        case InstructionType::SYS_Type:
+            handleEcall();  // this may set running = false
+            return false;
+
+        default:
+            std::cerr << "Unknown instruction type at PC=" << pc << "\n";
+            return false;
+    }
+}
+
+
+void ZX16_Simulator::run() {
+    pc = 0;
+    running = true;
+
+    while (running && pc < program.size()) {
         Instruction inst = program[pc];
 
-        execute(inst);  // Run the logic of the instruction
+        bool jumped = executeInstruction(inst); // now returns if PC was manually set
 
-        // If instruction doesn't modify PC directly (like jump), move to next
-        if (!inst.changesPC) {
-            pc++;
+        if (!jumped) {
+            pc++; // only advance if instruction didn't manually modify PC
         }
-    }*/ //later after decoding
-
-
-
+    }
 }
+
+void ZX16_Simulator::dumpRegisters() const {
+
+
+    for (int i = 0; i < NUM_REGISTERS; ++i) {
+        std::cout << regs[i] << " = " << registers[i] << "\n";
+    }
+}
+
 
