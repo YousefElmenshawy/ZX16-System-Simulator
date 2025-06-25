@@ -29,13 +29,23 @@ private:
     // bool executeInstruction(const Instruction& inst);   moved to public for now to test in main
     void handleEcall();
     int16_t sext_imm4(uint8_t imm);  // sign extend 4 bit
-public:
-    ZX16_Simulator();
+    bool executeRType(const Instruction& inst);
+    bool executeIType(const Instruction& inst);
+    bool executeSType(const Instruction& inst);
+    bool executeBType(const Instruction& inst);
+    bool executeLType(const Instruction& inst);
+    bool executeJType(const Instruction& inst);
+    bool executeUType(const Instruction& inst);
+    bool executeSysType(const Instruction& inst);
     bool executeInstruction(const Instruction& inst);
     void loadBinaryFile(const std::string& filename);
-    void run();
     void dumpRegisters() const;
     void dumpMemory(uint16_t address, uint16_t size) const;
+public:
+    ZX16_Simulator();
+
+    void run();
+
 
     // For testing/debug
     void printDisassembledProgram() const;

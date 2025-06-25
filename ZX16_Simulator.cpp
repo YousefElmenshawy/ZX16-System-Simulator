@@ -45,403 +45,438 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
     std::cout << "Program loaded into memory.\n";
 
 }
-
-bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
+bool ZX16_Simulator::executeRType(const Instruction& inst) {
     uint8_t rd = inst.getRd();
-    uint8_t rs1 = inst.getRs1();
     uint8_t rs2 = inst.getRs2();
     uint8_t func4 = inst.getFunc4();
     uint8_t func3 = inst.getFunc3();
-    uint8_t flag = inst.getflag();
-    int16_t imm = inst.getImmediate();
-    uint16_t svc = inst.getSvc();
 
-    switch (inst.getType()) {
-        case InstructionType::R_TYPE: {
-            if (func4 == 0b0000 && func3 == 0b000) { // ADD
-                registers[rd] += registers[rs2];
-                std::cout << "Executed: ADD " << regs[rd] << ", " << regs[rs2] << "\n";
-
-            } else if (func4 == 0b0001 && func3 == 0b000) { // SUB
-                registers[rd] -= registers[rs2];
-                std::cout << "Executed: SUB " << regs[rd] << ", " << regs[rs2] << "\n";
-
-            } else if (func4 == 0b0010 && func3 == 0b001) { // SLT
-                registers[rd] = (registers[rd] < registers[rs2]) ? 1 : 0;
-                std::cout << "Executed: SLT " << regs[rd] << ", " << regs[rs2] << "\n";
-
-            } else if (func4 == 0b0011 && func3 == 0b010) { // SLTU
-                registers[rd] = (static_cast<uint16_t>(registers[rd]) < static_cast<uint16_t>(registers[rs2])) ? 1 : 0;
-                std::cout << "Executed: SLTU " << regs[rd] << ", " << regs[rs2] << "\n";
-
-            } else if (func4 == 0b0100 && func3 == 0b011) { // SLL
-                registers[rd] <<= (registers[rs2] & 0xF);
-                std::cout << "Executed: SLL " << regs[rd] << ", " << regs[rs2] << "\n";
-
-            } else if (func4 == 0b0101 && func3 == 0b011) { // SRL
-                registers[rd] = static_cast<uint16_t>(registers[rd]) >> (registers[rs2] & 0xF);
-                std::cout << "Executed: SRL " << regs[rd] << ", " << regs[rs2] << "\n";
-
-            } else if (func4 == 0b0110 && func3 == 0b011) { // SRA
-                registers[rd] >>= (registers[rs2] & 0xF);
-                std::cout << "Executed: SRA " << regs[rd] << ", " << regs[rs2] << "\n";
-
-            } else if (func4 == 0b0111 && func3 == 0b100) { // OR
-                registers[rd] |= registers[rs2];
-                std::cout << "Executed: OR " << regs[rd] << ", " << regs[rs2] << "\n";
-
-            } else if (func4 == 0b1000 && func3 == 0b101) { // AND
-                registers[rd] &= registers[rs2];
-                std::cout << "Executed: AND " << regs[rd] << ", " << regs[rs2] << "\n";
-
-            } else if (func4 == 0b1001 && func3 == 0b110) { // XOR
-                registers[rd] ^= registers[rs2];
-                std::cout << "Executed: XOR " << regs[rd] << ", " << regs[rs2] << "\n";
-
-            } else if (func4 == 0b1010 && func3 == 0b111) { // MV
-                registers[rd] = registers[rs2];
-                std::cout << "Executed: MV " << regs[rd] << ", " << regs[rs2] << "\n";
-
-            } else if (func4 == 0b1011 && func3 == 0b000) { // JR
-                pc = registers[rd];
-                std::cout << "Executed: JR " << regs[rd] << " → PC = " << pc << "\n";
-                return true; // manually changed PC
-
-            } else if (func4 == 0b1100 && func3 == 0b000) { // JALR
-                registers[rd] = pc + 2;
-                pc = registers[rs2];
-                std::cout << "Executed: JALR " << regs[rd] << ", " << regs[rs2] << " → PC = " << pc << "\n";
-                return true; // manually changed PC
-
-            } else {
-                std::cerr << "Unknown R-Type instruction with func4=" << std::bitset<4>(func4)
-                          << " func3=" << std::bitset<3>(func3) << " at PC=" << pc << "\n";
-            }
-            return false; // pc not manually changed
-        }
-
-        case InstructionType::I_TYPE:
-            // Implement I-type logic here
-                return false;
-
-        case InstructionType::S_TYPE:{
-            // Implement S-type logic
-            uint16_t address = registers[rs1] + imm;
-            if(func3==0b000) {
-                uint16_t address = registers[rs1] + imm;
-                if (address < MEMORY_SIZE - 1) {
-                    memory[address] = registers[rs2] & 0xFF; // lower byte
-                    memory[address + 1] = (registers[rs2] >> 8) & 0xFF; // upper byte
-                    std::cout << "Executed: SB " << regs[rs2] << " → Memory[" << address << "]\n";
-                } else {
-                    std::cerr << "Memory write out of bounds at address " << address << "\n";
-                }
-            } else if(func3==0b001) { //sw
-                uint16_t address = registers[rs1] + imm;
-                if (address < MEMORY_SIZE - 1) {
-                    memory[address] = registers[rs2] & 0xFF; // lower byte
-                    memory[address + 1] = (registers[rs2] >> 8) & 0xFF; // upper byte
-                    std::cout << "Executed: SW " << regs[rs2] << " → Memory[" << address << "]\n";
-                } else {
-                    std::cerr << "Memory write out of bounds at address " << address << "\n";
-                }
-            } else {
-                std::cerr << "Unknown S-Type instruction with func3=" << std::bitset<3>(func3) << "\n";
-            }
-            return false;
-        }
-
-
-        case InstructionType::B_TYPE:{
-            // Implement B-type logic
-            if(func3==0b000){  //beq
-                if(registers[rs1] == registers[rs2]){
-                    pc += imm;
-                    std::cout << "Executed: BEQ " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
-                    return true; // manually changed PC
-                }
-                else
-                    std::cout << "BEQ condition not met, PC remains " << pc << "\n";
-            }
-            else if(func3==0b001){ //bne
-                if(registers[rs1] != registers[rs2]){
-                    pc += imm;
-                    std::cout << "Executed: BNE " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
-                    return true; // manually changed PC
-                }
-                else
-                    std::cout << "BNE condition not met, PC remains " << pc << "\n";
-            }
-            else if(func3==0b010){ //bz
-                if(registers[rs1] == 0){
-                    pc += imm;
-                    std::cout << "Executed: BZ " << regs[rs1]<< " → PC = " << pc << "\n";
-                    return true; // manually changed PC
-                }
-                else
-                    std::cout << "BZ condition not met, PC remains " << pc << "\n";
-            }
-            else if(func3==0b011){ //bnz
-                if(registers[rs1] != 0){
-                    pc += imm;
-                    std::cout << "Executed: BNZ " << regs[rs1] << " → PC = " << pc << "\n";
-                    return true; // manually changed PC
-                }
-                else
-                    std::cout << "BNZ condition not met, PC remains " << pc << "\n";
-            }
-            else if(func3==0b100){ //blt
-                if(registers[rs1] < registers[rs2]){
-                    pc += imm;
-                    std::cout << "Executed: BLT " << regs[rs1] << ", " << regs[rs2]  << " → PC = " << pc << "\n";
-                    return true; // manually changed PC
-                }
-                else
-                    std::cout << "BLT condition not met, PC remains " << pc << "\n";
-            }
-            else if(func3==0b101){ //bge
-                if(registers[rs1] >= registers[rs2]){
-                    pc += imm;
-                    std::cout << "Executed: BGE " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
-                    return true; // manually changed PC
-                }
-                else
-                    std::cout << "BGE condition not met, PC remains " << pc << "\n";
-            }
-            else if(func3==0b110){ //bltu
-                if(static_cast<uint16_t>(registers[rs1]) < static_cast<uint16_t>(registers[rs2])){
-                    pc += imm;
-                    std::cout << "Executed: BLTU " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
-                    return true; // manually changed PC
-                }
-                else
-                    std::cout << "BLTU condition not met, PC remains " << pc << "\n";
-            }
-            else if(func3==0b111){ //bgeu
-                if(static_cast<uint16_t>(registers[rs1]) >= static_cast<uint16_t>(registers[rs2])){
-                    pc += imm;
-                    std::cout << "Executed: BGEU " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
-                    return true; // manually changed PC
-                }
-                else
-                    std::cout << "BGEU condition not met, PC remains " << pc << "\n";
-            }
-            return false;
-        }
-
-
-       case InstructionType::L_TYPE:
-            //uint16_t address = registers[rs2] + imm;
-            uint16_t address = registers[rs2] + static_cast<int16_t>(imm);
-
-            if (func3 == 0b000) { // LB (signed byte load)
-                int8_t byte = static_cast<int8_t>(memory[address]); // sign-extend
-                registers[rd] = static_cast<int16_t>(byte); // sign-extended to 16 bits
-                std::cout << "Executed: LB " << regs[rd] << " <- MEM[" << address << "] (signed byte)\n";
-
-            } else if (func3 == 0b001) { // LW (load 16-bit word)
-                // Following little-endian
-                uint16_t word = memory[address] | (memory[address + 1] << 8);
-                registers[rd] = static_cast<int16_t>(word); // treat as signed 16-bit
-                std::cout << "Executed: LW " << regs[rd] << " <- MEM[" << address << "] (16-bit word)\n";
-
-            } else if (func3 == 0b010) { // LBU (unsigned byte load)
-                uint8_t byte = memory[address]; // zero-extend
-                registers[rd] = static_cast<uint16_t>(byte); // zero-extended
-                std::cout << "Executed: LBU " << regs[rd] << " <- MEM[" << address << "] (unsigned byte)\n";
-
-            } else {
-                std::cerr << "Unknown L-Type instruction with func3=" << std::bitset<3>(func3)
-                          << " at PC=" << pc << "\n";
-            }
-
-            return false; // PC not manually changed
-
-
-        case InstructionType::J_TYPE: {
-            int16_t offset = static_cast<int16_t>(imm); // Sign-extend immediate for PC-relative jumps
-
-            if (flag == 0) { // JUMP (Unconditional)
-                pc += offset;
-                std::cout << "Executed: JUMP -> PC <- PC + " << offset << " = " << pc << "\n";
-                return true; // PC manually changed
-
-            } else if (flag == 1) { // JAL (Jump and Link)
-                registers[rd] = pc + 2; // Store return address
-                pc += offset;
-                std::cout << "Executed: JAL " << regs[rd] << " <- PC+2, PC <- PC + " << offset << " = " << pc << "\n";
-                return true;
-
-            } else {
-                std::cerr << "Unknown J-Type instruction with flag=" << flag << " at PC=" << pc << "\n";
-                return false;
-            }
-        }
-
-        case InstructionType::U_TYPE: {
-            if (flag == 0) { // LUI
-                registers[rd] = imm << 7;
-                std::cout << "Executed: LUI " << regs[rd] << " ← " << (imm << 7) << "\n";
-            } else if (flag == 1) { // AUIPC
-                registers[rd] = pc + (imm << 7);
-                std::cout << "Executed: AUIPC " << regs[rd] << " ← PC + " << (imm << 7) << "\n";
-            } else {
-                std::cerr << "Unknown U-Type instruction with flag=" << flag << "\n";
-            }
-            return false; // PC not manually changed
-        }
-
-        case InstructionType::SYS_Type: {
-            std::cout << "ECALL executed. Halting the simulator." << std::endl;
-            running = false; // Stop the simulator
-            switch (svc) { // Service number in the instruction
-                case 1:
-                { // Read String
-                    char* buffer = reinterpret_cast<char*>(&memory[registers[6]]);
-                    int maxLength = registers[7];
-                    std::cin.getline(buffer, maxLength);
-                    registers[6] = std::cin.gcount(); // Set a0 to string length
-
-
-                    // Ensure null termination
-                    if (registers[6] < maxLength) {
-                        buffer[registers[6]] = '\0';
-                    } else {
-                        buffer[maxLength - 1] = '\0';
-                    }
-
-                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
-                    running = true; // Cont the simulator
-                    return false; // pc not manually changed
-
-                }
-                case 2: { // Read Integer
-                    int value;
-                    std::cin >> value;
-                    registers[6] = value; // Set a0 to the read integer
-
-
-
-                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
-                    running = true; // Cont the simulator
-                    return false; // pc not manually changed
-
-
-
-
-                }
-                case 3: { // Print String
-                    char* str = reinterpret_cast<char*>(&memory[registers[6]]);
-                    while (*str != '\0') {
-                        std::cout << *str;
-                        ++str;
-                    }
-
-                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
-                    running = true; // Cont the simulator
-                    return false; // pc not manually changed
-
-
-                }
-                case 4: { // Play Tone
-                    int frequency = registers[6];
-                    int duration = registers[7];
-                    std::cout << "Playing tone: Frequency=" << frequency << " Hz, Duration=" << duration << " ms\n";
-
-                    //ACTUAL IMPLEMENTATION LATER
-
-
-
-                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
-                    running = true; // Cont the simulator
-                    return false; // pc not manually changed
-
-
-                }
-                case 5: { // Set Audio Volume
-                    int value = registers[6];
-                    if (value < 0 || value > 255) {
-                        std::cerr << "Error: Volume must be between 0 and 255. Received: " << value << "\n";
-                    } else {
-                        volume = value;
-                        std::cout << "Setting audio volume to " << volume << "\n";
-                    }
-
-
-
-                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
-                    running = true; // Cont the simulator
-                    return false; // pc not manually changed
-
-
-                }
-                case 6: { // Stop Audio Playback
-                    std::cout << "Stopping audio playback\n";
-
-
-                    // Implementation later
-
-                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
-                    running = true; // Cont the simulator
-                    return false; // pc not manually changed
-
-
-                }
-                case 7: { // Read Keyboard
-                    char key;
-                    if (std::cin.peek() != EOF) {
-                        key = std::cin.get();
-                        registers[6] = key; // Set a0 to the key code
-                        registers[7] = 1;   // Set a1 to 1 (key pressed)
-                    } else {
-                        registers[7] = 0;   // Set a1 to 0 (nothing pressed)
-                    }
-
-
-                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
-                    running = true; // Cont the simulator
-                    return false; // pc not manually changed
-
-
-                }
-                case 8: { // Registers Dump
-                    dumpRegisters();
-
-
-
-                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
-                    running = true; // Cont the simulator
-                    return false; // pc not manually changed
-
-                }
-                case 9: { // Memory Dump
-                    uint16_t address = registers[6];
-                    uint16_t size = registers[7];
-                    dumpMemory(address, size);
-
-
-                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
-                    running = true; // Cont the simulator
-                    return false; // pc not manually changed
-
-
-                }
-                case 10: { // Program Exit
-                    std::cout << "Program exiting...\n";
-                    running = false;
-                    exit(0); // Exit the simulator gracefully
-
-
-
-                }
-                default:
-                    std::cerr << "Unknown service number: " << registers[6] << "\n";
-                break;
-            }
-        }
+    if (func4 == 0b0000 && func3 == 0b000) {
+        registers[rd] += registers[rs2];
+        std::cout << "Executed: ADD " << regs[rd] << ", " << regs[rs2] << "\n";
+
+    } else if (func4 == 0b0001 && func3 == 0b000) {
+        registers[rd] -= registers[rs2];
+        std::cout << "Executed: SUB " << regs[rd] << ", " << regs[rs2] << "\n";
+
+    } else if (func4 == 0b0010 && func3 == 0b001) {
+        registers[rd] = (registers[rd] < registers[rs2]) ? 1 : 0;
+        std::cout << "Executed: SLT " << regs[rd] << ", " << regs[rs2] << "\n";
+
+    } else if (func4 == 0b0011 && func3 == 0b010) {
+        registers[rd] = (static_cast<uint16_t>(registers[rd]) < static_cast<uint16_t>(registers[rs2])) ? 1 : 0;
+        std::cout << "Executed: SLTU " << regs[rd] << ", " << regs[rs2] << "\n";
+
+    } else if (func4 == 0b0100 && func3 == 0b011) {
+        registers[rd] <<= (registers[rs2] & 0xF);
+        std::cout << "Executed: SLL " << regs[rd] << ", " << regs[rs2] << "\n";
+
+    } else if (func4 == 0b0101 && func3 == 0b011) {
+        registers[rd] = static_cast<uint16_t>(registers[rd]) >> (registers[rs2] & 0xF);
+        std::cout << "Executed: SRL " << regs[rd] << ", " << regs[rs2] << "\n";
+
+    } else if (func4 == 0b0110 && func3 == 0b011) {
+        registers[rd] >>= (registers[rs2] & 0xF);
+        std::cout << "Executed: SRA " << regs[rd] << ", " << regs[rs2] << "\n";
+
+    } else if (func4 == 0b0111 && func3 == 0b100) {
+        registers[rd] |= registers[rs2];
+        std::cout << "Executed: OR " << regs[rd] << ", " << regs[rs2] << "\n";
+
+    } else if (func4 == 0b1000 && func3 == 0b101) {
+        registers[rd] &= registers[rs2];
+        std::cout << "Executed: AND " << regs[rd] << ", " << regs[rs2] << "\n";
+
+    } else if (func4 == 0b1001 && func3 == 0b110) {
+        registers[rd] ^= registers[rs2];
+        std::cout << "Executed: XOR " << regs[rd] << ", " << regs[rs2] << "\n";
+
+    } else if (func4 == 0b1010 && func3 == 0b111) {
+        registers[rd] = registers[rs2];
+        std::cout << "Executed: MV " << regs[rd] << ", " << regs[rs2] << "\n";
+
+    } else if (func4 == 0b1011 && func3 == 0b000) {
+        pc = registers[rd];
+        std::cout << "Executed: JR " << regs[rd] << " → PC = " << pc << "\n";
+        return true;
+
+    } else if (func4 == 0b1100 && func3 == 0b000) {
+        registers[rd] = pc + 2;
+        pc = registers[rs2];
+        std::cout << "Executed: JALR " << regs[rd] << ", " << regs[rs2] << " → PC = " << pc << "\n";
+        return true;
+
+    } else {
+        std::cerr << "Unknown R-Type instruction with func4=" << std::bitset<4>(func4)
+                  << " func3=" << std::bitset<3>(func3) << " at PC=" << pc << "\n";
     }
     return false;
 }
+
+bool ZX16_Simulator::executeIType(const Instruction& inst) {
+    uint8_t rd = inst.getRd();
+    uint8_t func3 = inst.getFunc3();
+    uint8_t func4 = inst.getFunc4(); // imm7[6:4] stored here (bits 15-12)
+    int16_t imm = inst.getImmediate(); // 7-bit immediate signed (imm7)
+    uint16_t uimm = static_cast<uint16_t>(imm); // unsigned interpretation
+
+    switch (func3) {
+        case 0b000: // ADDI
+            registers[rd] = registers[rd] + imm;
+            std::cout << "Executed: ADDI " << regs[rd] << ", " << imm << "\n";
+            break;
+
+        case 0b001: // SLTI (signed)
+            registers[rd] = (static_cast<int16_t>(registers[rd]) < imm) ? 1 : 0;
+            std::cout << "Executed: SLTI " << regs[rd] << ", " << imm << "\n";
+            break;
+
+        case 0b010: // SLTUI (unsigned)
+            registers[rd] = (registers[rd] < uimm) ? 1 : 0;
+            std::cout << "Executed: SLTUI " << regs[rd] << ", " << uimm << "\n";
+            break;
+
+        case 0b011: // Shift instructions: SLLI, SRLI, SRAI distinguished by func4
+            {
+                uint8_t shamt = imm & 0x7; // 3-bit shift amount (imm7 lower bits)
+                if (func4 == 0b001) { // SLLI
+                    registers[rd] = registers[rd] << shamt;
+                    std::cout << "Executed: SLLI " << regs[rd] << ", " << (int)shamt << "\n";
+                } else if (func4 == 0b010) { // SRLI
+                    registers[rd] = static_cast<uint16_t>(registers[rd]) >> shamt;
+                    std::cout << "Executed: SRLI " << regs[rd] << ", " << (int)shamt << "\n";
+                } else if (func4 == 0b100) { // SRAI
+                    registers[rd] = static_cast<int16_t>(registers[rd]) >> shamt;
+                    std::cout << "Executed: SRAI " << regs[rd] << ", " << (int)shamt << "\n";
+                } else {
+                    std::cerr << "Unknown shift immediate instruction func4=" << std::bitset<4>(func4) << "\n";
+                }
+            }
+            break;
+
+        case 0b100: // ORI
+            registers[rd] = registers[rd] | imm;
+            std::cout << "Executed: ORI " << regs[rd] << ", " << imm << "\n";
+            break;
+
+        case 0b101: // ANDI
+            registers[rd] = registers[rd] & imm;
+            std::cout << "Executed: ANDI " << regs[rd] << ", " << imm << "\n";
+            break;
+
+        case 0b110: // XORI
+            registers[rd] = registers[rd] ^ imm;
+            std::cout << "Executed: XORI " << regs[rd] << ", " << imm << "\n";
+            break;
+
+        case 0b111: // LI - load immediate directly
+            registers[rd] = imm;
+            std::cout << "Executed: LI " << regs[rd] << ", " << imm << "\n";
+            break;
+
+        default:
+            std::cerr << "Unknown I-Type func3=" << std::bitset<3>(func3) << " at PC=" << pc << "\n";
+            break;
+    }
+
+    return false; // PC not manually changed
+}
+
+
+bool ZX16_Simulator::executeSType(const Instruction& inst) {
+    uint8_t rs1 = inst.getRs1();
+    uint8_t rs2 = inst.getRs2();
+    uint8_t func3 = inst.getFunc3();
+    int16_t imm = inst.getImmediate();
+    uint16_t address = registers[rs1] + imm;
+
+    if (func3 == 0b000) {
+        if (address < MEMORY_SIZE - 1) {
+            memory[address] = registers[rs2] & 0xFF;
+            memory[address + 1] = (registers[rs2] >> 8) & 0xFF;
+            std::cout << "Executed: SB " << regs[rs2] << " → Memory[" << address << "]\n";
+        } else {
+            std::cerr << "Memory write out of bounds at address " << address << "\n";
+        }
+
+    } else if (func3 == 0b001) {
+        if (address < MEMORY_SIZE - 1) {
+            memory[address] = registers[rs2] & 0xFF;
+            memory[address + 1] = (registers[rs2] >> 8) & 0xFF;
+            std::cout << "Executed: SW " << regs[rs2] << " → Memory[" << address << "]\n";
+        } else {
+            std::cerr << "Memory write out of bounds at address " << address << "\n";
+        }
+
+    } else {
+        std::cerr << "Unknown S-Type instruction with func3=" << std::bitset<3>(func3) << "\n";
+    }
+    return false;
+}
+
+bool ZX16_Simulator::executeBType(const Instruction& inst) {
+    uint8_t rs1 = inst.getRs1();
+    uint8_t rs2 = inst.getRs2();
+    uint8_t func3 = inst.getFunc3();
+    int16_t imm = inst.getImmediate();
+
+    switch (func3) {
+        case 0b000:
+            if (registers[rs1] == registers[rs2]) {
+                pc += imm;
+                std::cout << "Executed: BEQ " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
+                return true;
+            }
+            std::cout << "BEQ condition not met, PC remains " << pc << "\n";
+            break;
+
+        case 0b001:
+            if (registers[rs1] != registers[rs2]) {
+                pc += imm;
+                std::cout << "Executed: BNE " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
+                return true;
+            }
+            std::cout << "BNE condition not met, PC remains " << pc << "\n";
+            break;
+
+        case 0b010:
+            if (registers[rs1] == 0) {
+                pc += imm;
+                std::cout << "Executed: BZ " << regs[rs1] << " → PC = " << pc << "\n";
+                return true;
+            }
+            std::cout << "BZ condition not met, PC remains " << pc << "\n";
+            break;
+
+        case 0b011:
+            if (registers[rs1] != 0) {
+                pc += imm;
+                std::cout << "Executed: BNZ " << regs[rs1] << " → PC = " << pc << "\n";
+                return true;
+            }
+            std::cout << "BNZ condition not met, PC remains " << pc << "\n";
+            break;
+
+        case 0b100:
+            if (registers[rs1] < registers[rs2]) {
+                pc += imm;
+                std::cout << "Executed: BLT " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
+                return true;
+            }
+            std::cout << "BLT condition not met, PC remains " << pc << "\n";
+            break;
+
+        case 0b101:
+            if (registers[rs1] >= registers[rs2]) {
+                pc += imm;
+                std::cout << "Executed: BGE " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
+                return true;
+            }
+            std::cout << "BGE condition not met, PC remains " << pc << "\n";
+            break;
+
+        case 0b110:
+            if (static_cast<uint16_t>(registers[rs1]) < static_cast<uint16_t>(registers[rs2])) {
+                pc += imm;
+                std::cout << "Executed: BLTU " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
+                return true;
+            }
+            std::cout << "BLTU condition not met, PC remains " << pc << "\n";
+            break;
+
+        case 0b111:
+            if (static_cast<uint16_t>(registers[rs1]) >= static_cast<uint16_t>(registers[rs2])) {
+                pc += imm;
+                std::cout << "Executed: BGEU " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
+                return true;
+            }
+            std::cout << "BGEU condition not met, PC remains " << pc << "\n";
+            break;
+    }
+    return false;
+}
+
+bool ZX16_Simulator::executeLType(const Instruction& inst) {
+    uint8_t rd = inst.getRd();
+    uint8_t rs2 = inst.getRs2();
+    uint8_t func3 = inst.getFunc3();
+    int16_t imm = inst.getImmediate();
+    uint16_t address = registers[rs2] + imm;
+
+    if (func3 == 0b000) {
+        int8_t byte = static_cast<int8_t>(memory[address]);
+        registers[rd] = static_cast<int16_t>(byte);
+        std::cout << "Executed: LB " << regs[rd] << " <- MEM[" << address << "] (signed byte)\n";
+
+    } else if (func3 == 0b001) {
+        uint16_t word = memory[address] | (memory[address + 1] << 8);
+        registers[rd] = static_cast<int16_t>(word);
+        std::cout << "Executed: LW " << regs[rd] << " <- MEM[" << address << "] (16-bit word)\n";
+
+    } else if (func3 == 0b010) {
+        uint8_t byte = memory[address];
+        registers[rd] = static_cast<uint16_t>(byte);
+        std::cout << "Executed: LBU " << regs[rd] << " <- MEM[" << address << "] (unsigned byte)\n";
+
+    } else {
+        std::cerr << "Unknown L-Type instruction with func3=" << std::bitset<3>(func3)
+                  << " at PC=" << pc << "\n";
+    }
+    return false;
+}
+
+bool ZX16_Simulator::executeJType(const Instruction& inst) {
+    uint8_t rd = inst.getRd();
+    uint8_t flag = inst.getflag();
+    int16_t imm = inst.getImmediate();
+    int16_t offset = imm;
+
+    if (flag == 0) {
+        pc += offset;
+        std::cout << "Executed: JUMP -> PC <- PC + " << offset << " = " << pc << "\n";
+        return true;
+
+    } else if (flag == 1) {
+        registers[rd] = pc + 2;
+        pc += offset;
+        std::cout << "Executed: JAL " << regs[rd] << " <- PC+2, PC <- PC + " << offset << " = " << pc << "\n";
+        return true;
+
+    } else {
+        std::cerr << "Unknown J-Type instruction with flag=" << flag << " at PC=" << pc << "\n";
+        return false;
+    }
+}
+
+bool ZX16_Simulator::executeUType(const Instruction& inst) {
+    uint8_t rd = inst.getRd();
+    int16_t imm = inst.getImmediate();
+    uint8_t flag = inst.getflag();
+
+    if (flag == 0) {
+        registers[rd] = imm << 7;
+        std::cout << "Executed: LUI " << regs[rd] << " ← " << (imm << 7) << "\n";
+
+    } else if (flag == 1) {
+        registers[rd] = pc + (imm << 7);
+        std::cout << "Executed: AUIPC " << regs[rd] << " ← PC + " << (imm << 7) << "\n";
+
+    } else {
+        std::cerr << "Unknown U-Type instruction with flag=" << flag << "\n";
+    }
+    return false;
+}
+bool ZX16_Simulator::executeSysType(const Instruction& inst) {
+    uint16_t svc = inst.getSvc();
+    std::cout << "ECALL executed. Halting the simulator." << std::endl;
+    running = false;
+
+    switch (svc) {
+        case 1: {
+            char* buffer = reinterpret_cast<char*>(&memory[registers[6]]);
+            int maxLength = registers[7];
+            std::cin.getline(buffer, maxLength);
+            registers[6] = std::cin.gcount();
+
+            if (registers[6] < maxLength) {
+                buffer[registers[6]] = '\0';
+            } else {
+                buffer[maxLength - 1] = '\0';
+            }
+
+            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            running = true;
+            return false;
+        }
+        case 2: {
+            int value;
+            std::cin >> value;
+            registers[6] = value;
+            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            running = true;
+            return false;
+        }
+        case 3: {
+            char* str = reinterpret_cast<char*>(&memory[registers[6]]);
+            while (*str != '\0') {
+                std::cout << *str;
+                ++str;
+            }
+            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            running = true;
+            return false;
+        }
+        case 4: {
+            int frequency = registers[6];
+            int duration = registers[7];
+            std::cout << "Playing tone: Frequency=" << frequency << " Hz, Duration=" << duration << " ms\n";
+            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            running = true;
+            return false;
+        }
+        case 5: { // Set Audio Volume
+            int value = registers[6];
+            if (value < 0 || value > 255) {
+                std::cerr << "Error: Volume must be between 0 and 255. Received: " << value << "\n";
+            } else {
+                volume = value;
+                std::cout << "Setting audio volume to " << volume << "\n";
+            }
+
+            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            running = true;
+            return false;
+        }
+        case 6: { // Stop Audio Playback
+            std::cout << "Stopping audio playback\n";
+            // Implementation later
+
+            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            running = true;
+            return false;
+        }
+        case 7: { // Read Keyboard
+            char key;
+            if (std::cin.peek() != EOF) {
+                key = std::cin.get();
+                registers[6] = key; // Set a0 to the key code
+                registers[7] = 1;   // Set a1 to 1 (key pressed)
+            } else {
+                registers[7] = 0;   // Set a1 to 0 (nothing pressed)
+            }
+
+            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            running = true;
+            return false;
+        }
+        case 8: { // Registers Dump
+            dumpRegisters();
+
+            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            running = true;
+            return false;
+        }
+        case 9: { // Memory Dump
+            uint16_t address = registers[6];
+            uint16_t size = registers[7];
+            dumpMemory(address, size);
+
+            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            running = true;
+            return false;
+        }
+        case 10: { // Program Exit
+            std::cout << "Program exiting...\n";
+            running = false;
+            exit(0); // Exit the simulator gracefully
+        }
+        default:
+            std::cerr << "Unknown service number: " << svc << "\n";
+            break;
+    }
+    return false;
+}
+
 
 
 
@@ -478,6 +513,37 @@ void ZX16_Simulator::printDisassembledProgram() const {
         cout << "[" << std::hex << std::setw(4) << std::setfill('0') << address << "]  "
              << "0x" << std::setw(4) << raw << "  "
              << program[i].AssemblyCode() << "\n";
+    }
+}
+bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
+    switch (inst.getType()) {
+        case InstructionType::R_TYPE:
+            return executeRType(inst);
+
+        case InstructionType::I_TYPE:
+            return executeIType(inst);
+
+        case InstructionType::S_TYPE:
+            return executeSType(inst);
+
+        case InstructionType::B_TYPE:
+            return executeBType(inst);
+
+        case InstructionType::L_TYPE:
+            return executeLType(inst);
+
+        case InstructionType::J_TYPE:
+            return executeJType(inst);
+
+        case InstructionType::U_TYPE:
+            return executeUType(inst);
+
+        case InstructionType::SYS_Type:
+            return executeSysType(inst);
+
+        default:
+            std::cerr << "Unknown instruction type at PC=" << pc << "\n";
+            return false;
     }
 }
 

@@ -4,6 +4,16 @@ CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
+# Ignore CMake debug build folder
+cmake-build-debug/
+
+# Ignore build folders
+build/
+
+# Ignore IntelliJ IDEA project files and folders
+.idea\misc.xml
+.idea/
+
 
 # Optional (platform-specific)
 *.sln
