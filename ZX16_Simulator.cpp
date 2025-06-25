@@ -230,9 +230,53 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
         }
 
 
-        case InstructionType::J_TYPE:
-            // Implement J-type logic here
+       case InstructionType::L_TYPE:
+            //uint16_t address = registers[rs2] + imm;
+            uint16_t address = registers[rs2] + static_cast<int16_t>(imm);
+
+            if (func3 == 0b000) { // LB (signed byte load)
+                int8_t byte = static_cast<int8_t>(memory[address]); // sign-extend
+                registers[rd] = static_cast<int16_t>(byte); // sign-extended to 16 bits
+                std::cout << "Executed: LB " << regs[rd] << " <- MEM[" << address << "] (signed byte)\n";
+
+            } else if (func3 == 0b001) { // LW (load 16-bit word)
+                // Following little-endian
+                uint16_t word = memory[address] | (memory[address + 1] << 8);
+                registers[rd] = static_cast<int16_t>(word); // treat as signed 16-bit
+                std::cout << "Executed: LW " << regs[rd] << " <- MEM[" << address << "] (16-bit word)\n";
+
+            } else if (func3 == 0b010) { // LBU (unsigned byte load)
+                uint8_t byte = memory[address]; // zero-extend
+                registers[rd] = static_cast<uint16_t>(byte); // zero-extended
+                std::cout << "Executed: LBU " << regs[rd] << " <- MEM[" << address << "] (unsigned byte)\n";
+
+            } else {
+                std::cerr << "Unknown L-Type instruction with func3=" << std::bitset<3>(func3)
+                          << " at PC=" << pc << "\n";
+            }
+
+            return false; // PC not manually changed
+
+
+        case InstructionType::J_TYPE: {
+            int16_t offset = static_cast<int16_t>(imm); // Sign-extend immediate for PC-relative jumps
+
+            if (flag == 0) { // JUMP (Unconditional)
+                pc += offset;
+                std::cout << "Executed: JUMP -> PC <- PC + " << offset << " = " << pc << "\n";
+                return true; // PC manually changed
+
+            } else if (flag == 1) { // JAL (Jump and Link)
+                registers[rd] = pc + 2; // Store return address
+                pc += offset;
+                std::cout << "Executed: JAL " << regs[rd] << " <- PC+2, PC <- PC + " << offset << " = " << pc << "\n";
+                return true;
+
+            } else {
+                std::cerr << "Unknown J-Type instruction with flag=" << flag << " at PC=" << pc << "\n";
                 return false;
+            }
+        }
 
         case InstructionType::U_TYPE: {
             if (flag == 0) { // LUI
