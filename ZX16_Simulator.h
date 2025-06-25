@@ -38,15 +38,15 @@ private:
     bool executeUType(const Instruction& inst);
     bool executeSysType(const Instruction& inst);
     bool executeInstruction(const Instruction& inst);
-    void loadBinaryFile(const std::string& filename);
-    void dumpRegisters() const;
-    void dumpMemory(uint16_t address, uint16_t size) const;
+
+
 public:
     ZX16_Simulator();
 
     void run();
-
-
+    void loadBinaryFile(const std::string& filename);
+    void dumpRegisters() const;
+    void dumpMemory(uint16_t address, uint16_t size) const;
     // For testing/debug
     void printDisassembledProgram() const;
 

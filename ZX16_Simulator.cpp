@@ -190,16 +190,14 @@ bool ZX16_Simulator::executeSType(const Instruction& inst) {
     int16_t imm = inst.getImmediate();
     uint16_t address = registers[rs1] + imm;
 
-    if (func3 == 0b000) {
-        if (address < MEMORY_SIZE - 1) {
-            memory[address] = registers[rs2] & 0xFF;
-            memory[address + 1] = (registers[rs2] >> 8) & 0xFF;
+    if (func3 == 0b000) { // SB - store byte
+        if (address < MEMORY_SIZE) {
+            memory[address] = registers[rs2] & 0xFF; // store 1 byte only
             std::cout << "Executed: SB " << regs[rs2] << " → Memory[" << address << "]\n";
         } else {
             std::cerr << "Memory write out of bounds at address " << address << "\n";
         }
-
-    } else if (func3 == 0b001) {
+    } else if (func3 == 0b001) { // SW - store word (2 bytes)
         if (address < MEMORY_SIZE - 1) {
             memory[address] = registers[rs2] & 0xFF;
             memory[address + 1] = (registers[rs2] >> 8) & 0xFF;
@@ -207,10 +205,8 @@ bool ZX16_Simulator::executeSType(const Instruction& inst) {
         } else {
             std::cerr << "Memory write out of bounds at address " << address << "\n";
         }
-
-    } else {
-        std::cerr << "Unknown S-Type instruction with func3=" << std::bitset<3>(func3) << "\n";
     }
+
     return false;
 }
 
@@ -218,7 +214,7 @@ bool ZX16_Simulator::executeBType(const Instruction& inst) {
     uint8_t rs1 = inst.getRs1();
     uint8_t rs2 = inst.getRs2();
     uint8_t func3 = inst.getFunc3();
-    int16_t imm = inst.getImmediate();
+    int16_t imm = inst.getImmediate()*2;
 
     switch (func3) {
         case 0b000:
@@ -329,7 +325,7 @@ bool ZX16_Simulator::executeJType(const Instruction& inst) {
     uint8_t rd = inst.getRd();
     uint8_t flag = inst.getflag();
     int16_t imm = inst.getImmediate();
-    int16_t offset = imm;
+    int16_t offset = 2*imm;
 
     if (flag == 0) {
         pc += offset;
@@ -491,6 +487,10 @@ void ZX16_Simulator::run() {
         bool jumped = executeInstruction(inst);
 
         if (!jumped) pc += 2;
+        if (pc >= programEnd) {
+            std::cerr << "PC out of program bounds at 0x" << std::hex << pc << ". Halting execution.\n";
+            running = false;
+        }
     }
 }
 

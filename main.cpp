@@ -150,37 +150,21 @@ void testSType(const std::string& label, int8_t imm4, int8_t func3){
 int main() {
     // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
     // <b>lang</b> variable name to see how CLion can help you rename it.
-    string file = "../ZX16_Instructions.bin";
+    string file = "../TestCase1.bin";
 
-    ZX16_Simulator Sim;
+    ZX16_Simulator sim;
 
-    Sim.loadBinaryFile(file);// In ZX16_Simulator.cpp
-    Sim.printDisassembledProgram();
+    // Load your binary program file here (make sure you have a .bin file)
+    sim.loadBinaryFile(file);
 
+    // Optionally print the disassembled program
+    sim.printDisassembledProgram();
 
-    //uint16_t rawtestForRegDump = 0x207; // Example raw instruction for testing
+    // Run the simulation
+    sim.run();
 
-    //Instruction RegDumpTestInst(rawtestForRegDump);
-
-    //RegDumpTestInst.decode();
-    //std::cout << RegDumpTestInst.AssemblyCode() << "\n";
-
-   // Sim.executeInstruction(RegDumpTestInst);
-
-
-    /*
-
-    uint16_t rawtest = 0x88c6; // Example raw instruction for testing
-
-
-    Instruction TestInst2(rawtest);
-
-    TestInst2.decode();
-    Sim.executeInstruction(TestInst2);
-
-
-    Sim.executeInstruction(RegDumpTestInst);
-*/
+    // After running, dump the registers to see final state
+    sim.dumpRegisters();
 
 
 
