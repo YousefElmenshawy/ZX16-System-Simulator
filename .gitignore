@@ -1,0 +1,13 @@
+# Ignore CMake build files and folders
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Optional (platform-specific)
+*.sln
+*.vcxproj*
+*.user
+*.cmake
+compile_commands.json
