@@ -273,8 +273,7 @@ void Instruction::generateAssemblyString() {
         break;
 
         case InstructionType::SYS_Type:
-            if (svc == 0) // ecall
-                oss << "ecall";
+                oss << "ecall " <<  svc;
                 break;
 
         case InstructionType::INVALID:
@@ -327,4 +326,8 @@ uint8_t Instruction::getFunc3() const {
 
 uint8_t Instruction::getFunc4() const {
     return func4;
+}
+
+uint16_t Instruction::getSvc() const {
+    return svc;
 }

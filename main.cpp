@@ -180,13 +180,9 @@ int main() {
 
     testUType("LUI", 22, 2, 0);
     testUType("AUIPC", 32, 3, 1);
-    testSysType("ECALL", 0x0);
+    testSysType("ECALL", 1);
 
 
     return 0;
 }
 
-// TIP See CLion help at <a
-// href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>.
-//  Also, you can try interactive lessons for CLion by selecting
-//  'Help | Learn IDE Features' from the main menu.

@@ -48,6 +48,7 @@ public:
     int16_t getImmediate() const;
     uint8_t getFunc3() const;
     uint8_t getFunc4() const;
+    uint16_t getSvc() const; // For SYS instructions
     void decode();  // Fills in fields like opcode, rd, etc.
 };
 

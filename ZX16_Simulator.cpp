@@ -33,14 +33,14 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
 }
 
 bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
-        uint8_t rd = inst.getRd();
-        uint8_t rs2 = inst.getRs2();
-        uint8_t func4 = inst.getFunc4();
-        uint8_t func3 = inst.getFunc3();
-        int16_t imm = inst.getImmediate();
+    uint8_t rd = inst.getRd();
+    uint8_t rs2 = inst.getRs2();
+    uint8_t func4 = inst.getFunc4();
+    uint8_t func3 = inst.getFunc3();
+    int16_t imm = inst.getImmediate();
+    uint16_t svc = inst.getSvc();
 
     switch (inst.getType()) {
-
         case InstructionType::R_TYPE: {
             if (func4 == 0b0000 && func3 == 0b000) { // ADD
                 registers[rd] += registers[rs2];
@@ -121,18 +121,125 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
             return false;
 
         case InstructionType::U_TYPE:
-            // Implement U-type logic here
+
             return false;
 
-        case InstructionType::SYS_Type:
-            handleEcall();  // this may set running = false
-            return false;
+        case InstructionType::SYS_Type: {
+            std::cout << "ECALL executed. Halting the simulator." << std::endl;
+            running = false; // Stop the simulator
+            switch (svc) { // svc is stored in a0 (register 6)
+                case 1:
+                { // Read String
+                    char* buffer = reinterpret_cast<char*>(&memory[registers[0]]);
+                    int maxLength = registers[1];
+                    std::cin.getline(buffer, maxLength);
+                    registers[6] = std::cin.gcount(); // Set a0 to string length
 
-        default:
-            std::cerr << "Unknown instruction type at PC=" << pc << "\n";
-            return false;
+                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
+                    running = true; // Cont the simulator
+                    break;
+                }
+                case 2: { // Read Integer
+                    int value;
+                    std::cin >> value;
+                    registers[6] = value; // Set a0 to the read integer
+
+
+
+                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
+                    running = true; // Cont the simulator
+                    break;
+
+
+                }
+                case 3: { // Print String
+                    char* str = reinterpret_cast<char*>(&memory[registers[6]]);
+                    std::cout << str;
+
+
+                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
+                    running = true; // Cont the simulator
+                    break;
+                }
+                case 4: { // Play Tone
+                    int frequency = registers[6];
+                    int duration = registers[7];
+                    std::cout << "Playing tone: Frequency=" << frequency << " Hz, Duration=" << duration << " ms\n";
+
+
+
+                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
+                    running = true; // Cont the simulator
+                    break;
+                }
+                case 5: { // Set Audio Volume
+                    int volume = registers[6];
+                    std::cout << "Setting audio volume to " << volume << "\n";
+
+
+                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
+                    running = true; // Cont the simulator
+                    break;
+                }
+                case 6: { // Stop Audio Playback
+                    std::cout << "Stopping audio playback\n";
+
+
+
+                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
+                    running = true; // Cont the simulator
+                    break;
+                }
+                case 7: { // Read Keyboard
+                    char key;
+                    if (std::cin.peek() != EOF) {
+                        key = std::cin.get();
+                        registers[6] = key; // Set a0 to the key code
+                        registers[7] = 1;   // Set a1 to 1 (key pressed)
+                    } else {
+                        registers[7] = 0;   // Set a1 to 0 (nothing pressed)
+                    }
+
+
+                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
+                    running = true; // Cont the simulator
+                    break;
+                }
+                case 8: { // Registers Dump
+                    dumpRegisters();
+
+
+
+                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
+                    running = true; // Cont the simulator
+                    break;
+                }
+                case 9: { // Memory Dump
+                    uint16_t address = registers[6];
+                    uint16_t size = registers[7];
+                    dumpMemory(address, size);
+
+
+                    std::cout << "ECALL done. Continuing the simulator." << std::endl;
+                    running = true; // Cont the simulator
+                    break;
+                }
+                case 10: { // Program Exit
+                    std::cout << "Program exiting...\n";
+                    running = false;
+                    exit(0); // Exit the simulator gracefully
+
+
+
+                }
+                default:
+                    std::cerr << "Unknown service number: " << registers[6] << "\n";
+                    break;
+            }
+        }
     }
 }
+
 
 
 void ZX16_Simulator::run() {
@@ -158,4 +265,21 @@ void ZX16_Simulator::dumpRegisters() const {
     }
 }
 
+void ZX16_Simulator::dumpMemory(uint16_t address, uint16_t size) const {
+    if (address + size > MEMORY_SIZE) {
+        std::cerr << "Memory dump out of bounds: address=" << address << ", size=" << size << "\n";
+        return;
+    }
 
+    std::cout << "Memory Dump (address=" << address << ", size=" << size << "):\n";
+    for (uint16_t i = 0; i < size; ++i) {
+        if (i % 16 == 0) {
+            std::cout << std::hex << std::setw(4) << std::setfill('0') << (address + i) << ": ";
+        }
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(memory[address + i]) << " ";
+        if (i % 16 == 15) {
+            std::cout << "\n";
+        }
+    }
+    std::cout << std::dec << std::endl;
+}
