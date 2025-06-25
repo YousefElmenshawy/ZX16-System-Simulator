@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\build\CMakeFiles\6cb222c8e17b6fba1ddc4cb166fef3b5\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{86DCCB9C-29F0-3E6F-B836-FE4934D90AB1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

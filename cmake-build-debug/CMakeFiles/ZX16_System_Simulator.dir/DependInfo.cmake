@@ -8,9 +8,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/kareem/Desktop/Projects/ZX16-System-Simulator/Instruction.cpp" "CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.o" "gcc" "CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.o.d"
-  "/Users/kareem/Desktop/Projects/ZX16-System-Simulator/ZX16_Simulator.cpp" "CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.o" "gcc" "CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.o.d"
-  "/Users/kareem/Desktop/Projects/ZX16-System-Simulator/main.cpp" "CMakeFiles/ZX16_System_Simulator.dir/main.cpp.o" "gcc" "CMakeFiles/ZX16_System_Simulator.dir/main.cpp.o.d"
+  "C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/Instruction.cpp" "CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.obj" "gcc" "CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.obj.d"
+  "C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/ZX16_Simulator.cpp" "CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj" "gcc" "CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj.d"
+  "C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/main.cpp" "CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj" "gcc" "CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

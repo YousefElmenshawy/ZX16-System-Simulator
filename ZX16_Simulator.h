@@ -28,7 +28,7 @@ private:
 
     // bool executeInstruction(const Instruction& inst);   moved to public for now to test in main
     void handleEcall();
-
+    int16_t sext_imm4(uint8_t imm);  // sign extend 4 bit
 public:
     ZX16_Simulator();
     bool executeInstruction(const Instruction& inst);
