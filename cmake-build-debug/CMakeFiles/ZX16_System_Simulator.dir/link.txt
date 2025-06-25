@@ -1,3 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2024.2.1\bin\cmake\win\x64\bin\cmake.exe" -E rm -f CMakeFiles\ZX16_System_Simulator.dir/objects.a
-C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\ar.exe qc CMakeFiles\ZX16_System_Simulator.dir/objects.a @CMakeFiles\ZX16_System_Simulator.dir\objects1.rsp
-C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE -g -Wl,--whole-archive CMakeFiles\ZX16_System_Simulator.dir/objects.a -Wl,--no-whole-archive -o ZX16_System_Simulator.exe -Wl,--out-implib,libZX16_System_Simulator.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\ZX16_System_Simulator.dir\linkLibs.rsp

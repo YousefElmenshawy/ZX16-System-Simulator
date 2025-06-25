@@ -28,15 +28,18 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
     uint16_t address = 0; // load instructions starting at 0x0000
     uint16_t value;
 
-    while (file.read(reinterpret_cast<char*>(&value), sizeof(value))) {
+    uint8_t bytes[2];
+    while (file.read(reinterpret_cast<char*>(bytes), 2)) {
+        uint16_t value = bytes[0] | (bytes[1] << 8); // 👈 correct little-endian assembly
 
         Instruction inst(value);
         program.push_back(inst);
-        // Store in little-endian order into memory
-        memory[address]     = value & 0xFF;       // lower byte
-        memory[address + 1] = (value >> 8) & 0xFF; // upper byte
+
+        memory[address]     = bytes[0];
+        memory[address + 1] = bytes[1];
         address += 2;
     }
+
     programEnd= address;
 
     std::cout << "Program loaded into memory.\n";
@@ -227,7 +230,7 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
         }
 
 
-        case InstructionType::L_TYPE: {
+       case InstructionType::L_TYPE:
             //uint16_t address = registers[rs2] + imm;
             uint16_t address = registers[rs2] + static_cast<int16_t>(imm);
 
@@ -253,7 +256,6 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
             }
 
             return false; // PC not manually changed
-        }
 
 
         case InstructionType::J_TYPE: {
@@ -275,7 +277,6 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
                 return false;
             }
         }
-
 
         case InstructionType::U_TYPE: {
             if (flag == 0) { // LUI
@@ -472,10 +473,14 @@ void ZX16_Simulator::printDisassembledProgram() const {
 
     for (size_t i = 0; i < program.size(); ++i) {
         uint16_t address = i * 2;  // each instruction is 2 bytes
+
+        uint16_t raw = program[i].get_CompleteInstruction();  // Add this function if needed
         cout << "[" << std::hex << std::setw(4) << std::setfill('0') << address << "]  "
-                  << program[i].AssemblyCode() << "\n";
+             << "0x" << std::setw(4) << raw << "  "
+             << program[i].AssemblyCode() << "\n";
     }
 }
+
 
 void ZX16_Simulator::dumpMemory(uint16_t address, uint16_t size) const {
     if (address + size > MEMORY_SIZE) {
@@ -495,11 +500,4 @@ void ZX16_Simulator::dumpMemory(uint16_t address, uint16_t size) const {
     }
     std::cout << std::dec << std::endl;
 }
-int16_t sext_imm4(uint8_t imm) {
-    // Sign extend 4-bit immediate to 16-bit
-    if (imm & 0x8) {  // if sign bit (bit 3) is set
-        return (int16_t)(imm | 0xFFF0);  // extend with 1s on the left
-    } else {
-        return (int16_t)(imm & 0xF);     // keep as positive value
-    }
-}
+

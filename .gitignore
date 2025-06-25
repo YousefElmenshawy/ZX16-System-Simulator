@@ -11,3 +11,5 @@ Makefile
 *.user
 *.cmake
 compile_commands.json
+"build/" 
+"CMakeFiles/" 

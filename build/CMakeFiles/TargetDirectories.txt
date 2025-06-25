@@ -1,3 +1,0 @@
-C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/build/CMakeFiles/ZX16_System_Simulator.dir
-C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/build/CMakeFiles/ZERO_CHECK.dir

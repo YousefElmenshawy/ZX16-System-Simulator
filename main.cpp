@@ -34,40 +34,6 @@ void testIType(const std::string& label, int8_t imm, uint8_t func3) {
     std::cout << label << " (0x" << std::hex << raw << std::dec << "): ";
     std::cout << inst.AssemblyCode() << "\n";
 }
-// B- Type encoding and test
-uint16_t encodeBType(int8_t imm5, uint8_t rs2, uint8_t rs1, uint8_t func3) {
-    uint8_t imm4to1 = (imm5 >> 1) & 0xF; // Right shift one for bits [4:1]
-    uint16_t immPart = imm4to1 << 12;  // Shift to bits [15:12]
-    return immPart | (rs2 << 9) | (rs1 << 6) | (func3 << 3) | 0b010;
-}
-
-void testBType(const std::string& label, int8_t imm5, uint8_t func3) {
-    uint8_t rs1 = 1;  // ra
-    uint8_t rs2 = 6;  // a0
-
-    uint16_t raw = encodeBType(imm5, rs2, rs1, func3);
-    Instruction inst(raw);
-    inst.decode();
-
-    std::cout << label << " (0x" << std::hex << raw << std::dec << "): ";
-    std::cout << inst.AssemblyCode() << "\n";
-}
-
-uint16_t encodeSType(int8_t imm4, int8_t rs2, int8_t rs1, int8_t func3){
-    uint16_t immpart = (imm4 & 0xF) << 12; // Mask to 4 bits and shift
-    return immpart | (rs2 << 9) | (rs1 << 6) | (func3 << 3) | 0b011;
-}
-void testSType(const std::string& label, int8_t imm4, int8_t func3){
-    uint8_t rs1 = 1;  // ra
-    uint8_t rs2 = 3;  // x3
-
-    uint16_t raw = encodeSType(imm4, rs2, rs1, func3);
-    Instruction inst(raw);
-    inst.decode();
-
-    std::cout << label << " (0x" << std::hex << raw << std::dec << "): ";
-    std::cout << inst.AssemblyCode() << "\n";
-}
 
 uint16_t encodeLType(int8_t imm4, uint8_t rs2, uint8_t rd, uint8_t func3) {
     uint16_t immPart = (imm4 & 0xF) << 12;  // Mask to 4 bits and shift
@@ -144,101 +110,62 @@ void testSysType(const std::string& label, uint16_t svc) {
     std::cout << inst.AssemblyCode() << "\n";
 }
 
+
+uint16_t encodeBType(int8_t imm5, uint8_t rs2, uint8_t rs1, uint8_t func3) {
+    uint8_t imm4to1 = (imm5 >> 1) & 0xF; // Right shift one for bits [4:1]
+    uint16_t immPart = imm4to1 << 12;  // Shift to bits [15:12]
+    return immPart | (rs2 << 9) | (rs1 << 6) | (func3 << 3) | 0b010;
+}
+
+void testBType(const std::string& label, int8_t imm5, uint8_t func3) {
+    uint8_t rs1 = 1;  // ra
+    uint8_t rs2 = 6;  // a0
+
+    uint16_t raw = encodeBType(imm5, rs2, rs1, func3);
+    Instruction inst(raw);
+    inst.decode();
+
+    std::cout << label << " (0x" << std::hex << raw << std::dec << "): ";
+    std::cout << inst.AssemblyCode() << "\n";
+}
+
+uint16_t encodeSType(int8_t imm4, int8_t rs2, int8_t rs1, int8_t func3){
+    uint16_t immpart = (imm4 & 0xF) << 12; // Mask to 4 bits and shift
+    return immpart | (rs2 << 9) | (rs1 << 6) | (func3 << 3) | 0b011;
+}
+void testSType(const std::string& label, int8_t imm4, int8_t func3){
+    uint8_t rs1 = 1;  // ra
+    uint8_t rs2 = 3;  // x3
+
+    uint16_t raw = encodeSType(imm4, rs2, rs1, func3);
+    Instruction inst(raw);
+    inst.decode();
+
+    std::cout << label << " (0x" << std::hex << raw << std::dec << "): ";
+    std::cout << inst.AssemblyCode() << "\n";
+}
+
+
+
 int main() {
     // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
     // <b>lang</b> variable name to see how CLion can help you rename it.
-    string file = "../sampleBINFILE-2instructions.bin";
+    string file = "../ZX16_Instructions.bin";
 
     ZX16_Simulator Sim;
 
-   // Sim.loadBinaryFile(file);// In ZX16_Simulator.cpp
+    Sim.loadBinaryFile(file);// In ZX16_Simulator.cpp
+    Sim.printDisassembledProgram();
 
 
-    /*std::cout << "Testing All R-Type Instructions:\n";
+    //uint16_t rawtestForRegDump = 0x207; // Example raw instruction for testing
 
-    testRType("ADD",   0b0000, 0b000);
-    testRType("SUB",   0b0001, 0b000);
-    testRType("SLT",   0b0010, 0b001);
-    testRType("SLTU",  0b0011, 0b010);
-    testRType("SLL",   0b0100, 0b011);
-    testRType("SRL",   0b0101, 0b011);
-    testRType("SRA",   0b0110, 0b011);
-    testRType("OR",    0b0111, 0b100);
-    testRType("AND",   0b1000, 0b101);
-    testRType("XOR",   0b1001, 0b110);
-    testRType("MV",    0b1010, 0b111);
-    testRType("JR",    0b1011, 0b000);  // rs2 ignored
-    testRType("JALR",  0b1100, 0b000);
+    //Instruction RegDumpTestInst(rawtestForRegDump);
 
-    std::cout << "Testing All I-Type Instructions:\n";*/
+    //RegDumpTestInst.decode();
+    //std::cout << RegDumpTestInst.AssemblyCode() << "\n";
 
-/*
-
-    testIType("ADDI",   -3, 0b000);
-    testIType("SLTI",    5, 0b001);
-    testIType("SLTUI",   7, 0b010);
-
-    // Shift Instructions use imm7[6:4] to distinguish type
-    // SLLI → imm7 = 0010000 (0x10), shift by 0
-    testIType("SLLI",  0b0010000, 0b011);
-    // SRLI → imm7 = 0100100 (0x24), shift by 4
-    testIType("SRLI",  0b0100100, 0b011);
-    // SRAI → imm7 = 1000011 (0x43), shift by 3
-    testIType("SRAI",  0b1000011, 0b011);
-
-    testIType("ORI",     8, 0b100);
-    testIType("ANDI",   -2, 0b101);
-    testIType("XORI",   12, 0b110);
-    testIType("LI",     -69, 0b111);
-
-    // L-Type Tests
-    testLType("LB",   -3, 0b000);
-    testLType("LW",    5, 0b001);
-    testLType("LBU",   7, 0b010);
-
-    // J-Type Tests
-    testJType("J",     12, 0, false);
-    testJType("J",    -16, 0, false);
-    testJType("JAL",   10, 1, true);
-    testJType("JAL",  -14, 2, true);
-
-
-*/
-    // std::cout << "Testing All B-Type Instructions:\n";
-    // testBType("BEQ",  4, 0b000);
-    // testBType("BNE", -6, 0b001);
-    // testBType("BZ",   2, 0b010);
-    // testBType("BNZ", -8, 0b011);
-    // testBType("BLT",  3, 0b100);
-    // testBType("BGE", -5, 0b101);
-    // testBType("BLE",  1, 0b110);
-    // testBType("BGT", -7, 0b111);
-    // std::cout << "Testing All S-Type Instructions:\n";
-    // testSType("SB",  2, 0b000);
-    // testSType("SW", -4, 0b001);
-
-    // testUType("LUI", 22, 3, 0);
-    // testUType("AUIPC", 32, 3, 1);
-    // testSysType("ECALL", 10);
-
-
-    uint16_t rawtestForRegDump = 0x204; // Example raw instruction for testing  0000001000000100
-    uint16_t rawtestForRegDump2 = 0b1111111000010101;   //0000000001100
-
-    Instruction RegDumpTestInst(rawtestForRegDump);
-
-    RegDumpTestInst.decode();
-    std::cout << RegDumpTestInst.AssemblyCode() << "\n";
-
-    Sim.executeInstruction(RegDumpTestInst);
-
-    Instruction RegDumpTestInst2(rawtestForRegDump2);
-
-    RegDumpTestInst2.decode();
-    std::cout << RegDumpTestInst2.AssemblyCode() << "\n";
-
-    Sim.executeInstruction(RegDumpTestInst2);
-    
+   // Sim.executeInstruction(RegDumpTestInst);
 
 
     /*
