@@ -48,6 +48,7 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
 
 bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
     uint8_t rd = inst.getRd();
+    uint8_t rs1 = inst.getRs1();
     uint8_t rs2 = inst.getRs2();
     uint8_t func4 = inst.getFunc4();
     uint8_t func3 = inst.getFunc3();
@@ -121,19 +122,117 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
 
         case InstructionType::I_TYPE:
             // Implement I-type logic here
-            return false;
+                return false;
 
-        case InstructionType::S_TYPE:
-            // Implement S-type logic here
+        case InstructionType::S_TYPE:{
+            // Implement S-type logic
+            uint16_t address = registers[rs1] + imm;
+            if(func3==0b000) {
+                uint16_t address = registers[rs1] + imm;
+                if (address < MEMORY_SIZE - 1) {
+                    memory[address] = registers[rs2] & 0xFF; // lower byte
+                    memory[address + 1] = (registers[rs2] >> 8) & 0xFF; // upper byte
+                    std::cout << "Executed: SB " << regs[rs2] << " → Memory[" << address << "]\n";
+                } else {
+                    std::cerr << "Memory write out of bounds at address " << address << "\n";
+                }
+            } else if(func3==0b001) { //sw
+                uint16_t address = registers[rs1] + imm;
+                if (address < MEMORY_SIZE - 1) {
+                    memory[address] = registers[rs2] & 0xFF; // lower byte
+                    memory[address + 1] = (registers[rs2] >> 8) & 0xFF; // upper byte
+                    std::cout << "Executed: SW " << regs[rs2] << " → Memory[" << address << "]\n";
+                } else {
+                    std::cerr << "Memory write out of bounds at address " << address << "\n";
+                }
+            } else {
+                std::cerr << "Unknown S-Type instruction with func3=" << std::bitset<3>(func3) << "\n";
+            }
             return false;
+        }
 
-        case InstructionType::B_TYPE:
-            // Implement B-type logic here
+
+        case InstructionType::B_TYPE:{
+            // Implement B-type logic
+            if(func3==0b000){  //beq
+                if(registers[rs1] == registers[rs2]){
+                    pc += imm;
+                    std::cout << "Executed: BEQ " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
+                    return true; // manually changed PC
+                }
+                else
+                    std::cout << "BEQ condition not met, PC remains " << pc << "\n";
+            }
+            else if(func3==0b001){ //bne
+                if(registers[rs1] != registers[rs2]){
+                    pc += imm;
+                    std::cout << "Executed: BNE " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
+                    return true; // manually changed PC
+                }
+                else
+                    std::cout << "BNE condition not met, PC remains " << pc << "\n";
+            }
+            else if(func3==0b010){ //bz
+                if(registers[rs1] == 0){
+                    pc += imm;
+                    std::cout << "Executed: BZ " << regs[rs1]<< " → PC = " << pc << "\n";
+                    return true; // manually changed PC
+                }
+                else
+                    std::cout << "BZ condition not met, PC remains " << pc << "\n";
+            }
+            else if(func3==0b011){ //bnz
+                if(registers[rs1] != 0){
+                    pc += imm;
+                    std::cout << "Executed: BNZ " << regs[rs1] << " → PC = " << pc << "\n";
+                    return true; // manually changed PC
+                }
+                else
+                    std::cout << "BNZ condition not met, PC remains " << pc << "\n";
+            }
+            else if(func3==0b100){ //blt
+                if(registers[rs1] < registers[rs2]){
+                    pc += imm;
+                    std::cout << "Executed: BLT " << regs[rs1] << ", " << regs[rs2]  << " → PC = " << pc << "\n";
+                    return true; // manually changed PC
+                }
+                else
+                    std::cout << "BLT condition not met, PC remains " << pc << "\n";
+            }
+            else if(func3==0b101){ //bge
+                if(registers[rs1] >= registers[rs2]){
+                    pc += imm;
+                    std::cout << "Executed: BGE " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
+                    return true; // manually changed PC
+                }
+                else
+                    std::cout << "BGE condition not met, PC remains " << pc << "\n";
+            }
+            else if(func3==0b110){ //bltu
+                if(static_cast<uint16_t>(registers[rs1]) < static_cast<uint16_t>(registers[rs2])){
+                    pc += imm;
+                    std::cout << "Executed: BLTU " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
+                    return true; // manually changed PC
+                }
+                else
+                    std::cout << "BLTU condition not met, PC remains " << pc << "\n";
+            }
+            else if(func3==0b111){ //bgeu
+                if(static_cast<uint16_t>(registers[rs1]) >= static_cast<uint16_t>(registers[rs2])){
+                    pc += imm;
+                    std::cout << "Executed: BGEU " << regs[rs1] << ", " << regs[rs2] << " → PC = " << pc << "\n";
+                    return true; // manually changed PC
+                }
+                else
+                    std::cout << "BGEU condition not met, PC remains " << pc << "\n";
+            }
             return false;
+        }
+
 
         case InstructionType::J_TYPE:
             // Implement J-type logic here
-            return false;
+                return false;
 
         case InstructionType::U_TYPE: {
             if (flag == 0) { // LUI
@@ -263,6 +362,9 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
                 }
                 case 8: { // Registers Dump
                     dumpRegisters();
+
+
+
                     std::cout << "ECALL done. Continuing the simulator." << std::endl;
                     running = true; // Cont the simulator
                     return false; // pc not manually changed
@@ -290,10 +392,11 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
                 }
                 default:
                     std::cerr << "Unknown service number: " << registers[6] << "\n";
-                    break;
+                break;
             }
         }
     }
+    return false;
 }
 
 
@@ -353,3 +456,4 @@ void ZX16_Simulator::dumpMemory(uint16_t address, uint16_t size) const {
     }
     std::cout << std::dec << std::endl;
 }
+

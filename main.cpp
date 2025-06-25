@@ -110,6 +110,43 @@ void testSysType(const std::string& label, uint16_t svc) {
     std::cout << inst.AssemblyCode() << "\n";
 }
 
+
+uint16_t encodeBType(int8_t imm5, uint8_t rs2, uint8_t rs1, uint8_t func3) {
+    uint8_t imm4to1 = (imm5 >> 1) & 0xF; // Right shift one for bits [4:1]
+    uint16_t immPart = imm4to1 << 12;  // Shift to bits [15:12]
+    return immPart | (rs2 << 9) | (rs1 << 6) | (func3 << 3) | 0b010;
+}
+
+void testBType(const std::string& label, int8_t imm5, uint8_t func3) {
+    uint8_t rs1 = 1;  // ra
+    uint8_t rs2 = 6;  // a0
+
+    uint16_t raw = encodeBType(imm5, rs2, rs1, func3);
+    Instruction inst(raw);
+    inst.decode();
+
+    std::cout << label << " (0x" << std::hex << raw << std::dec << "): ";
+    std::cout << inst.AssemblyCode() << "\n";
+}
+
+uint16_t encodeSType(int8_t imm4, int8_t rs2, int8_t rs1, int8_t func3){
+    uint16_t immpart = (imm4 & 0xF) << 12; // Mask to 4 bits and shift
+    return immpart | (rs2 << 9) | (rs1 << 6) | (func3 << 3) | 0b011;
+}
+void testSType(const std::string& label, int8_t imm4, int8_t func3){
+    uint8_t rs1 = 1;  // ra
+    uint8_t rs2 = 3;  // x3
+
+    uint16_t raw = encodeSType(imm4, rs2, rs1, func3);
+    Instruction inst(raw);
+    inst.decode();
+
+    std::cout << label << " (0x" << std::hex << raw << std::dec << "): ";
+    std::cout << inst.AssemblyCode() << "\n";
+}
+
+
+
 int main() {
     // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
     // <b>lang</b> variable name to see how CLion can help you rename it.
