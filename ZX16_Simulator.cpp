@@ -5,6 +5,8 @@
 #include "ZX16_Simulator.h"
 #include <iostream>
 #include<bitset>
+#include <iomanip>  // for setw, setfill
+
 using namespace std;
 
 
@@ -19,16 +21,25 @@ ZX16_Simulator::ZX16_Simulator() {
 void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
     std::ifstream file(filename, std::ios::binary);
     if (!file) {
-        cerr<< "Failed to open file: " << filename << std::endl;
+        std::cerr << "Failed to open file: " << filename << std::endl;
         return;
     }
 
+    uint16_t address = 0; // load instructions starting at 0x0000
     uint16_t value;
+
     while (file.read(reinterpret_cast<char*>(&value), sizeof(value))) {
+
         Instruction inst(value);
         program.push_back(inst);
+        // Store in little-endian order into memory
+        memory[address]     = value & 0xFF;       // lower byte
+        memory[address + 1] = (value >> 8) & 0xFF; // upper byte
+        address += 2;
     }
+    programEnd= address;
 
+    std::cout << "Program loaded into memory.\n";
 
 }
 
@@ -92,7 +103,7 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
                 return true; // manually changed PC
 
             } else if (func4 == 0b1100 && func3 == 0b000) { // JALR
-                registers[rd] = pc + 1;
+                registers[rd] = pc + 2;
                 pc = registers[rs2];
                 std::cout << "Executed: JALR " << regs[rd] << ", " << regs[rs2] << " → PC = " << pc << "\n";
                 return true; // manually changed PC
@@ -246,22 +257,32 @@ void ZX16_Simulator::run() {
     pc = 0;
     running = true;
 
-    while (running && pc < program.size()) {
-        Instruction inst = program[pc];
+    while (running && pc < programEnd) {
+        uint16_t BinaryInstruction = memory[pc] | (memory[pc + 1] << 8);
+        Instruction inst(BinaryInstruction);
 
-        bool jumped = executeInstruction(inst); // now returns if PC was manually set
+        bool jumped = executeInstruction(inst);
 
-        if (!jumped) {
-            pc++; // only advance if instruction didn't manually modify PC
-        }
+        if (!jumped) pc += 2;
     }
 }
+
+
 
 void ZX16_Simulator::dumpRegisters() const {
 
 
     for (int i = 0; i < NUM_REGISTERS; ++i) {
         std::cout << regs[i] << " = " << registers[i] << "\n";
+    }
+}
+void ZX16_Simulator::printDisassembledProgram() const {
+    cout << "Disassembled Program:\n";
+
+    for (size_t i = 0; i < program.size(); ++i) {
+        uint16_t address = i * 2;  // each instruction is 2 bytes
+        cout << "[" << std::hex << std::setw(4) << std::setfill('0') << address << "]  "
+                  << program[i].AssemblyCode() << "\n";
     }
 }
 
