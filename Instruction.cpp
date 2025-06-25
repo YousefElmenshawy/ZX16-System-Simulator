@@ -248,17 +248,17 @@ void Instruction::generateAssemblyString() {
 
         case InstructionType::U_TYPE:
             if (flag == 0)
-                oss << "LUI " << regs[rd] << ", " << imm;
+                oss << "lui " << regs[rd] << ", 0x" << std::hex << std::uppercase << imm;
             else if (flag == 1)
-                oss << "AUIPC " << regs[rd] << ", " << imm;
+                oss << "auipc " << regs[rd] << ", 0x" << std::hex << std::uppercase << imm;
+        break;
 
-                break;
 
         case InstructionType::J_TYPE:
             if (flag == 0)
-                oss << "j " << imm;
+                oss << "j " << std::showbase << std::hex << imm;
             else
-                oss << "jal " << regs[rd] << ", " << imm;
+                oss << "jal " << regs[rd] << ", " << std::showbase << std::hex << imm;
         break;
 
         case InstructionType::L_TYPE:
@@ -273,8 +273,9 @@ void Instruction::generateAssemblyString() {
         break;
 
         case InstructionType::SYS_Type:
-                oss << "ecall " <<  svc;
-                break;
+            oss << "ecall 0x" << std::hex << std::uppercase << svc;
+        break;
+
 
         case InstructionType::INVALID:
             default:

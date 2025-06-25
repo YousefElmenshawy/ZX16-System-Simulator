@@ -263,9 +263,6 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
                 }
                 case 8: { // Registers Dump
                     dumpRegisters();
-
-
-
                     std::cout << "ECALL done. Continuing the simulator." << std::endl;
                     running = true; // Cont the simulator
                     return false; // pc not manually changed
