@@ -266,7 +266,7 @@ void Instruction::generateAssemblyString() {
                 oss << "lb " << regs[rd] << ", " << imm << "(" << regs[rs2] << ")";
             else if (func3 == 0b001)
                 oss << "lw " << regs[rd] << ", " << imm << "(" << regs[rs2] << ")";
-            else if (func3 == 0b010)
+            else if (func3 == 0b100)
                 oss << "lbu " << regs[rd] << ", " << imm << "(" << regs[rs2] << ")";
             else
                 oss << "unknown_ltype";

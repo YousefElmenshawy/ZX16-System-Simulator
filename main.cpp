@@ -117,8 +117,8 @@ int main() {
 
     ZX16_Simulator Sim;
 
-   // Sim.loadBinaryFile(file);// In ZX16_Simulator.cpp
-
+    Sim.loadBinaryFile(file);// In ZX16_Simulator.cpp
+Sim.printDisassembledProgram();
 
     /*std::cout << "Testing All R-Type Instructions:\n";
 

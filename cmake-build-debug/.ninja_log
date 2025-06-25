@@ -1,0 +1,27 @@
+# ninja log v6
+61	638	7724955941425050	CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.obj	93978420218902e4
+24	535	7724976575082516	CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj	f7f6c1754f60f1f1
+11	648	7724956620662292	CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj	651972f4b362b38d
+535	631	7724976580195535	ZX16_System_Simulator.exe	3834b67d40aea37f
+72	1052	7725535586308042	CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.obj	93978420218902e4
+64	1101	7725535586228029	CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj	f7f6c1754f60f1f1
+80	1329	7725535586388027	CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj	651972f4b362b38d
+1329	1587	7725535598881389	ZX16_System_Simulator.exe	3834b67d40aea37f
+65	1155	7725543107555000	CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj	f7f6c1754f60f1f1
+1156	1367	7725543118471222	ZX16_System_Simulator.exe	3834b67d40aea37f
+61	1165	7725543316994107	CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj	f7f6c1754f60f1f1
+1165	1376	7725543328040023	ZX16_System_Simulator.exe	3834b67d40aea37f
+14	1225	7725575121337691	CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj	651972f4b362b38d
+1225	1431	7725575133449239	ZX16_System_Simulator.exe	3834b67d40aea37f
+52	1154	7725577162116542	CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj	651972f4b362b38d
+1154	1303	7725577173151899	ZX16_System_Simulator.exe	3834b67d40aea37f
+61	1111	7725577631920591	CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj	651972f4b362b38d
+1112	1288	7725577642425924	ZX16_System_Simulator.exe	3834b67d40aea37f
+63	1247	7725581040330913	CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj	651972f4b362b38d
+1248	1413	7725581052175963	ZX16_System_Simulator.exe	3834b67d40aea37f
+13	1165	7725583637539811	CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj	651972f4b362b38d
+1166	1331	7725583649060629	ZX16_System_Simulator.exe	3834b67d40aea37f
+8	639	7725592207787395	CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj	651972f4b362b38d
+640	774	7725592214110262	ZX16_System_Simulator.exe	3834b67d40aea37f
+8	482	7725626490781141	CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.obj	93978420218902e4
+482	596	7725626495521148	ZX16_System_Simulator.exe	3834b67d40aea37f
