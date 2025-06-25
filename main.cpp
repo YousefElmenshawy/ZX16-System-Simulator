@@ -158,14 +158,14 @@ int main() {
     Sim.printDisassembledProgram();
 
 
-    uint16_t rawtestForRegDump = 0x207; // Example raw instruction for testing
+    //uint16_t rawtestForRegDump = 0x207; // Example raw instruction for testing
 
-    Instruction RegDumpTestInst(rawtestForRegDump);
+    //Instruction RegDumpTestInst(rawtestForRegDump);
 
-    RegDumpTestInst.decode();
-    std::cout << RegDumpTestInst.AssemblyCode() << "\n";
+    //RegDumpTestInst.decode();
+    //std::cout << RegDumpTestInst.AssemblyCode() << "\n";
 
-    Sim.executeInstruction(RegDumpTestInst);
+   // Sim.executeInstruction(RegDumpTestInst);
 
 
     /*
