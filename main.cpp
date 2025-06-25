@@ -204,25 +204,26 @@ int main() {
 
 
 */
-    std::cout << "Testing All B-Type Instructions:\n";
-    testBType("BEQ",  4, 0b000);
-    testBType("BNE", -6, 0b001);
-    testBType("BZ",   2, 0b010);
-    testBType("BNZ", -8, 0b011);
-    testBType("BLT",  3, 0b100);
-    testBType("BGE", -5, 0b101);
-    testBType("BLE",  1, 0b110);
-    testBType("BGT", -7, 0b111);
-    std::cout << "Testing All S-Type Instructions:\n";
-    testSType("SB",  2, 0b000);
-    testSType("SW", -4, 0b001);
+    // std::cout << "Testing All B-Type Instructions:\n";
+    // testBType("BEQ",  4, 0b000);
+    // testBType("BNE", -6, 0b001);
+    // testBType("BZ",   2, 0b010);
+    // testBType("BNZ", -8, 0b011);
+    // testBType("BLT",  3, 0b100);
+    // testBType("BGE", -5, 0b101);
+    // testBType("BLE",  1, 0b110);
+    // testBType("BGT", -7, 0b111);
+    // std::cout << "Testing All S-Type Instructions:\n";
+    // testSType("SB",  2, 0b000);
+    // testSType("SW", -4, 0b001);
 
     // testUType("LUI", 22, 3, 0);
     // testUType("AUIPC", 32, 3, 1);
     // testSysType("ECALL", 10);
 
 
-    uint16_t rawtestForRegDump = 0x207; // Example raw instruction for testing
+    uint16_t rawtestForRegDump = 0x204; // Example raw instruction for testing  0000001000000100
+    uint16_t rawtestForRegDump2 = 0b1111111000010101;   //0000000001100
 
     Instruction RegDumpTestInst(rawtestForRegDump);
 
@@ -230,6 +231,13 @@ int main() {
     std::cout << RegDumpTestInst.AssemblyCode() << "\n";
 
     Sim.executeInstruction(RegDumpTestInst);
+
+    Instruction RegDumpTestInst2(rawtestForRegDump2);
+
+    RegDumpTestInst2.decode();
+    std::cout << RegDumpTestInst2.AssemblyCode() << "\n";
+
+    Sim.executeInstruction(RegDumpTestInst2);
     
 
 

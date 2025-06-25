@@ -1,6 +1,6 @@
 CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj: \
- C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\ZX16_Simulator.cpp \
- C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\ZX16_Simulator.h \
+ C:\Users\ASUS\ Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\ZX16_Simulator.cpp \
+ C:\Users\ASUS\ Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\ZX16_Simulator.h \
  C:/Program\ Files/JetBrains/CLion\ 2024.2.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/vector \
  C:/Program\ Files/JetBrains/CLion\ 2024.2.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/requires_hosted.h \
  C:/Program\ Files/JetBrains/CLion\ 2024.2.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/c++config.h \
@@ -163,7 +163,7 @@ CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj: \
  C:/Program\ Files/JetBrains/CLion\ 2024.2.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/basic_file.h \
  C:/Program\ Files/JetBrains/CLion\ 2024.2.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32/bits/c++io.h \
  C:/Program\ Files/JetBrains/CLion\ 2024.2.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bits/fstream.tcc \
- C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\Instruction.h \
+ C:\Users\ASUS\ Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\Instruction.h \
  C:/Program\ Files/JetBrains/CLion\ 2024.2.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/iostream \
  C:/Program\ Files/JetBrains/CLion\ 2024.2.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/bitset \
  C:/Program\ Files/JetBrains/CLion\ 2024.2.1/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/iomanip \

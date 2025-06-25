@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/cmake-build-debug"
+			"value" : "c:/Users/ASUS Zenbook/OneDrive/Documents/GitHub/ZX16-System-Simulator/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -559,7 +559,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "C:/Users/ASUS Zenbook/OneDrive/Documents/GitHub/ZX16-System-Simulator/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -631,7 +631,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator"
+			"value" : "C:/Users/ASUS Zenbook/OneDrive/Documents/GitHub/ZX16-System-Simulator"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1267,7 +1267,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/cmake-build-debug"
+			"value" : "C:/Users/ASUS Zenbook/OneDrive/Documents/GitHub/ZX16-System-Simulator/cmake-build-debug"
 		},
 		{
 			"name" : "ZX16_System_Simulator_IS_TOP_LEVEL",
@@ -1291,7 +1291,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator"
+			"value" : "C:/Users/ASUS Zenbook/OneDrive/Documents/GitHub/ZX16-System-Simulator"
 		},
 		{
 			"name" : "_CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED",

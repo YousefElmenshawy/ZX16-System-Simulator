@@ -52,10 +52,10 @@ RM = "C:\Program Files\JetBrains\CLion 2024.2.1\bin\cmake\win\x64\bin\cmake.exe"
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator
+CMAKE_SOURCE_DIR = "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug
+CMAKE_BINARY_DIR = "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug"
 
 # Include any dependencies generated for this target.
 include CMakeFiles/ZX16_System_Simulator.dir/depend.make
@@ -69,46 +69,46 @@ include CMakeFiles/ZX16_System_Simulator.dir/progress.make
 include CMakeFiles/ZX16_System_Simulator.dir/flags.make
 
 CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj: CMakeFiles/ZX16_System_Simulator.dir/flags.make
-CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj: C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/main.cpp
+CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj: C:/Users/ASUS\ Zenbook/OneDrive/Documents/GitHub/ZX16-System-Simulator/main.cpp
 CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj: CMakeFiles/ZX16_System_Simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj -MF CMakeFiles\ZX16_System_Simulator.dir\main.cpp.obj.d -o CMakeFiles\ZX16_System_Simulator.dir\main.cpp.obj -c C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ZX16_System_Simulator.dir/main.cpp.obj -MF CMakeFiles\ZX16_System_Simulator.dir\main.cpp.obj.d -o CMakeFiles\ZX16_System_Simulator.dir\main.cpp.obj -c "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\main.cpp"
 
 CMakeFiles/ZX16_System_Simulator.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ZX16_System_Simulator.dir/main.cpp.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\main.cpp > CMakeFiles\ZX16_System_Simulator.dir\main.cpp.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\main.cpp" > CMakeFiles\ZX16_System_Simulator.dir\main.cpp.i
 
 CMakeFiles/ZX16_System_Simulator.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ZX16_System_Simulator.dir/main.cpp.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\main.cpp -o CMakeFiles\ZX16_System_Simulator.dir\main.cpp.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\main.cpp" -o CMakeFiles\ZX16_System_Simulator.dir\main.cpp.s
 
 CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.obj: CMakeFiles/ZX16_System_Simulator.dir/flags.make
-CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.obj: C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/Instruction.cpp
+CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.obj: C:/Users/ASUS\ Zenbook/OneDrive/Documents/GitHub/ZX16-System-Simulator/Instruction.cpp
 CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.obj: CMakeFiles/ZX16_System_Simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.obj -MF CMakeFiles\ZX16_System_Simulator.dir\Instruction.cpp.obj.d -o CMakeFiles\ZX16_System_Simulator.dir\Instruction.cpp.obj -c C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\Instruction.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.obj -MF CMakeFiles\ZX16_System_Simulator.dir\Instruction.cpp.obj.d -o CMakeFiles\ZX16_System_Simulator.dir\Instruction.cpp.obj -c "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\Instruction.cpp"
 
 CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\Instruction.cpp > CMakeFiles\ZX16_System_Simulator.dir\Instruction.cpp.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\Instruction.cpp" > CMakeFiles\ZX16_System_Simulator.dir\Instruction.cpp.i
 
 CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ZX16_System_Simulator.dir/Instruction.cpp.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\Instruction.cpp -o CMakeFiles\ZX16_System_Simulator.dir\Instruction.cpp.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\Instruction.cpp" -o CMakeFiles\ZX16_System_Simulator.dir\Instruction.cpp.s
 
 CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj: CMakeFiles/ZX16_System_Simulator.dir/flags.make
-CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj: C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/ZX16_Simulator.cpp
+CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj: C:/Users/ASUS\ Zenbook/OneDrive/Documents/GitHub/ZX16-System-Simulator/ZX16_Simulator.cpp
 CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj: CMakeFiles/ZX16_System_Simulator.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj -MF CMakeFiles\ZX16_System_Simulator.dir\ZX16_Simulator.cpp.obj.d -o CMakeFiles\ZX16_System_Simulator.dir\ZX16_Simulator.cpp.obj -c C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\ZX16_Simulator.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir="C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.obj -MF CMakeFiles\ZX16_System_Simulator.dir\ZX16_Simulator.cpp.obj.d -o CMakeFiles\ZX16_System_Simulator.dir\ZX16_Simulator.cpp.obj -c "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\ZX16_Simulator.cpp"
 
 CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\ZX16_Simulator.cpp > CMakeFiles\ZX16_System_Simulator.dir\ZX16_Simulator.cpp.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\ZX16_Simulator.cpp" > CMakeFiles\ZX16_System_Simulator.dir\ZX16_Simulator.cpp.i
 
 CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/ZX16_System_Simulator.dir/ZX16_Simulator.cpp.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\ZX16_Simulator.cpp -o CMakeFiles\ZX16_System_Simulator.dir\ZX16_Simulator.cpp.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\ZX16_Simulator.cpp" -o CMakeFiles\ZX16_System_Simulator.dir\ZX16_Simulator.cpp.s
 
 # Object files for target ZX16_System_Simulator
 ZX16_System_Simulator_OBJECTS = \
@@ -126,7 +126,7 @@ ZX16_System_Simulator.exe: CMakeFiles/ZX16_System_Simulator.dir/build.make
 ZX16_System_Simulator.exe: CMakeFiles/ZX16_System_Simulator.dir/linkLibs.rsp
 ZX16_System_Simulator.exe: CMakeFiles/ZX16_System_Simulator.dir/objects1.rsp
 ZX16_System_Simulator.exe: CMakeFiles/ZX16_System_Simulator.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable ZX16_System_Simulator.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir="C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable ZX16_System_Simulator.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\ZX16_System_Simulator.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -138,6 +138,6 @@ CMakeFiles/ZX16_System_Simulator.dir/clean:
 .PHONY : CMakeFiles/ZX16_System_Simulator.dir/clean
 
 CMakeFiles/ZX16_System_Simulator.dir/depend:
-	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug C:\Users\Beba\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug\CMakeFiles\ZX16_System_Simulator.dir\DependInfo.cmake "--color=$(COLOR)"
+	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator" "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator" "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug" "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug" "C:\Users\ASUS Zenbook\OneDrive\Documents\GitHub\ZX16-System-Simulator\cmake-build-debug\CMakeFiles\ZX16_System_Simulator.dir\DependInfo.cmake" "--color=$(COLOR)"
 .PHONY : CMakeFiles/ZX16_System_Simulator.dir/depend
 
