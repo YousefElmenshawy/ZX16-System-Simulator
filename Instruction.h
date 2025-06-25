@@ -45,6 +45,7 @@ public:
     uint8_t getRd() const;
     uint8_t getRs2() const;
     uint8_t getRs1() const;
+    uint8_t getflag() const;
     int16_t getImmediate() const;
     uint8_t getFunc3() const;
     uint8_t getFunc4() const;

@@ -138,7 +138,7 @@ int main() {
 
     std::cout << "Testing All I-Type Instructions:\n";*/
 
-
+/*
 
     testIType("ADDI",   -3, 0b000);
     testIType("SLTI",    5, 0b001);
@@ -169,18 +169,38 @@ int main() {
     testJType("JAL",  -14, 2, true);
 
 
+*/
 
-    uint16_t rawtest = 0x436; // Example raw instruction for testing
-
-    Instruction inst(rawtest);
-
-    inst.decode();
-    std::cout << inst.AssemblyCode() << "\n";
-
-
-    testUType("LUI", 22, 2, 0);
+    testUType("LUI", 22, 3, 0);
     testUType("AUIPC", 32, 3, 1);
-    testSysType("ECALL", 1);
+    testSysType("ECALL", 10);
+
+
+    uint16_t rawtestForRegDump = 0x207; // Example raw instruction for testing
+
+    Instruction RegDumpTestInst(rawtestForRegDump);
+
+    RegDumpTestInst.decode();
+    std::cout << RegDumpTestInst.AssemblyCode() << "\n";
+
+    Sim.executeInstruction(RegDumpTestInst);
+    
+
+
+    /*
+
+    uint16_t rawtest = 0x88c6; // Example raw instruction for testing
+
+
+    Instruction TestInst2(rawtest);
+
+    TestInst2.decode();
+    Sim.executeInstruction(TestInst2);
+
+
+    Sim.executeInstruction(RegDumpTestInst);
+*/
+
 
 
     return 0;

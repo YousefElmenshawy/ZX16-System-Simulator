@@ -48,6 +48,7 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
     uint8_t rs2 = inst.getRs2();
     uint8_t func4 = inst.getFunc4();
     uint8_t func3 = inst.getFunc3();
+    uint8_t flag = inst.getflag();
     int16_t imm = inst.getImmediate();
     uint16_t svc = inst.getSvc();
 
@@ -131,24 +132,42 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
             // Implement J-type logic here
             return false;
 
-        case InstructionType::U_TYPE:
-
-            return false;
+        case InstructionType::U_TYPE: {
+            if (flag == 0) { // LUI
+                registers[rd] = imm << 7;
+                std::cout << "Executed: LUI " << regs[rd] << " ← " << (imm << 7) << "\n";
+            } else if (flag == 1) { // AUIPC
+                registers[rd] = pc + (imm << 7);
+                std::cout << "Executed: AUIPC " << regs[rd] << " ← PC + " << (imm << 7) << "\n";
+            } else {
+                std::cerr << "Unknown U-Type instruction with flag=" << flag << "\n";
+            }
+            return false; // PC not manually changed
+        }
 
         case InstructionType::SYS_Type: {
             std::cout << "ECALL executed. Halting the simulator." << std::endl;
             running = false; // Stop the simulator
-            switch (svc) { // svc is stored in a0 (register 6)
+            switch (svc) { // Service number in the instruction
                 case 1:
                 { // Read String
-                    char* buffer = reinterpret_cast<char*>(&memory[registers[0]]);
-                    int maxLength = registers[1];
+                    char* buffer = reinterpret_cast<char*>(&memory[registers[6]]);
+                    int maxLength = registers[7];
                     std::cin.getline(buffer, maxLength);
                     registers[6] = std::cin.gcount(); // Set a0 to string length
 
+
+                    // Ensure null termination
+                    if (registers[6] < maxLength) {
+                        buffer[registers[6]] = '\0';
+                    } else {
+                        buffer[maxLength - 1] = '\0';
+                    }
+
                     std::cout << "ECALL done. Continuing the simulator." << std::endl;
                     running = true; // Cont the simulator
-                    break;
+                    return false; // pc not manually changed
+
                 }
                 case 2: { // Read Integer
                     int value;
@@ -159,47 +178,68 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
 
                     std::cout << "ECALL done. Continuing the simulator." << std::endl;
                     running = true; // Cont the simulator
-                    break;
+                    return false; // pc not manually changed
+
+
 
 
                 }
                 case 3: { // Print String
                     char* str = reinterpret_cast<char*>(&memory[registers[6]]);
-                    std::cout << str;
-
+                    while (*str != '\0') {
+                        std::cout << *str;
+                        ++str;
+                    }
 
                     std::cout << "ECALL done. Continuing the simulator." << std::endl;
                     running = true; // Cont the simulator
-                    break;
+                    return false; // pc not manually changed
+
+
                 }
                 case 4: { // Play Tone
                     int frequency = registers[6];
                     int duration = registers[7];
                     std::cout << "Playing tone: Frequency=" << frequency << " Hz, Duration=" << duration << " ms\n";
 
+                    //ACTUAL IMPLEMENTATION LATER
+
 
 
                     std::cout << "ECALL done. Continuing the simulator." << std::endl;
                     running = true; // Cont the simulator
-                    break;
+                    return false; // pc not manually changed
+
+
                 }
                 case 5: { // Set Audio Volume
-                    int volume = registers[6];
-                    std::cout << "Setting audio volume to " << volume << "\n";
+                    int value = registers[6];
+                    if (value < 0 || value > 255) {
+                        std::cerr << "Error: Volume must be between 0 and 255. Received: " << value << "\n";
+                    } else {
+                        volume = value;
+                        std::cout << "Setting audio volume to " << volume << "\n";
+                    }
+
 
 
                     std::cout << "ECALL done. Continuing the simulator." << std::endl;
                     running = true; // Cont the simulator
-                    break;
+                    return false; // pc not manually changed
+
+
                 }
                 case 6: { // Stop Audio Playback
                     std::cout << "Stopping audio playback\n";
 
 
+                    // Implementation later
 
                     std::cout << "ECALL done. Continuing the simulator." << std::endl;
                     running = true; // Cont the simulator
-                    break;
+                    return false; // pc not manually changed
+
+
                 }
                 case 7: { // Read Keyboard
                     char key;
@@ -214,7 +254,9 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
 
                     std::cout << "ECALL done. Continuing the simulator." << std::endl;
                     running = true; // Cont the simulator
-                    break;
+                    return false; // pc not manually changed
+
+
                 }
                 case 8: { // Registers Dump
                     dumpRegisters();
@@ -223,7 +265,8 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
 
                     std::cout << "ECALL done. Continuing the simulator." << std::endl;
                     running = true; // Cont the simulator
-                    break;
+                    return false; // pc not manually changed
+
                 }
                 case 9: { // Memory Dump
                     uint16_t address = registers[6];
@@ -233,7 +276,9 @@ bool ZX16_Simulator::executeInstruction(const Instruction& inst) {
 
                     std::cout << "ECALL done. Continuing the simulator." << std::endl;
                     running = true; // Cont the simulator
-                    break;
+                    return false; // pc not manually changed
+
+
                 }
                 case 10: { // Program Exit
                     std::cout << "Program exiting...\n";

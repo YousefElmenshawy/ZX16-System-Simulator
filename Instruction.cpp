@@ -331,3 +331,7 @@ uint8_t Instruction::getFunc4() const {
 uint16_t Instruction::getSvc() const {
     return svc;
 }
+
+uint8_t Instruction::getflag() const {
+    return flag;
+}

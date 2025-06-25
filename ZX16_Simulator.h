@@ -22,13 +22,16 @@ private:
     uint16_t programEnd;                    // address of the Program Ending at Memory
     bool running;                           // Execution state
 
+    int volume;                           //Needed for ecall/game
+
     std::vector<Instruction> program;       // Loaded program
 
-    bool executeInstruction(const Instruction& inst);
+    // bool executeInstruction(const Instruction& inst);   moved to public for now to test in main
     void handleEcall();
 
 public:
     ZX16_Simulator();
+    bool executeInstruction(const Instruction& inst);
     void loadBinaryFile(const std::string& filename);
     void run();
     void dumpRegisters() const;
@@ -36,6 +39,14 @@ public:
 
     // For testing/debug
     void printDisassembledProgram() const;
+
+
+    //use this to set register values directly so you can test the execution of your instructions in main easily
+    void setRegister(int index, int16_t value) {
+        if (index >= 0 && index < NUM_REGISTERS) {
+            registers[index] = value;
+        }
+    }
 };
 
 
