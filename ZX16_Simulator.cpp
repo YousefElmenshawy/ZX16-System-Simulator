@@ -325,7 +325,7 @@ bool ZX16_Simulator::executeJType(const Instruction& inst) {
     uint8_t rd = inst.getRd();
     uint8_t flag = inst.getflag();
     int16_t imm = inst.getImmediate();
-    int16_t offset = 2*imm;
+    int16_t offset = imm+2;
 
     if (flag == 0) {
         pc += offset;
@@ -498,11 +498,12 @@ void ZX16_Simulator::run() {
 
 void ZX16_Simulator::dumpRegisters() const {
 
-
     for (int i = 0; i < NUM_REGISTERS; ++i) {
-        std::cout << regs[i] << " = " << registers[i] << "\n";
+        cout << regs[i] << " = " << std::dec << (registers[i]) << "\n";
     }
 }
+
+
 void ZX16_Simulator::printDisassembledProgram() const {
     cout << "Disassembled Program:\n";
 

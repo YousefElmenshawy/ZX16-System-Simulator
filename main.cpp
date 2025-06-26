@@ -150,7 +150,7 @@ void testSType(const std::string& label, int8_t imm4, int8_t func3){
 int main() {
     // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
     // <b>lang</b> variable name to see how CLion can help you rename it.
-    string file = "../TestCase1.bin";
+    string file = "../T2.bin";
 
     ZX16_Simulator sim;
 
@@ -164,7 +164,7 @@ int main() {
     sim.run();
 
     // After running, dump the registers to see final state
-    sim.dumpRegisters();
+   sim.dumpRegisters();
 
 
 
