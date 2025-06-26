@@ -146,16 +146,22 @@ void testSType(const std::string& label, int8_t imm4, int8_t func3){
 }
 
 
+int main(int argc, char* argv[]) {
+    std::string file;
+    if (argc < 2) {
+        std::cout << "No file path provided. Running default test program.\n";
 
-int main() {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
-    // <b>lang</b> variable name to see how CLion can help you rename it.
-    string file = "../T2.bin";
+        file = "T3.bin"; // Default test program file path
 
+    } else {
+        file = argv[1]; // Get the file path from the command-line argument
+    }
     ZX16_Simulator sim;
 
-    // Load your binary program file here (make sure you have a .bin file)
+    // Load the binary program file
+
     sim.loadBinaryFile(file);
+    sim.dumpRegisters();
 
     // Optionally print the disassembled program
     sim.printDisassembledProgram();
@@ -163,11 +169,8 @@ int main() {
     // Run the simulation
     sim.run();
 
-    // After running, dump the registers to see final state
-   sim.dumpRegisters();
-
-
+    // After running, dump the registers to see the final state
+    sim.dumpRegisters();
 
     return 0;
 }
-
