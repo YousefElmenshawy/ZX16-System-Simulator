@@ -18,18 +18,15 @@ This project implements a **simulator for the ZX16 Instruction Set Architecture 
 
 1. Clone the repository:
 
-   bash
    git clone https://github.com/your-username/zx16-sim.git
    cd zx16-sim
 
 2. Compile:
 
-   bash
    g++ -std=c++17 -o zx16sim src/main.cpp
 
 3. Run the simulator:
 
-   bash
    ./zx16sim program.bin
 
 > Ensure that your `.bin` file is a valid ZX16 binary produced by the official assembler from the [ZX16 GitHub repo](https://github.com/shalan/ZX16).
