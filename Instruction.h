@@ -32,15 +32,18 @@ private:
     int16_t imm;
 
     uint16_t svc; //For SYS
-    void generateAssemblyString();
+    uint16_t PC;
+
 public:
     Instruction(uint16_t rawInstruction);
 
+    void generateAssemblyString();
     InstructionType getType() const;
     std::string AssemblyCode() const;//Human-readable form (e.g., "add r1, r2, r3")
     uint16_t get_CompleteInstruction() const;  // 16-bit binary instruction
 
     // Access decoded fields
+    void readPC(uint16_t pc) ;
     uint8_t getOpcode() const;
     uint8_t getRd() const;
     uint8_t getRs2() const;

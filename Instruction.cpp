@@ -213,28 +213,30 @@ void Instruction::generateAssemblyString() {
                 oss << "unknown_itype";
         break;
 
-        case InstructionType::B_TYPE:
+        case InstructionType::B_TYPE: {
             // TODO: Add logic for B-Type decoding
+            uint16_t new_imm = PC+imm*2;
             if(func3 ==0b000)
-                oss << "beq " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+                oss << "beq " << regs[rs1] << ", " << regs[rs2] << ", "<< std::hex << new_imm;
             else if(func3 ==0b001)
-                oss << "bne " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+                oss << "bne " << regs[rs1] << ", " << regs[rs2] << ", "<< std::hex << new_imm;
             else if(func3 ==0b010)
-                oss << "bz " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+                oss << "bz " << regs[rs1] << ", " << regs[rs2] << ", "<< std::hex << new_imm;
             else if(func3 ==0b011)
-                oss << "bnz " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+                oss << "bnz " << regs[rs1] << ", " << regs[rs2] << ", "<< std::hex << new_imm;
             else if(func3 ==0b100)
-                oss << "blt " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+                oss << "blt " << regs[rs1] << ", " << regs[rs2] << ", " << std::hex << new_imm;
             else if(func3 ==0b101)
-                oss << "bge " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+                oss << "bge " << regs[rs1] << ", " << regs[rs2] << ", "<< std::hex << new_imm;
             else if(func3 ==0b110)
-                oss << "bltu " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+                oss << "bltu " << regs[rs1] << ", " << regs[rs2] << ", "<< std::hex << new_imm;
             else if(func3 ==0b111)
-                oss << "bgeu " << regs[rs1] << ", " << regs[rs2] << ", "<< imm;
+                oss << "bgeu " << regs[rs1] << ", " << regs[rs2] << ", "<< std::hex << new_imm;
             else
                 oss << "unknown_btype";
            
-                break;
+            break;
+        }
 
         case InstructionType::S_TYPE:
             // TODO: Add logic for S-Type decoding
@@ -256,9 +258,9 @@ void Instruction::generateAssemblyString() {
 
         case InstructionType::J_TYPE:
             if (flag == 0)
-                oss << "j " << std::showbase << std::hex << imm;
+                oss << "j " << std::showbase << std::hex << PC+imm;
             else
-                oss << "jal " << regs[rd] << ", " << std::showbase << std::hex << imm;
+                oss << "jal " << regs[rd] << ", " << std::showbase << std::hex << PC+imm;
         break;
 
         case InstructionType::L_TYPE:
@@ -335,4 +337,7 @@ uint16_t Instruction::getSvc() const {
 
 uint8_t Instruction::getflag() const {
     return flag;
+}
+void Instruction::readPC(uint16_t pc) {
+    PC = pc;
 }

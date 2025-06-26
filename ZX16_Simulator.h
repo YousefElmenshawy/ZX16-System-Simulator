@@ -32,12 +32,12 @@ private:
     bool executeRType(const Instruction& inst);
     bool executeIType(const Instruction& inst);
     bool executeSType(const Instruction& inst);
-    bool executeBType(const Instruction& inst);
+    bool executeBType( Instruction& inst);
     bool executeLType(const Instruction& inst);
-    bool executeJType(const Instruction& inst);
+    bool executeJType( Instruction& inst);
     bool executeUType(const Instruction& inst);
     bool executeSysType(const Instruction& inst);
-    bool executeInstruction(const Instruction& inst);
+    bool executeInstruction( Instruction& inst);
 
 
 public:
@@ -48,7 +48,7 @@ public:
     void dumpRegisters() const;
     void dumpMemory(uint16_t address, uint16_t size) const;
     // For testing/debug
-    void printDisassembledProgram() const;
+    void printDisassembledProgram();
 
 
     //use this to set register values directly so you can test the execution of your instructions in main easily
