@@ -14,7 +14,9 @@ static const std::string regs[8] = {
     "t0", "ra", "sp", "s0", "s1", "t1", "a0", "a1"
 };
 ZX16_Simulator::ZX16_Simulator() {
-    // Initialize members here
+    for (int i = 0; i < 8; i++) {
+        registers[i] = 0;
+    }
 }
 
 
@@ -30,6 +32,12 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
 
     uint8_t bytes[2];
     while (file.read(reinterpret_cast<char*>(bytes), 2)) {
+
+        if (address >= MEMORY_SIZE - 2) { // Prevent overflow
+            std::cerr << "Error: Program exceeds memory bounds.\n";
+            break;
+        }
+
         uint16_t value = bytes[0] | (bytes[1] << 8); // 👈 correct little-endian assembly
 
         Instruction inst(value);
@@ -38,9 +46,11 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
         memory[address]     = bytes[0];
         memory[address + 1] = bytes[1];
         address += 2;
-    }
 
+    }
     programEnd= address;
+
+
 
     std::cout << "Program loaded into memory.\n";
 
@@ -559,6 +569,10 @@ bool ZX16_Simulator::executeInstruction(Instruction& inst) {
             return executeSysType(inst);
 
         default:
+            if (inst.get_CompleteInstruction() == 0x0000) {
+                //std::cout << "No operation (NOP) at PC=" << pc << "\n";
+                return false; // NOP does not change PC
+            }
             std::cerr << "Unknown instruction type at PC=" << pc << "\n";
             return false;
     }

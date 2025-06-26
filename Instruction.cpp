@@ -12,6 +12,13 @@ Instruction::Instruction(uint16_t value)
     decode();
 }
 void Instruction::decode() {
+
+    if (Complete_Instruction == 0x0000) {
+        type = InstructionType::INVALID; // Mark as invalid or NOP
+        Assembly_Code = "nop"; // Optional: Treat as a NOP
+        return;
+    }
+
      opcode = Complete_Instruction & 0x7; // bits [2:0]
 
     switch (opcode) {
