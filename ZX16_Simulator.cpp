@@ -143,6 +143,8 @@ bool ZX16_Simulator::executeIType(const Instruction& inst) {
     uint8_t func3 = inst.getFunc3();
     uint8_t func4 = inst.getFunc4(); // imm7[6:4] stored here (bits 15-12)
     int16_t imm = inst.getImmediate(); // 7-bit immediate signed (imm7)
+    uint8_t shamt = imm & 0x1F; // Extract 5-bit shift amount
+
     uint16_t uimm = static_cast<uint16_t>(imm); // unsigned interpretation
 
     switch (func3) {
@@ -161,21 +163,18 @@ bool ZX16_Simulator::executeIType(const Instruction& inst) {
             std::cout << "Executed: SLTUI " << regs[rd] << ", " << uimm << "\n";
             break;
 
-        case 0b011: // Shift instructions: SLLI, SRLI, SRAI distinguished by func4
-            {
-                uint8_t shamt = imm & 0x7; // 3-bit shift amount (imm7 lower bits)
-                if (func4 == 0b001) { // SLLI
-                    registers[rd] = registers[rd] << shamt;
-                    std::cout << "Executed: SLLI " << regs[rd] << ", " << (int)shamt << "\n";
-                } else if (func4 == 0b010) { // SRLI
-                    registers[rd] = static_cast<uint16_t>(registers[rd]) >> shamt;
-                    std::cout << "Executed: SRLI " << regs[rd] << ", " << (int)shamt << "\n";
-                } else if (func4 == 0b100) { // SRAI
-                    registers[rd] = static_cast<int16_t>(registers[rd]) >> shamt;
-                    std::cout << "Executed: SRAI " << regs[rd] << ", " << (int)shamt << "\n";
-                } else {
-                    std::cerr << "Unknown shift immediate instruction func4=" << std::bitset<4>(func4) << "\n";
-                }
+        case 0b011: // Shift instructions: SLLI, SRLI, SRAI
+            if (func4 == 0b001) { // SLLI
+                registers[rd] = registers[rd] << shamt;
+                std::cout << "Executed: SLLI " << regs[rd] << ", " << (int)shamt << "\n";
+            } else if (func4 == 0b010) { // SRLI
+                registers[rd] = static_cast<uint16_t>(registers[rd]) >> shamt;
+                std::cout << "Executed: SRLI " << regs[rd] << ", " << (int)shamt << "\n";
+            } else if (func4 == 0b100) { // SRAI
+                registers[rd] = static_cast<int16_t>(registers[rd]) >> shamt;
+                std::cout << "Executed: SRAI " << regs[rd] << ", " << (int)shamt << "\n";
+            } else {
+                std::cerr << "Unknown shift immediate instruction func4=" << std::bitset<4>(func4) << "\n";
             }
             break;
 

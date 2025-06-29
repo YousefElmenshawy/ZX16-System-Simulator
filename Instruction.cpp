@@ -33,17 +33,23 @@ void Instruction::decode() {
         case 0b001: { // I-Type
             type = InstructionType::I_TYPE;
 
-            uint8_t rawImm = (Complete_Instruction >> 9) & 0x7F;  // bits [15:9]
-            // Sign-extend 7-bit immediate to 16 bits
-            if (rawImm & 0x40)  // if sign bit set
-                imm = static_cast<int16_t>(rawImm | 0xFF80);
-            else
-                imm = rawImm;
-
-
-            rd    = (Complete_Instruction >> 6) & 0x7;   // bits [8:6]
+            rd = (Complete_Instruction >> 6) & 0x7;   // bits [8:6]
             func3 = (Complete_Instruction >> 3) & 0x7;   // bits [5:3]
 
+            if (func3 == 0b011) {
+                // Shift-immediate: extract as unsigned
+                uint8_t rawImm = (Complete_Instruction >> 9) & 0x7F;  // bits [15:9]
+                func4 = (rawImm >> 4) & 0x7; // imm[6:4] (3 bits)
+                imm = rawImm & 0xF; // shamt is only the lower 4 bits
+            } else {
+                // Other I-type: sign-extend
+                uint8_t rawImm = (Complete_Instruction >> 9) & 0x7F;  // bits [15:9]
+                if (rawImm & 0x40)  // Check sign bit (bit 6 of imm7)
+                    imm = static_cast<int16_t>(rawImm | 0xFF80);  // Sign-extend to 16 bits
+                else
+                    imm = rawImm;
+                func4 = 0; // Not a shift instruction
+            }
             break;
         }
 
