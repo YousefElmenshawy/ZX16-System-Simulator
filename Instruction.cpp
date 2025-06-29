@@ -272,10 +272,10 @@ void Instruction::generateAssemblyString() {
 
         case InstructionType::J_TYPE:
             if (flag == 0)
-                oss << "j " << std::showbase << std::hex << (PC + 2 + imm);
+                oss << "j " << std::showbase << std::hex << PC+imm;
             else
-                oss << "jal " << regs[rd] << ", " << std::showbase << std::hex << (PC + 2 + imm);
-            break;
+                oss << "jal " << regs[rd] << ", " << std::showbase << std::hex << PC+imm+2;
+        break;
 
         case InstructionType::L_TYPE:
             if (func3 == 0b000)

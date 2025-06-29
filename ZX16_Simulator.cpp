@@ -334,7 +334,7 @@ bool ZX16_Simulator::executeLType(const Instruction& inst) {
         registers[rd] = static_cast<int16_t>(word);
         std::cout << "Executed: LW " << regs[rd] << " <- MEM[" << address << "] (16-bit word)\n";
 
-    } else if (func3 == 0b010) {
+    } else if (func3 == 0b100) {
         uint8_t byte = memory[address];
         registers[rd] = static_cast<uint16_t>(byte);
         std::cout << "Executed: LBU " << regs[rd] << " <- MEM[" << address << "] (unsigned byte)\n";
@@ -491,7 +491,7 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
         case 10: { // Program Exit
             std::cout << "Program exiting...\n";
             running = false;
-            exit(0); // Exit the simulator gracefully
+            return false;
         }
         default:
             std::cerr << "Unknown service number: " << svc << "\n";
