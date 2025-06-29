@@ -8,7 +8,8 @@ int main(int argc, char* argv[]) {
     if (argc < 2) {
         std::cout << "No file path provided. Running default test program.\n";
 
-        file = "TestCases/TC-ZX16-05.bin"; // Default test program file path
+        //file = "TestCases/TC-ZX16-05.bin"; // Default test program file path
+        file = "C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/TestCases/TC-ZX16-07.bin";
 
     } else {
         file = argv[1]; // Get the file path from the command-line argument
