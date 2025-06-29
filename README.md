@@ -29,7 +29,7 @@ This project implements a **simulator for the ZX16 Instruction Set Architecture 
 
    ./zx16sim program.bin
 
-> Ensure that your `.bin` file is a valid ZX16 binary produced by the official assembler from the [ZX16 GitHub repo](https://github.com/shalan/ZX16).
+> Ensure that your `.bin` file is a valid ZX16 binary produced by the official assembler from the [ZX16 GitHub repo](https://github.com/shalan/z16.git).
 
 
 ## 📦 Usage Guidelines
