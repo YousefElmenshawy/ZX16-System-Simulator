@@ -29,7 +29,7 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
 
     file.seekg(0x20);  // Skip header
 
-    uint16_t address = 0x20; // Start loading at 0x20 to match .org 0x20
+    uint16_t address = 0;
     uint8_t bytes[2];
     std::vector<Instruction> tempProgram;
     std::vector<uint16_t> rawInstructions;
@@ -143,7 +143,7 @@ bool ZX16_Simulator::executeIType(const Instruction& inst) {
     uint8_t func3 = inst.getFunc3();
     uint8_t func4 = inst.getFunc4(); // imm7[6:4] stored here (bits 15-12)
     int16_t imm = inst.getImmediate(); // 7-bit immediate signed (imm7)
-    uint8_t shamt = imm & 0x1F; // Extract 5-bit shift amount
+    uint8_t shamt = imm & 0xF; ; // Extract 5-bit shift amount
 
     uint16_t uimm = static_cast<uint16_t>(imm); // unsigned interpretation
 
@@ -238,72 +238,76 @@ bool ZX16_Simulator::executeBType(Instruction& inst) {
     uint8_t rs1 = inst.getRs1();
     uint8_t rs2 = inst.getRs2();
     uint8_t func3 = inst.getFunc3();
-    int16_t imm = inst.getImmediate() * 2;
+    int16_t imm = inst.getImmediate()+2;
     inst.readPC(pc);
-
-    // Branch offset is relative to the next instruction (PC + 2 + imm)
-    uint16_t target = pc + 2 + imm;
 
     switch (func3) {
         case 0b000:
             if (registers[rs1] == registers[rs2]) {
-                pc = target;
+                pc += imm;
                 std::cout << "Executed: BEQ " << regs[rs1] << ", " << regs[rs2] << " -> PC = " << pc << "\n";
                 return true;
             }
             std::cout << "BEQ condition not met, PC remains " << pc << "\n";
             break;
+
         case 0b001:
             if (registers[rs1] != registers[rs2]) {
-                pc = target;
+                pc += imm;
                 std::cout << "Executed: BNE " << regs[rs1] << ", " << regs[rs2] << " -> PC = " << pc << "\n";
                 return true;
             }
             std::cout << "BNE condition not met, PC remains " << pc << "\n";
             break;
+
         case 0b010:
             if (registers[rs1] == 0) {
-                pc = target;
+                pc += imm;
                 std::cout << "Executed: BZ " << regs[rs1] << " -> PC = " << pc << "\n";
                 return true;
             }
             std::cout << "BZ condition not met, PC remains " << pc << "\n";
             break;
+
         case 0b011:
             if (registers[rs1] != 0) {
-                pc = target;
+                pc += imm;
                 std::cout << "Executed: BNZ " << regs[rs1] << " -> PC = " << pc << "\n";
                 return true;
             }
             std::cout << "BNZ condition not met, PC remains " << pc << "\n";
             break;
+
         case 0b100:
             if (registers[rs1] < registers[rs2]) {
-                pc = target;
+                pc += imm;
                 std::cout << "Executed: BLT " << regs[rs1] << ", " << regs[rs2] << " -> PC = " << pc << "\n";
                 return true;
             }
             std::cout << "BLT condition not met, PC remains " << pc << "\n";
             break;
+
         case 0b101:
             if (registers[rs1] >= registers[rs2]) {
-                pc = target;
+                pc += imm;
                 std::cout << "Executed: BGE " << regs[rs1] << ", " << regs[rs2] << " -> PC = " << pc << "\n";
                 return true;
             }
             std::cout << "BGE condition not met, PC remains " << pc << "\n";
             break;
+
         case 0b110:
             if (static_cast<uint16_t>(registers[rs1]) < static_cast<uint16_t>(registers[rs2])) {
-                pc = target;
+                pc += imm;
                 std::cout << "Executed: BLTU " << regs[rs1] << ", " << regs[rs2] << " -> PC = " << pc << "\n";
                 return true;
             }
             std::cout << "BLTU condition not met, PC remains " << pc << "\n";
             break;
+
         case 0b111:
             if (static_cast<uint16_t>(registers[rs1]) >= static_cast<uint16_t>(registers[rs2])) {
-                pc = target;
+                pc += imm;
                 std::cout << "Executed: BGEU " << regs[rs1] << ", " << regs[rs2] << " -> PC = " << pc << "\n";
                 return true;
             }
@@ -335,11 +339,6 @@ bool ZX16_Simulator::executeLType(const Instruction& inst) {
         registers[rd] = static_cast<uint16_t>(byte);
         std::cout << "Executed: LBU " << regs[rd] << " <- MEM[" << address << "] (unsigned byte)\n";
 
-    } else if (func3 == 0b100) {
-        uint8_t byte = memory[address];
-        registers[rd] = static_cast<uint16_t>(byte);
-        std::cout << "Executed: LBU " << regs[rd] << " <- MEM[" << address << "] (unsigned byte)\n";
-
     } else {
         std::cerr << "Unknown L-Type instruction with func3=" << std::bitset<3>(func3)
                   << " at PC=" << pc << "\n";
@@ -347,22 +346,25 @@ bool ZX16_Simulator::executeLType(const Instruction& inst) {
     return false;
 }
 
-bool ZX16_Simulator::executeJType(Instruction& inst) {
+bool ZX16_Simulator::executeJType( Instruction& inst) {
     uint8_t rd = inst.getRd();
     uint8_t flag = inst.getflag();
     int16_t imm = inst.getImmediate();
-    // Jumps are relative to the next instruction (PC + 2 + imm)
-    uint16_t target = pc + 2 + imm;
+    int16_t offset = imm+2;
+    //inst.readPC(pc);
 
     if (flag == 0) {
-        pc = target;
-        std::cout << "Executed: JUMP -> PC <- " << target << "\n";
+        pc += offset;
+
+        std::cout << "Executed: JUMP -> PC <- PC + " << offset << " = " << pc << "\n";
         return true;
+
     } else if (flag == 1) {
         registers[rd] = pc + 2;
-        pc = target;
-        std::cout << "Executed: JAL " << regs[rd] << " <- PC+2, PC <- " << target << "\n";
+        pc += offset;
+        std::cout << "Executed: JAL " << regs[rd] << " <- PC+2, PC <- PC + " << offset << " = " << pc << "\n";
         return true;
+
     } else {
         std::cerr << "Unknown J-Type instruction with flag=" << flag << " at PC=" << pc << "\n";
         return false;
@@ -502,19 +504,23 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
 
 
 void ZX16_Simulator::run() {
-    // Start PC at 0x20 (where program is loaded)
-    pc = 0x20;
+    pc = 0;
     running = true;
 
     while (running && pc < programEnd) {
-        if (pc + 1 >= MEMORY_SIZE) {
-            std::cerr << "PC out of memory bounds at 0x" << std::hex << pc << ". Halting execution.\n";
-            running = false;
-            break;
-        }
         uint16_t BinaryInstruction = memory[pc] | (memory[pc + 1] << 8);
+        // Instruction inst(BinaryInstruction);
+        //
+        // inst.readPC(pc);
+
         Instruction inst(BinaryInstruction);
+        //inst.readPC(pc);               // 🟢 Give the instruction the current PC
+        // 🟢 Now decoding can compute PC + imm
+
         bool jumped = executeInstruction(inst);
+
+        //inst.generateAssemblyString();
+
         if (!jumped) pc += 2;
         if (pc >= programEnd) {
             std::cerr << "PC out of program bounds at 0x" << std::hex << pc << ". Halting execution.\n";
@@ -604,3 +610,4 @@ void ZX16_Simulator::dumpMemory(uint16_t address, uint16_t size) const {
     }
     std::cout << std::dec << std::endl;
 }
+

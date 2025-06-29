@@ -38,9 +38,10 @@ void Instruction::decode() {
 
             if (func3 == 0b011) {
                 // Shift-immediate: extract as unsigned
-                uint8_t rawImm = (Complete_Instruction >> 9) & 0x7F;  // bits [15:9]
-                func4 = (rawImm >> 4) & 0x7; // imm[6:4] (3 bits)
-                imm = rawImm & 0xF; // shamt is only the lower 4 bits
+               uint8_t rawImm = (Complete_Instruction >> 9) & 0x7F;
+                func4 = (rawImm >> 4) & 0x7; // imm[6:4]
+                imm = rawImm;                // store full imm7!
+
             } else {
                 // Other I-type: sign-extend
                 uint8_t rawImm = (Complete_Instruction >> 9) & 0x7F;  // bits [15:9]

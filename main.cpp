@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
     if (argc < 2) {
         std::cout << "No file path provided. Running default test program.\n";
 
-        file = "ex-1.bin"; // Default test program file path
+        file = "../T1.bin"; // Default test program file path
 
     } else {
         file = argv[1]; // Get the file path from the command-line argument
