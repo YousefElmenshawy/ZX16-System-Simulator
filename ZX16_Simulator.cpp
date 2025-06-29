@@ -143,7 +143,7 @@ bool ZX16_Simulator::executeIType(const Instruction& inst) {
     uint8_t func3 = inst.getFunc3();
     uint8_t func4 = inst.getFunc4(); // imm7[6:4] stored here (bits 15-12)
     int16_t imm = inst.getImmediate(); // 7-bit immediate signed (imm7)
-    uint8_t shamt = imm & 0x1F; // Extract 5-bit shift amount
+    uint8_t shamt = imm & 0xF; ; // Extract 5-bit shift amount
 
     uint16_t uimm = static_cast<uint16_t>(imm); // unsigned interpretation
 
@@ -238,7 +238,7 @@ bool ZX16_Simulator::executeBType(Instruction& inst) {
     uint8_t rs1 = inst.getRs1();
     uint8_t rs2 = inst.getRs2();
     uint8_t func3 = inst.getFunc3();
-    int16_t imm = inst.getImmediate()*2;
+    int16_t imm = inst.getImmediate()+2;
     inst.readPC(pc);
 
     switch (func3) {
