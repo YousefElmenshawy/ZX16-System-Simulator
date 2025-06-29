@@ -267,7 +267,7 @@ void Instruction::generateAssemblyString() {
             if (flag == 0)
                 oss << "j " << std::showbase << std::hex << PC+imm;
             else
-                oss << "jal " << regs[rd] << ", " << std::showbase << std::hex << PC+imm;
+                oss << "jal " << regs[rd] << ", " << std::showbase << std::hex << PC+imm+2;
         break;
 
         case InstructionType::L_TYPE:

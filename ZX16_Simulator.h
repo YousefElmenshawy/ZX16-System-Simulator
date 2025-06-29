@@ -17,7 +17,7 @@ private:
 
     uint8_t memory[MEMORY_SIZE];           // Main memory
     int16_t registers[NUM_REGISTERS];      // General-purpose registers
-
+    uint16_t trailingZeroCount = 0;
     uint16_t pc;                            // Program counter
     uint16_t programEnd;                    // address of the Program Ending at Memory
     bool running;                           // Execution state

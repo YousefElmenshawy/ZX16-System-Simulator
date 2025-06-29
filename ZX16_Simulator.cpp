@@ -27,34 +27,49 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
         return;
     }
 
-    uint16_t address = 0; // load instructions starting at 0x0000
-    uint16_t value;
+    file.seekg(0x20);  // Skip header
 
+    uint16_t address = 0;
     uint8_t bytes[2];
-    while (file.read(reinterpret_cast<char*>(bytes), 2)) {
+    std::vector<Instruction> tempProgram;
+    std::vector<uint16_t> rawInstructions;
 
-        if (address >= MEMORY_SIZE - 2) { // Prevent overflow
+    while (file.read(reinterpret_cast<char*>(bytes), 2)) {
+        if (address >= MEMORY_SIZE - 2) {
             std::cerr << "Error: Program exceeds memory bounds.\n";
             break;
         }
 
-        uint16_t value = bytes[0] | (bytes[1] << 8); // 👈 correct little-endian assembly
-
-        Instruction inst(value);
-        program.push_back(inst);
+        uint16_t value = bytes[0] | (bytes[1] << 8);  // Little endian
 
         memory[address]     = bytes[0];
         memory[address + 1] = bytes[1];
+
+        Instruction inst(value);
+        tempProgram.push_back(inst);
+        rawInstructions.push_back(value);
+
         address += 2;
-
     }
-    programEnd= address;
 
+    // Set programEnd to last loaded address
+    programEnd = address;
 
+    // Count trailing zero (NOP) instructions
+    int trailingZeros = 0;
+    for (int i = rawInstructions.size() - 1; i >= 0; --i) {
+        if (rawInstructions[i] == 0x0000)
+            ++trailingZeros;
+        else
+            break;
+    }
+
+    trailingZeroCount = trailingZeros;
+    program = std::move(tempProgram);  // Save parsed instructions
 
     std::cout << "Program loaded into memory.\n";
-
 }
+
 bool ZX16_Simulator::executeRType(const Instruction& inst) {
     uint8_t rd = inst.getRd();
     uint8_t rs2 = inst.getRs2();
@@ -336,8 +351,8 @@ bool ZX16_Simulator::executeJType( Instruction& inst) {
     uint8_t rd = inst.getRd();
     uint8_t flag = inst.getflag();
     int16_t imm = inst.getImmediate();
-    int16_t offset = imm; 
-    inst.readPC(pc);
+    int16_t offset = imm+2;
+    //inst.readPC(pc);
 
     if (flag == 0) {
         pc += offset;
@@ -527,8 +542,8 @@ void ZX16_Simulator::dumpRegisters() const {
 
 void ZX16_Simulator::printDisassembledProgram() {
     cout << "Disassembled Program:\n";
-
-    for (size_t i = 0; i < program.size(); ++i) {
+    size_t lastUsefulIndex = program.size() - trailingZeroCount;
+    for (size_t i = 0; i < lastUsefulIndex; ++i) {
         uint16_t address = i * 2;  // each instruction is 2 bytes
 
         uint16_t raw = program[i].get_CompleteInstruction();  // Add this function if needed
@@ -537,7 +552,6 @@ void ZX16_Simulator::printDisassembledProgram() {
         cout << "[" << std::hex << std::setw(4) << std::setfill('0') << address << "]  "
              << "0x" << std::setw(4) << raw << "  "
              << program[i].AssemblyCode() << "\n";
-
     }
 }
 bool ZX16_Simulator::executeInstruction(Instruction& inst) {
