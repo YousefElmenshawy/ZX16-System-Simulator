@@ -64,6 +64,7 @@ void Instruction::decode() {
                 imm = shiftedImm | 0xFFF0;  // fill upper bits with 1s
             else    
                 imm = shiftedImm;
+
             rs2 = (Complete_Instruction >> 9) & 0x7;  // bits [11:9]
             rs1 = (Complete_Instruction >> 6) & 0x7;  // bits [8:6]
             func3 = (Complete_Instruction >> 3) & 0x7;  // bits [5:3]
