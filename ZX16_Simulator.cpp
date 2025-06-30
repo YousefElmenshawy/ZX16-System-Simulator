@@ -17,6 +17,7 @@ ZX16_Simulator::ZX16_Simulator() {
     for (int i = 0; i < 8; i++) {
         registers[i] = 0;
     }
+
 }
 
 
@@ -504,20 +505,17 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
 
 
 void ZX16_Simulator::run() {
+
     pc = 0;
     running = true;
 
     while (running && pc < programEnd) {
         uint16_t BinaryInstruction = memory[pc] | (memory[pc + 1] << 8);
-        // Instruction inst(BinaryInstruction);
-        //
-        // inst.readPC(pc);
 
         Instruction inst(BinaryInstruction);
-        //inst.readPC(pc);               // 🟢 Give the instruction the current PC
-        // 🟢 Now decoding can compute PC + imm
-
+        PrintDynamicDiassembley(BinaryInstruction);
         bool jumped = executeInstruction(inst);
+
 
         //inst.generateAssemblyString();
 
@@ -538,8 +536,18 @@ void ZX16_Simulator::dumpRegisters() const {
     }
 }
 
+void ZX16_Simulator::PrintDynamicDiassembley(uint16_t binary) {
+    Instruction inst(binary);
+    inst.readPC(pc);  // To handle PC-relative instructions properly
 
-void ZX16_Simulator::printDisassembledProgram() {
+    std::cout << "["
+              << std::setw(4) << std::setfill('0') << std::hex << pc
+              << "]  0x"
+              << std::setw(4) << std::setfill('0') << std::hex << binary
+              << "  " << inst.AssemblyCode()
+              << std::endl;
+}
+void ZX16_Simulator::printDisassembledProgram() {//Static decoding For Testing Purposes Only
     cout << "Disassembled Program:\n";
     size_t lastUsefulIndex = program.size() - trailingZeroCount;
     for (size_t i = 0; i < lastUsefulIndex; ++i) {

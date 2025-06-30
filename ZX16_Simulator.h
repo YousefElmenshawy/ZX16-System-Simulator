@@ -9,24 +9,20 @@
 #include <cstdint>
 #include <fstream>
 #include "Instruction.h"
+using namespace std;
 
 class ZX16_Simulator {
 private:
     static const int MEMORY_SIZE = 65536;   // 64KB addressable memory
     static const int NUM_REGISTERS = 8;//8 Registers
-
     uint8_t memory[MEMORY_SIZE];           // Main memory
     int16_t registers[NUM_REGISTERS];      // General-purpose registers
     uint16_t trailingZeroCount = 0;
     uint16_t pc;                            // Program counter
     uint16_t programEnd;                    // address of the Program Ending at Memory
     bool running;                           // Execution state
-
     int volume;                           //Needed for ecall/game
-
     std::vector<Instruction> program;       // Loaded program
-
-    // bool executeInstruction(const Instruction& inst);   moved to public for now to test in main
     void handleEcall();
     int16_t sext_imm4(uint8_t imm);  // sign extend 4 bit
     bool executeRType(const Instruction& inst);
@@ -38,18 +34,15 @@ private:
     bool executeUType(const Instruction& inst);
     bool executeSysType(const Instruction& inst);
     bool executeInstruction( Instruction& inst);
-
-
-public:
-    ZX16_Simulator();
-
-    void run();
-    void loadBinaryFile(const std::string& filename);
+    void PrintDynamicDiassembley(uint16_t PC);
     void dumpRegisters() const;
     void dumpMemory(uint16_t address, uint16_t size) const;
+public:
+    ZX16_Simulator();
+    void run();
+    void loadBinaryFile(const std::string& filename);
     // For testing/debug
     void printDisassembledProgram();
-
 
     //use this to set register values directly so you can test the execution of your instructions in main easily
     void setRegister(int index, int16_t value) {

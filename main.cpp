@@ -9,26 +9,14 @@ int main(int argc, char* argv[]) {
         std::cout << "No file path provided. Running default test program.\n";
 
         //file = "TestCases/TC-ZX16-05.bin"; // Default test program file path
-        file = "C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/TestCases/TC-ZX16-07.bin";
+        file = "../TestCases/TC-ZX16-03.bin";
 
     } else {
         file = argv[1]; // Get the file path from the command-line argument
     }
     ZX16_Simulator sim;
-
-    // Load the binary program file
-
-    sim.loadBinaryFile(file);
-    sim.dumpRegisters();
-
-    // Optionally print the disassembled program
-    sim.printDisassembledProgram();
-
-    // Run the simulation
-    sim.run();
-
-    // After running, dump the registers to see the final state
-    sim.dumpRegisters();
+    sim.loadBinaryFile(file);    // Load the binary program file
+    sim.run();// run the simulator
 
     return 0;
 }
