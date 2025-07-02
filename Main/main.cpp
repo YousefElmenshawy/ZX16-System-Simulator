@@ -42,6 +42,7 @@
 #include <iostream>
 
 #include "ZX16_Simulator.h"
+#include "Graphics.h"
 using namespace std;
 
 int main(int argc, char* argv[]) {
@@ -58,6 +59,9 @@ int main(int argc, char* argv[]) {
     ZX16_Simulator sim;
     sim.loadBinaryFile(file);    // Load the binary program file
     sim.run();// run the simulator
+
+    Graphics graphics;
+    graphics.run();  // Calls your SFML drawing window
 
     return 0;
 }
