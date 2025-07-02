@@ -17,6 +17,11 @@ from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Dict, List, Optional, Tuple, Union, Any
 from pathlib import Path
+import logging
+
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 class TokenType(Enum):
@@ -211,21 +216,23 @@ class ZX16Lexer:
         return identifier.lower() in register_names
     
     def tokenize(self) -> List[Token]:
-        """Tokenize the input text."""
+        logging.debug("Tokenization started")
         while self.pos < len(self.text):
             self.skip_whitespace()
-            
+            logging.debug(f"Current position: {self.pos}, Current char: '{self.current_char()}'")
+
             if not self.current_char():
                 break
-            
+
             line, column = self.line, self.column
-            
+
             # Handle newlines
             if self.current_char() == '\n':
                 self.tokens.append(Token(TokenType.NEWLINE, '\n', line, column))
+                logging.debug(f"Newline token added at line {line}, column {column}")
                 self.advance()
                 continue
-            
+
             # Handle comments
             if self.current_char() == '#':
                 start_pos = self.pos
@@ -233,23 +240,9 @@ class ZX16Lexer:
                     self.advance()
                 comment_text = self.text[start_pos:self.pos]
                 self.tokens.append(Token(TokenType.COMMENT, comment_text, line, column))
+                logging.debug(f"Comment token added: {comment_text}")
                 continue
-            
-            # Handle block comments
-            if self.current_char() == '/' and self.peek_char() == '*':
-                start_pos = self.pos
-                self.advance()  # Skip '/'
-                self.advance()  # Skip '*'
-                while self.pos < len(self.text) - 1:
-                    if self.current_char() == '*' and self.peek_char() == '/':
-                        self.advance()  # Skip '*'
-                        self.advance()  # Skip '/'
-                        break
-                    self.advance()
-                comment_text = self.text[start_pos:self.pos]
-                self.tokens.append(Token(TokenType.COMMENT, comment_text, line, column))
-                continue
-            
+
             # Handle single character tokens
             char_tokens = {
                 ',': TokenType.COMMA,
@@ -257,90 +250,45 @@ class ZX16Lexer:
                 '(': TokenType.LPAREN,
                 ')': TokenType.RPAREN
             }
-            
+
             if self.current_char() in char_tokens:
                 token_type = char_tokens[self.current_char()]
                 self.tokens.append(Token(token_type, self.current_char(), line, column))
+                logging.debug(f"Single character token added: {self.current_char()}")
                 self.advance()
                 continue
-            
+
             # Handle string literals
             if self.current_char() == '"':
                 string_value = self.read_string()
                 self.tokens.append(Token(TokenType.STRING, string_value, line, column))
+                logging.debug(f"String token added: {string_value}")
                 continue
-            
-            # Handle character literals
-            if self.current_char() == "'":
-                self.advance()  # Skip opening quote
-                char_value = 0
-                if self.current_char() == '\\':
-                    self.advance()
-                    escape_char = self.current_char()
-                    escape_map = {
-                        'n': ord('\n'), 't': ord('\t'), 'r': ord('\r'),
-                        '\\': ord('\\'), "'": ord("'")
-                    }
-                    char_value = escape_map.get(escape_char, ord(escape_char))
-                    self.advance()
-                else:
-                    char_value = ord(self.current_char())
-                    self.advance()
-                
-                if self.current_char() == "'":
-                    self.advance()  # Skip closing quote
-                
-                self.tokens.append(Token(TokenType.CHARACTER, str(char_value), line, column))
-                continue
-            
-            # Handle negative numbers
-            if self.current_char() == '-' and self.peek_char().isdigit():
-                self.advance()  # Skip '-'
-                number_value = -self.read_number()
-                self.tokens.append(Token(TokenType.IMMEDIATE, str(number_value), line, column))
-                continue
-            
+
             # Handle numbers
             if self.current_char().isdigit():
                 number_value = self.read_number()
                 self.tokens.append(Token(TokenType.IMMEDIATE, str(number_value), line, column))
+                logging.debug(f"Number token added: {number_value}")
                 continue
-            
-            # Handle directives
-            if self.current_char() == '.':
-                start_pos = self.pos
-                self.advance()  # Skip '.'
-                identifier = self.read_identifier()
-                directive_name = self.text[start_pos:self.pos]
-                self.tokens.append(Token(TokenType.DIRECTIVE, directive_name, line, column))
-                continue
-            
+
             # Handle identifiers, labels, instructions, and registers
             if self.current_char().isalpha() or self.current_char() == '_':
                 identifier = self.read_identifier()
-                
-                # Check if it's followed by a colon (label)
-                old_pos = self.pos
-                self.skip_whitespace()
-                if self.current_char() == ':':
-                    self.advance()  # Consume the colon
-                    self.tokens.append(Token(TokenType.LABEL, identifier, line, column))
-                    continue
-                else:
-                    self.pos = old_pos  # Restore position
-                
-                # Check if it's a register
                 if self.is_register(identifier):
                     self.tokens.append(Token(TokenType.REGISTER, identifier, line, column))
+                    logging.debug(f"Register token added: {identifier}")
                 else:
-                    # Assume it's an instruction or symbol
                     self.tokens.append(Token(TokenType.INSTRUCTION, identifier, line, column))
+                    logging.debug(f"Identifier token added: {identifier}")
                 continue
-            
-            # Unknown character - skip it
+
+            # Unknown character - log and skip it
+            logging.warning(f"Unknown character at line {line}, column {column}: {self.current_char()}")
             self.advance()
-        
+
         self.tokens.append(Token(TokenType.EOF, '', self.line, self.column))
+        logging.debug("Tokenization completed")
         return self.tokens
 
 
@@ -637,42 +585,37 @@ class ZX16Assembler:
         self.symbols[name] = Symbol(name, value, defined=True, global_symbol=global_sym, line=line)
     
     def assemble(self, source_code: str, filename: str = "<input>") -> bool:
-        """Assemble source code."""
+        logging.debug("Starting tokenization")
         try:
-            # Tokenize
             lexer = ZX16Lexer(source_code, filename)
             tokens = lexer.tokenize()
-            
-            if self.verbose:
-                print(f"Tokenized {len(tokens)} tokens")
-            
-            # Pass 1: Symbol collection
+            logging.debug(f"Tokenization complete: {len(tokens)} tokens generated")
+
+            logging.debug("Starting Pass 1: Symbol collection")
             self.pass1(tokens, filename)
-            
+            logging.debug(f"Pass 1 complete: {len(self.symbols)} symbols collected")
+
             if self.errors:
+                logging.error(f"Pass 1 encountered errors: {len(self.errors)} errors")
                 return False
-            
-            if self.verbose:
-                print(f"Pass 1 complete. Found {len(self.symbols)} symbols")
-            
-            # Pass 2: Code generation
+
+            logging.debug("Starting Pass 2: Code generation")
             self.pass2(tokens, filename)
-            
-            if self.verbose:
-                print(f"Pass 2 complete. Generated {len(self.sections['.text'])} bytes of code")
-            
+            logging.debug(f"Pass 2 complete: {len(self.sections['.text'])} bytes of code generated")
+
             return len(self.errors) == 0
-        
         except Exception as e:
+            logging.error(f"Exception during assembly: {str(e)}")
             self.add_error(f"Internal assembler error: {str(e)}", 0)
             return False
-    
+
     def pass1(self, tokens: List[Token], filename: str = "<input>") -> None:
-        """First pass: collect symbols and calculate addresses."""
+        logging.debug("Pass 1: Starting symbol collection")
         parser = ZX16Parser(tokens, filename)
         self.current_address = self.section_addresses[self.current_section]
-        
+
         while parser.current_token.type != TokenType.EOF:
+            logging.debug(f"Pass 1: Processing token {parser.current_token.type} at line {parser.current_token.line}")
             # Skip comments and newlines
             if parser.current_token.type in [TokenType.COMMENT, TokenType.NEWLINE]:
                 parser.advance()
@@ -838,12 +781,13 @@ class ZX16Assembler:
             parser.advance()
     
     def pass2(self, tokens: List[Token], filename: str = "<input>") -> None:
-        """Second pass: generate machine code."""
+        logging.debug("Pass 2: Starting code generation")
         parser = ZX16Parser(tokens, filename)
         self.current_address = self.section_addresses[self.current_section]
         current_section_data = self.sections[self.current_section]
-        
+
         while parser.current_token.type != TokenType.EOF:
+            logging.debug(f"Pass 2: Processing token {parser.current_token.type} at line {parser.current_token.line}")
             # Skip comments and newlines
             if parser.current_token.type in [TokenType.COMMENT, TokenType.NEWLINE]:
                 parser.advance()
@@ -1427,7 +1371,7 @@ class ZX16Assembler:
 
 
 def main():
-    """Main entry point for the assembler."""
+    logging.debug("ZX16 Assembler started")
     parser = argparse.ArgumentParser(description="ZX16 Assembler")
     parser.add_argument("input", help="Input assembly file")
     parser.add_argument("-o", "--output", help="Output file")
@@ -1439,34 +1383,37 @@ def main():
                        help="Verilog module name")
     parser.add_argument("--mem-sparse", action="store_true",
                        help="Generate sparse memory file")
-    
+
     args = parser.parse_args()
-    
+
     # Read input file
     try:
         with open(args.input, 'r', encoding='utf-8') as f:
             source_code = f.read()
             source_lines = source_code.splitlines()
+        logging.debug(f"Read input file: {args.input}")
     except FileNotFoundError:
-        print(f"Error: Input file '{args.input}' not found", file=sys.stderr)
+        logging.error(f"Input file '{args.input}' not found")
         return 1
     except IOError as e:
-        print(f"Error reading input file: {e}", file=sys.stderr)
+        logging.error(f"Error reading input file: {e}")
         return 1
-    
+
     # Create assembler
     assembler = ZX16Assembler()
     assembler.verbose = args.verbose
-    
+
     # Assemble
+    logging.debug("Starting assembly process")
     success = assembler.assemble(source_code, args.input)
-    
+
     # Print errors/warnings
     assembler.print_errors()
-    
+
     if not success:
+        logging.error("Assembly failed")
         return 1
-    
+
     # Generate output
     if args.output:
         output_file = args.output
@@ -1481,45 +1428,46 @@ def main():
             output_file = input_path.with_suffix('.v')
         elif args.format == "mem":
             output_file = input_path.with_suffix('.mem')
-    
+
     try:
         if args.format == "bin":
             output_data = assembler.get_binary_output()
             with open(output_file, 'wb') as f:
                 f.write(output_data)
-        
+            logging.debug(f"Binary output written to {output_file}")
+
         elif args.format == "hex":
             output_data = assembler.get_intel_hex_output()
             with open(output_file, 'w', encoding='utf-8') as f:
                 f.write(output_data)
-        
+            logging.debug(f"Intel HEX output written to {output_file}")
+
         elif args.format == "verilog":
             output_data = assembler.get_verilog_output(args.verilog_module)
             with open(output_file, 'w', encoding='utf-8') as f:
                 f.write(output_data)
-        
+            logging.debug(f"Verilog output written to {output_file}")
+
         elif args.format == "mem":
             output_data = assembler.get_memory_file_output(args.mem_sparse)
             with open(output_file, 'w', encoding='utf-8') as f:
                 f.write(output_data)
-        
-        if args.verbose:
-            print(f"Output written to {output_file}")
-        
+            logging.debug(f"Memory file output written to {output_file}")
+
         # Generate listing file if requested
         if args.listing:
             listing_content = assembler.get_listing_output(source_lines)
             with open(args.listing, 'w', encoding='utf-8') as f:
                 f.write(listing_content)
-            if args.verbose:
-                print(f"Listing written to {args.listing}")
-        
+            logging.debug(f"Listing file written to {args.listing}")
+
     except IOError as e:
-        print(f"Error writing output file: {e}", file=sys.stderr)
+        logging.error(f"Error writing output file: {e}")
         return 1
-    
+
+    logging.debug("Assembly process completed successfully")
     return 0
 
-
 if __name__ == "__main__":
+    logging.debug("Starting ZX16 Assembler")
     sys.exit(main())
