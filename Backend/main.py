@@ -16,6 +16,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/state")
+def get_default_state():
+    # Only the correct 8 registers
+    registers = {reg: 0 for reg in ["t0", "ra", "sp", "s0", "s1", "t1", "a0", "a1"]}
+    memory = []
+    for addr in range(0, 256, 16):
+        memory.append({
+            "address": f"0x{addr:04X}",
+            "bytes": ["00"] * 16
+        })
+    return {"registers": registers, "memory": memory}
+
 @app.post("/simulate")
 async def simulate_code(request: Request):
     try:
@@ -89,14 +101,22 @@ async def simulate_code(request: Request):
             if result.stderr:
                 output += f"\nStderr:\n{result.stderr}"
 
-        # --- Parse register and memory dump from output ---
-        registers = {}
-        memory = []
+        # --- Always initialize registers and memory with zeros ---
+        default_registers = {reg: 0 for reg in ["t0", "ra", "sp", "s0", "s1", "t1", "a0", "a1"]}
+        default_memory = []
+        for addr in range(0, 256, 16):
+            default_memory.append({
+                "address": f"0x{addr:04X}",
+                "bytes": ["00"] * 16
+            })
+        registers = default_registers.copy()
+        memory = [dict(m) for m in default_memory]
+        # --- Parse register and memory dump from output if present ---
         lines = result.stdout.splitlines()
         reg_section = False
         mem_section = False
         for line in lines:
-            if line.strip().startswith("t0 ="):
+            if any(line.strip().startswith(f"{reg} =") for reg in registers):
                 reg_section = True
             if reg_section and line.strip() == '':
                 reg_section = False
@@ -104,7 +124,9 @@ async def simulate_code(request: Request):
                 parts = line.strip().split('=')
                 if len(parts) == 2:
                     reg, val = parts
-                    registers[reg.strip()] = int(val.strip())
+                    reg = reg.strip()
+                    if reg in registers:
+                        registers[reg] = int(val.strip())
             if line.strip().startswith("Memory Dump"):
                 mem_section = True
                 continue
@@ -115,8 +137,10 @@ async def simulate_code(request: Request):
                 if ':' in line:
                     addr, bytestr = line.split(':', 1)
                     bytes_list = [b for b in bytestr.strip().split(' ') if b]
-                    memory.append({"address": addr.strip(), "bytes": bytes_list})
-
+                    for m in memory:
+                        if m["address"] == addr.strip():
+                            m["bytes"] = bytes_list
+                            break
         return {"output": output, "registers": registers, "memory": memory}
     except Exception as e:
         return JSONResponse(content={"error": f"Server error: {str(e)}"}, status_code=500)
