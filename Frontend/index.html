@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ZX16 Web IDE</title>
+  <style>
+    textarea, pre { width: 100%; font-family: monospace; }
+    body { font-family: Arial; max-width: 800px; margin: 2rem auto; }
+  </style>
+</head>
+<body>
+  <h2>ZX16 Web IDE</h2>
+  <form id="zx16-form">
+    <label for="asm">Enter ZX16 Assembly Code:</label><br>
+    <textarea id="asm" rows="10" placeholder="li s0, 5\nli s1, 0\n..."></textarea><br><br>
+    <button type="submit">Assemble & Simulate</button>
+  </form>
+  <h3>Output:</h3>
+  <pre id="output"></pre>
+
+  <script>
+    document.getElementById("zx16-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const code = document.getElementById("asm").value;
+      const response = await fetch("http://127.0.0.1:8000/simulate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code })
+      });
+
+      const output = document.getElementById("output");
+      if (response.ok) {
+        const data = await response.json();
+        output.textContent = data.output;
+      } else {
+        const err = await response.json();
+        output.textContent = "Error: " + err.error;
+      }
+    });
+  </script>
+</body>
+</html>
