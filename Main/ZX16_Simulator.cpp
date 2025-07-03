@@ -618,4 +618,4 @@ void ZX16_Simulator::dumpMemory(uint16_t address, uint16_t size) const {
     }
     std::cout << std::dec << std::endl;
 }
-
+uint8_t* ZX16_Simulator::getMemoryPtr() { return memory; }

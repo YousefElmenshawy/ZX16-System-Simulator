@@ -43,6 +43,7 @@ public:
     void loadBinaryFile(const std::string& filename);
     // For testing/debug
     void printDisassembledProgram();
+    uint8_t* getMemoryPtr();
 
     //use this to set register values directly so you can test the execution of your instructions in main easily
     void setRegister(int index, int16_t value) {
