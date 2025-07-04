@@ -6,9 +6,11 @@
 #include "GraphicsMemory.h"
 // initialize the graphics window & tile paremeters
 Graphics::Graphics(int width, int height, int tileSize)
-    : window(sf::VideoMode(width, height), "Tile Grid"),
-      tileSize(tileSize)
+    : tileSize(tileSize)
 {
+    //calculate no. of tiles horizontally & vertically
+    // Allocate a new window using a pointer
+    window = new sf::RenderWindow(sf::VideoMode(width, height), "Tile Grid");
     //calculate no. of tiles horizontally & vertically
     tilesX = width / tileSize;
     tilesY = height / tileSize;
@@ -21,7 +23,7 @@ Graphics::Graphics(int width, int height, int tileSize)
 }
 // run the graphics window
 void Graphics::run() {
-    while (window.isOpen()) {
+    while (window->isOpen()) {
         processEvents();  //handle window events
         render();  //draw the frame
     }
@@ -29,15 +31,15 @@ void Graphics::run() {
 // window events
 void Graphics::processEvents() {
     sf::Event event;
-    while (window.pollEvent(event)) {
+    while (window->pollEvent(event)) {
         if (event.type == sf::Event::Closed)
-            window.close();  //for closing the window
+            window->close();  //for closing the window
     }
 }
 //renders the tile grid to the window
 
 void Graphics::render() {
-    window.clear();
+    window->clear();
     if (!Gmemory) return;
 
     for (int y = 0; y < tilesY; ++y) {
@@ -55,13 +57,13 @@ void Graphics::render() {
                     sf::Color color = Gmemory->colorPalette(colorIndex);
                     pixel.setFillColor(color);
                     pixel.setPosition((x * 16) + col, (y * 16) + row);
-                    window.draw(pixel);
+                    window->draw(pixel);
                 }
             }
         }
     }
 
-    window.display();
+    window->display();
 }
 
 //connect the memory to the graphics system

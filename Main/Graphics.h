@@ -21,11 +21,14 @@ public:
         render();
     }
     bool isOpen() const {
-        return window.isOpen();
+        return (window&&window->isOpen());
     }
 
+    ~Graphics() {
+        delete window;
+    }
 private:
-    sf::RenderWindow window;
+    sf::RenderWindow* window = nullptr;
     sf::RectangleShape tile;
     sf::RectangleShape pixel;
 
