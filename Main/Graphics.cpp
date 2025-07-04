@@ -68,4 +68,34 @@ void Graphics::render() {
 void Graphics::setmemory(GraphicsMemory* mem) {
     Gmemory = mem;
 }
+void Graphics::updateTilePixel(int tileIndex, int x, int y, uint8_t colorIndex) {
+    int byteOffset = y * 8 + x / 2;
+    uint8_t& byte = Gmemory->getMemory()[0xF200 + tileIndex * 128 + byteOffset];
+    if (x % 2 == 0)
+        byte = (byte & 0xF0) | (colorIndex & 0x0F);
+    else
+        byte = (byte & 0x0F) | ((colorIndex & 0x0F) << 4);
+}
+void Graphics::draw(uint8_t* memory) {
+        const uint16_t BALL_DATA_ADDR = 0x8000;
+        const uint16_t TILEMAP_BASE = 0xF000;
+        const int TILEMAP_WIDTH = 20;
+        const int TILEMAP_HEIGHT = 15;
+        const uint8_t BALL_TILE = 1;
 
+        // Clear screen
+        for (int y = 0; y < TILEMAP_HEIGHT; ++y) {
+            for (int x = 0; x < TILEMAP_WIDTH; ++x) {
+                memory[TILEMAP_BASE + y * TILEMAP_WIDTH + x] = 0;
+            }
+        }
+
+        // Read ball position
+        uint8_t x = memory[BALL_DATA_ADDR];
+        uint8_t y = memory[BALL_DATA_ADDR + 1];
+
+        //  Check bounds before drawing
+        if (x < TILEMAP_WIDTH && y < TILEMAP_HEIGHT) {
+            memory[TILEMAP_BASE + y * TILEMAP_WIDTH + x] = BALL_TILE;
+        }
+    }

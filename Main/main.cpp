@@ -43,7 +43,41 @@
 
 #include "ZX16_Simulator.h"
 #include "Graphics.h"
+#include <thread>
 using namespace std;
+
+// Function to run the simulator loop
+void runSimulator(ZX16_Simulator& sim) {
+    sim.run();
+}
+
+// Function to run the graphics loop
+void runGraphics(Graphics& graphics) {
+    graphics.run();
+}
+//
+// void draw(uint8_t* memory) {
+//     const uint16_t BALL_DATA_ADDR = 0x8000;
+//     const uint16_t TILEMAP_BASE = 0xF000;
+//     const int TILEMAP_WIDTH = 20;
+//     const uint8_t BALL_TILE = 1;
+//
+//     // Clear screen
+//     for (int y = 0; y < 15; ++y) {
+//         for (int x = 0; x < TILEMAP_WIDTH; ++x) {
+//             memory[TILEMAP_BASE + y * TILEMAP_WIDTH + x] = 0;
+//         }
+//     }
+//
+//     // Read ball position
+//     uint8_t x = memory[BALL_DATA_ADDR];
+//     uint8_t y = memory[BALL_DATA_ADDR + 1];
+//
+//     // Draw ball if within bounds
+//     if (x < TILEMAP_WIDTH && y < 15) {
+//         memory[TILEMAP_BASE + y * TILEMAP_WIDTH + x] = BALL_TILE;
+//     }
+// }
 
 int main(int argc, char* argv[]) {
     std::string file;
@@ -60,50 +94,27 @@ int main(int argc, char* argv[]) {
     sim.loadBinaryFile(file);    // Load the binary program file
     GraphicsMemory Gmem;
     Gmem.setMemory(sim.getMemoryPtr());
-    sim.run();// run the simulator
+    sim.run();
+
 
     Graphics graphics;
-    int base = 0xF200 + 128; //tile 1
-    uint8_t* mem = sim.getMemoryPtr();
-    for (int row = 0; row < 16; ++row) {
-        for (int col = 0; col < 8; ++col) {
-            uint8_t even = (row + col) % 2 == 0 ? 1 : 2;
-            uint8_t odd = (even == 1) ? 2 : 1;
-            mem[base + row * 8 + col] = (odd << 4) | even;
-        }
-    }
+    graphics.setmemory(&Gmem);
 
-    // Put tile 1 in tile map at position (5, 5)
-    //mem[0xF000 + (5 * 20 + 5)] = 1;
+    uint8_t* mem = Gmem.getMemory();
+    // for (int i = 0; i < 64; i += 2) {
+    //     uint16_t inst = mem[i] | (mem[i+1] << 8);
+    //     std::cout << "[" << std::hex << i << "] = 0x" << inst << std::endl;
+    // }
 
-
-    //Different testing for the colorsss
-
-    //Gmem.setTileAt(5, 5, 7);// For testing to check the color and here it will appears a brown tile
-  //  Gmem.setTileAt(5, 3, 15); //here another testing with another color
-    // Example: create a pattern of color as an example
-    /*for (int y = 0; y < 15; ++y) {
-        for (int x = 0; x < 20; ++x) {
-            uint8_t tileNum = (x + y) % 16;
-            Gmem.setTileAt(x, y, tileNum);
-        }
-    }*/
-    // Fill the whole screen with tile 1--, result is all boxes are brown
-   /* for (int y = 0; y < 15; ++y) {
-        for (int x = 0; x < 20; ++x) {
-            Gmem.setTileAt(x, y, 1);
-        }
-    }*/
-    // Fill color palette at 0xFA00 with real RGB values
     std::vector<uint8_t> palette = {
         0b00000000, // Black
+        0b11111111, // White
         0b11100000, // Red
         0b00011100, // Green
         0b00000011, // Blue
         0b11111100, // Yellow
         0b11100011, // Magenta
         0b00011111, // Cyan
-        0b11111111, // White
         0b10000000, // Dark red
         0b00100000, // Dark green
         0b00000010, // Dark blue
@@ -117,23 +128,87 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < 16; ++i) {
         mem[0xFA00 + i] = palette[i];
     }
-    // Fill tile definitions: each tile with one solid color
-    for (int tile = 0; tile <= 15; ++tile) {
-        int base = 0xF200 + tile * 128;
-        for (int i = 0; i < 128; ++i) {
-            mem[base + i] = (tile << 4) | tile;  // Set each pixel's color index to 'tile'
+
+    for (int i = 0; i < 128; ++i) {
+        mem[0xF200 + i] = (0 << 4) | 0;  // black tile
+        mem[0xF200 + 1 * 128 + i] = (1 << 4) | 1;  // white tile
+    }
+
+    // thin vertical line tile: black background, vertical white line at x = 7
+    int base = 0xF200 + 2 * 128;
+    for (int row = 0; row < 16; ++row) {
+        for (int col = 0; col < 8; ++col) {
+            uint8_t color = (col == 3) ? 1 : 0;
+            mem[base + row * 8 + col] = (color << 4) | color;
         }
     }
+
     for (int y = 0; y < 15; ++y) {
         for (int x = 0; x < 20; ++x) {
-            Gmem.setTileAt(x, y, ((x + y) % 16) ); // test with tile 0
-            // Gmem.setTileAt(x, y, ((x + y) % 15)+1 );  test with tile 1
+            Gmem.setTileAt(x, y, 0); // fill background black
         }
     }
-    graphics.setmemory((&Gmem));
-    graphics.run();  // Calls your SFML drawing window
 
+    Gmem.setTileAt(12, 7, 1); // Ball
 
+    Gmem.setTileAt(1, 6, 1);
+    Gmem.setTileAt(1, 7, 1);
+    Gmem.setTileAt(1, 8, 1);
+    Gmem.setTileAt(18, 6, 1);
+    Gmem.setTileAt(18, 7, 1);
+    Gmem.setTileAt(18, 8, 1);
+
+    // vertical thin white line in center of screen (x = 10)  (can be removed if we will do the version without walls )
+    for (int y = 0; y < 15; ++y) {
+        Gmem.setTileAt(10, y, 2);  // tile 2 = thin vertical white line
+    }
+
+    graphics.run();
+
+    //setting initial values for movement
+    mem[0x8000] = 10;  // x
+    mem[0x8001] = 7;   // y
+    mem[0x8002] = 1;   // dx
+    mem[0x8003] = 1;   // dy
+
+    // while (graphics.isOpen()) {
+    //     if (!sim.halted) {
+    //         sim.step();  // Execute one instruction from assembly code
+    //     }
+    //     graphics.draw(mem);  // Draw the screen based on memory
+    //     graphics.tick();     // Update the window
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(16)); // ~60 FPS
+    // }
+
+    // while (graphics.isOpen()) {
+    //     if (!sim.halted) {
+    //         sim.step();  // Only step if not halted
+    //         std::cout << "PC: 0x" << std::hex << sim.pc << " Instruction: 0x" << ((mem[sim.pc + 1] << 8) | mem[sim.pc]) << std::endl;
+    //     }
+    //     graphics.draw(mem);  // Draw the ball again from updated memory
+    //     graphics.tick();
+    //     std::cout << "Ball x: " << (int)mem[0x8000] << " y: " << (int)mem[0x8001] << std::endl;
+    //     std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    // }
+
+    // //=== Multithreaded simulation and graphics ===
+    //  std::thread simThread([&]() {
+    //      while (graphics.isOpen()) {
+    //          sim.step(); // execute one instruction
+    //          std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    //      }
+    //  });
+    //
+    //  while (graphics.isOpen()) {
+    //      graphics.draw(mem);                      // update tilemap based on memory
+    //      graphics.tick();                // redraw screen
+    //      std::cout << "Ball x: " << (int)mem[0x8000] << " y: " << (int)mem[0x8001] << std::endl;
+    //      std::this_thread::sleep_for(std::chrono::milliseconds(16));
+    //  }
+    //
+    //
+    //  if (simThread.joinable())
+    //      simThread.join();
 
   return 0;
 }

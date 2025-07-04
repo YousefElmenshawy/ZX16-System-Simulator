@@ -18,9 +18,9 @@ private:
     uint8_t memory[MEMORY_SIZE];           // Main memory
     int16_t registers[NUM_REGISTERS];      // General-purpose registers
     uint16_t trailingZeroCount = 0;
-    uint16_t pc;                            // Program counter
+                                // Program counter
     uint16_t programEnd;                    // address of the Program Ending at Memory
-    bool running;                           // Execution state
+                             // Execution state
     int volume;                           //Needed for ecall/game
     std::vector<Instruction> program;       // Loaded program
     void handleEcall();
@@ -38,6 +38,8 @@ private:
     void dumpRegisters() const;
     void dumpMemory(uint16_t address, uint16_t size) const;
 public:
+    uint16_t pc;
+    bool halted = false;
     ZX16_Simulator();
     void run();
     void loadBinaryFile(const std::string& filename);
@@ -51,6 +53,8 @@ public:
             registers[index] = value;
         }
     }
+    void step();
+    bool running;
 };
 
 

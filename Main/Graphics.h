@@ -12,6 +12,17 @@ public:
     Graphics(int width = 320, int height = 240, int tileSize = 16);
     void setmemory(GraphicsMemory* memory);
     void run();  // Starts the main rendering loop
+    void updateTilePixel(int tileIndex, int x, int y, uint8_t colorIndex);
+
+    void draw(uint8_t* mem);
+    void tick() {
+        if (!Gmemory) return;
+        draw(Gmemory->getMemory());
+        render();
+    }
+    bool isOpen() const {
+        return window.isOpen();
+    }
 
 private:
     sf::RenderWindow window;

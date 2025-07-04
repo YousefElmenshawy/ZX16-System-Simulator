@@ -59,3 +59,6 @@ sf::Color GraphicsMemory:: colorPalette(uint8_t index) const {
     int B = (colorbyte & 0x03) * 255 / 3;  //2 bits for B -> 0, 1
     return sf :: Color(R,G,B);
 }
+uint8_t* GraphicsMemory::getMemory() {
+    return memory;
+}

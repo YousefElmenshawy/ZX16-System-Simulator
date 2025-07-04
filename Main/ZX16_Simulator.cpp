@@ -619,3 +619,39 @@ void ZX16_Simulator::dumpMemory(uint16_t address, uint16_t size) const {
     std::cout << std::dec << std::endl;
 }
 uint8_t* ZX16_Simulator::getMemoryPtr() { return memory; }
+
+void ZX16_Simulator::step() {
+    if (!running) {
+        std::cout << "Simulator is halted.\n";
+        return;
+    }
+
+    if (halted) return;
+
+    if (pc >= programEnd) {
+        std::cerr << "PC out of program bounds at 0x" << std::hex << pc << ". Halting execution.\n";
+        running = false;
+        return;
+    }
+
+    // Fetch 16-bit instruction from memory (little-endian)
+    uint16_t binaryInstruction = memory[pc] | (memory[pc + 1] << 8);
+
+    // Decode instruction
+    Instruction inst(binaryInstruction);
+    PrintDynamicDiassembley(binaryInstruction);
+
+    // Execute instruction
+    bool jumped = executeInstruction(inst);
+
+    // If instruction didn't jump, increment PC normally
+    if (!jumped) {
+        pc += 2;
+    }
+
+    // Check bounds again
+    if (pc >= programEnd) {
+        std::cerr << "PC out of program bounds at 0x" << std::hex << pc << ". Halting execution.\n";
+        running = false;
+    }
+}

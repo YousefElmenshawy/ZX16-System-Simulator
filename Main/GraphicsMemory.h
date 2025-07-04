@@ -33,6 +33,9 @@ public:
     //For color Palette
     sf::Color colorPalette(uint8_t index) const;
 
+    uint8_t* getMemory();
+
+
 };
 
 
