@@ -35,9 +35,13 @@ private:
     bool executeSysType(const Instruction& inst);
     bool executeInstruction( Instruction& inst);
     void PrintDynamicDiassembley(uint16_t PC);
+
+public:
+    void printState() const;
+    void reset();
+    bool step();
     void dumpRegisters() const;
     void dumpMemory(uint16_t address, uint16_t size) const;
-public:
     ZX16_Simulator();
     void run();
     void loadBinaryFile(const std::string& filename);

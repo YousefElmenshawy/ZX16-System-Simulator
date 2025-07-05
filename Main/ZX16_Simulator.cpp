@@ -14,12 +14,19 @@ static const std::string regs[8] = {
     "t0", "ra", "sp", "s0", "s1", "t1", "a0", "a1"
 };
 ZX16_Simulator::ZX16_Simulator() {
+    reset();
+}
+
+// Add a reset method
+void ZX16_Simulator::reset() {
     for (int i = 0; i < 8; i++) {
         registers[i] = 0;
     }
-
+    pc = 0;
+    running = true;
+    // Optionally clear memory if needed
+    // std::fill(std::begin(memory), std::end(memory), 0);
 }
-
 
 void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
     std::ifstream file(filename, std::ios::binary);
@@ -505,6 +512,7 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
 
 
 void ZX16_Simulator::run() {
+    reset(); // Ensure state is reset before running
 
     pc = 0;
     running = true;
@@ -537,7 +545,8 @@ void ZX16_Simulator::dumpRegisters() const {
 }
 
 void ZX16_Simulator::PrintDynamicDiassembley(uint16_t binary) {
-    Instruction inst(binary);
+  std::cout << std::flush; // <- ADD THIS
+  Instruction inst(binary);
     inst.readPC(pc);  // To handle PC-relative instructions properly
 
     std::cout << "["
@@ -619,3 +628,30 @@ void ZX16_Simulator::dumpMemory(uint16_t address, uint16_t size) const {
     std::cout << std::dec << std::endl;
 }
 
+void ZX16_Simulator::printState() const {
+    std::cout << "Current PC: 0x" << std::hex << pc << "\n";
+    std::cout << "Registers:\n";
+    for (int i = 0; i < NUM_REGISTERS; ++i) {
+        std::cout << "  " << regs[i] << " = " << std::dec << registers[i] << "\n";
+    }
+
+    std::cout << std::flush; // <- ADD THIS
+}
+bool ZX16_Simulator::step() {
+    if (!running || pc >= programEnd) {
+        return false;
+    }
+    uint16_t BinaryInstruction = memory[pc] | (memory[pc + 1] << 8);
+    Instruction inst(BinaryInstruction);
+    PrintDynamicDiassembley(BinaryInstruction);
+    bool jumped = executeInstruction(inst);
+    if (!jumped) pc += 2;
+    if (pc >= programEnd) {
+        std::cerr << "PC out of program bounds at 0x" << std::hex << pc << ". Halting execution.\n";
+        running = false;
+    }
+    printState();
+    dumpRegisters();
+    dumpMemory(0, 256);
+    return running && pc < programEnd;
+}

@@ -4,49 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="BackendCodeEditorMiscSettings">
-    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="123" type="long" />
-    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
-    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
+    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
+    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="3" type="long" />
   </component>
-  <component name="CMakePresetLoader">{
-  &quot;useNewFormat&quot;: true
-}</component>
   <component name="CMakeProjectFlavorService">
     <option name="flavorId" value="CMakePlainProjectFlavor" />
   </component>
-  <component name="CMakeReloadState">
-    <option name="reloaded" value="true" />
-  </component>
-  <component name="CMakeRunConfigurationManager">
-    <generated />
-  </component>
-  <component name="CMakeSettings" AUTO_RELOAD="true">
+  <component name="CMakeSettings">
     <configurations>
       <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c241e201-3d6e-4091-a618-0018d50976b6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Backend/temp_08ad4686-87bf-4f7e-a4d6-1894ea5bd402.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/temp_0a8882e7-d015-4238-a634-24ff21bfb7bc.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/temp_48134229-9756-4e1e-9fbd-436509ae3274.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/temp_5a75e1c1-0c1c-466b-9a16-c9aa06b6f2da.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/temp_708d85f1-fb53-43a3-9cf7-60d0dda8f6fc.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/temp_a1074bc3-00ba-4ca3-a8ce-fc726055bc41.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/temp_aed30743-8040-4378-8db6-2ea4eefe5ea4.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/temp_c1b97f3e-9d27-4a80-92ed-bb0c16c46b69.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Backend/temp_f914fa70-514b-4201-b839-df9493508e29.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assembler/temp_3eb62d2e-e7f8-4d4b-9799-b439a5b2ce76.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assembler/temp_3eb62d2e-e7f8-4d4b-9799-b439a5b2ce76.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assembler/temp_4676ec3e-7bde-4131-a0ed-b4208377b99f.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assembler/temp_517c38b8-a45f-48e9-8337-3aa31f889e6c.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assembler/temp_571172f1-dff8-4b11-beb6-efdb9cfd3650.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assembler/temp_78e16f33-8627-4a5b-bb0c-79b20ddabfbc.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assembler/temp_7cd364e2-d965-44e3-aebb-db4cba5e297f.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assembler/temp_a6f55f33-2ba2-4896-b39c-4c91cabfe32e.s" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assembler/temp_e2fc6839-c8d3-469b-92b9-1f00402a0811.s" beforeDir="false" />
-    </list>
+    <list default="true" id="a251a081-cffd-4a78-92e8-90234a6bde6d" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -55,159 +28,55 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RESET_MODE" value="HARD" />
-    <option name="ROOT_SYNC" value="DONT_SYNC" />
-  </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;Kareem-Rashed&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/YousefElmenshawy/ZX16-System-Simulator.git&quot;,
-    &quot;accountId&quot;: &quot;dd52442f-35b2-4e7f-9f68-10d8610e1196&quot;
-  }
-}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
-  <component name="ProjectApplicationVersion">
-    <option name="ide" value="CLion" />
-    <option name="majorVersion" value="2025" />
-    <option name="minorVersion" value="1.2" />
-    <option name="productBranch" value="Classic" />
-  </component>
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 4
+  &quot;associatedIndex&quot;: 8
 }</component>
-  <component name="ProjectId" id="2zHpBkFRyghL36uyacxKS4ECoNj" />
+  <component name="ProjectId" id="2zKhUWg4R8Oxp3NYtVBKqTiX3Gk" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "C/C++ File.main.cpp (1).executor": "Run",
-    "C/C++ File.main.cpp (2).executor": "Run",
-    "C/C++ File.main.cpp.executor": "Run",
-    "CMake Application.ZX16_System_Simulator.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.RadMigrateCodeStyle": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "RunOnceActivity.west.config.association.type.startup.service": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "Web__based",
-    "last_opened_file_path": "/Users/kareem/Desktop/Projects/ZX16-System-Simulator/Backend",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "ts.external.directory.path": "/Applications/CLion.app/Contents/plugins/javascript-plugin/jsLanguageServicesImpl/external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Web_based_IDE&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/Backend" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/Backend" />
-      <recent name="$PROJECT_DIR$/assembler" />
-    </key>
-  </component>
-  <component name="RunManager" selected="C/C++ File.main.cpp (2)">
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="main.cpp (1)" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ZX16-System-Simulator" TARGET_NAME="main.cpp" CONFIG_NAME="main.cpp">
-      <option name="sourceFile" value="Main/main.cpp" />
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="main.cpp (2)" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ZX16-System-Simulator" TARGET_NAME="main.cpp" CONFIG_NAME="main.cpp">
-      <option name="sourceFile" value="main.cpp" />
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="main.cpp" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ZX16-System-Simulator" TARGET_NAME="main.cpp" CONFIG_NAME="main.cpp">
-      <option name="sourceFile" value="$PROJECT_DIR$/zx16sim" />
-      <method v="2">
-        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="C/C++ File.main.cpp (2)" />
-      <item itemvalue="C/C++ File.main.cpp (1)" />
-      <item itemvalue="C/C++ File.main.cpp" />
-    </list>
-    <recent_temporary>
-      <list>
-        <item itemvalue="C/C++ File.main.cpp (2)" />
-        <item itemvalue="C/C++ File.main.cpp (1)" />
-        <item itemvalue="C/C++ File.main.cpp" />
-      </list>
-    </recent_temporary>
-  </component>
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="c241e201-3d6e-4091-a618-0018d50976b6" name="Changes" comment="" />
-      <created>1751397719982</created>
+      <changelist id="a251a081-cffd-4a78-92e8-90234a6bde6d" name="Changes" comment="" />
+      <created>1751485687385</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1751397719982</updated>
-      <workItem from="1751397720948" duration="14000" />
-      <workItem from="1751397736547" duration="1014000" />
-      <workItem from="1751398754109" duration="68000" />
-      <workItem from="1751399246925" duration="18492000" />
-      <workItem from="1751475284392" duration="4505000" />
+      <updated>1751485687385</updated>
+      <workItem from="1751485688701" duration="1014000" />
+      <workItem from="1751486738113" duration="2639000" />
+      <workItem from="1751577032954" duration="3235000" />
+      <workItem from="1751614918020" duration="419000" />
+      <workItem from="1751615856216" duration="5907000" />
+      <workItem from="1751645624195" duration="1117000" />
+      <workItem from="1751664379414" duration="5542000" />
+      <workItem from="1751716310869" duration="7923000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="VCPKGProject">
-    <isAutomaticCheckingOnLaunch value="false" />
-    <isAutomaticFoundErrors value="true" />
-    <isAutomaticReloadCMake value="true" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State>
-              <option name="FILTERS">
-                <map>
-                  <entry key="branch">
-                    <value>
-                      <list>
-                        <option value="Web_Based_New" />
-                      </list>
-                    </value>
-                  </entry>
-                </map>
-              </option>
-            </State>
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
 </project>
