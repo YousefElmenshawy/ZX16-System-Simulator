@@ -28,12 +28,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c241e201-3d6e-4091-a618-0018d50976b6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/web_server.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ZX16_Simulator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/ZX16_Simulator.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ZX16_Simulator.h" beforeDir="false" afterPath="$PROJECT_DIR$/ZX16_Simulator.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/temp_08ad4686-87bf-4f7e-a4d6-1894ea5bd402.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/temp_0a8882e7-d015-4238-a634-24ff21bfb7bc.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/temp_48134229-9756-4e1e-9fbd-436509ae3274.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/temp_5a75e1c1-0c1c-466b-9a16-c9aa06b6f2da.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/temp_708d85f1-fb53-43a3-9cf7-60d0dda8f6fc.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/temp_a1074bc3-00ba-4ca3-a8ce-fc726055bc41.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/temp_aed30743-8040-4378-8db6-2ea4eefe5ea4.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/temp_c1b97f3e-9d27-4a80-92ed-bb0c16c46b69.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Backend/temp_f914fa70-514b-4201-b839-df9493508e29.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assembler/temp_3eb62d2e-e7f8-4d4b-9799-b439a5b2ce76.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assembler/temp_3eb62d2e-e7f8-4d4b-9799-b439a5b2ce76.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assembler/temp_4676ec3e-7bde-4131-a0ed-b4208377b99f.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assembler/temp_517c38b8-a45f-48e9-8337-3aa31f889e6c.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assembler/temp_571172f1-dff8-4b11-beb6-efdb9cfd3650.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assembler/temp_78e16f33-8627-4a5b-bb0c-79b20ddabfbc.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assembler/temp_7cd364e2-d965-44e3-aebb-db4cba5e297f.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assembler/temp_a6f55f33-2ba2-4896-b39c-4c91cabfe32e.s" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assembler/temp_e2fc6839-c8d3-469b-92b9-1f00402a0811.s" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,19 +59,20 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RESET_MODE" value="HARD" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "Kareem-Rashed"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Kareem-Rashed&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/YousefElmenshawy/ZX16-System-Simulator.git",
-    "accountId": "dd52442f-35b2-4e7f-9f68-10d8610e1196"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/YousefElmenshawy/ZX16-System-Simulator.git&quot;,
+    &quot;accountId&quot;: &quot;dd52442f-35b2-4e7f-9f68-10d8610e1196&quot;
   }
-}]]></component>
+}</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -93,6 +106,7 @@
     "RunOnceActivity.west.config.association.type.startup.service": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "Web__based",
     "last_opened_file_path": "/Users/kareem/Desktop/Projects/ZX16-System-Simulator/Backend",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -114,9 +128,9 @@
     </key>
   </component>
   <component name="RunManager" selected="C/C++ File.main.cpp (2)">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="main.cpp (1)" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ZX16-System-Simulator" TARGET_NAME="main.cpp" CONFIG_NAME="main.cpp">
@@ -161,6 +175,7 @@
       <workItem from="1751397736547" duration="1014000" />
       <workItem from="1751398754109" duration="68000" />
       <workItem from="1751399246925" duration="18492000" />
+      <workItem from="1751475284392" duration="4505000" />
     </task>
     <servers />
   </component>
@@ -177,7 +192,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="Web_Based_New" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>

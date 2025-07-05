@@ -1,0 +1,50 @@
+Index: Backend/main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from fastapi import FastAPI, Request\nfrom fastapi.middleware.cors import CORSMiddleware\nimport subprocess\nimport uuid\nimport os\nfrom fastapi.responses import JSONResponse\n\napp = FastAPI()\n\n# Add CORS middleware configuration\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"http://127.0.0.1:8080\"],  # Allow frontend origin\n    allow_credentials=True,\n    allow_methods=[\"*\"],\n    allow_headers=[\"*\"],\n)\n\n@app.get(\"/state\")\ndef get_default_state():\n    # Only the correct 8 registers\n    registers = {reg: 0 for reg in [\"t0\", \"ra\", \"sp\", \"s0\", \"s1\", \"t1\", \"a0\", \"a1\"]}\n    memory = []\n    for addr in range(0, 256, 16):\n        memory.append({\n            \"address\": f\"0x{addr:04X}\",\n            \"bytes\": [\"00\"] * 16\n        })\n    return {\"registers\": registers, \"memory\": memory}\n\n@app.post(\"/simulate\")\nasync def simulate_code(request: Request):\n    try:\n        data = await request.json()\n        code = data[\"code\"]\n\n        # Create unique temp files\n        uid = str(uuid.uuid4())\n        asm_file = f\"temp_{uid}.s\"\n        bin_file = f\"temp_{uid}.bin\"\n\n        # Write assembly code to file\n        with open(asm_file, \"w\") as f:\n            f.write(code)\n\n        # Get current directory\n        current_dir = os.path.dirname(os.path.abspath(__file__))\n        print(f\"[DEBUG] Current directory: {current_dir}\")\n        print(f\"[DEBUG] Assembly file: {asm_file}, Binary file: {bin_file}\")\n\n        # Assemble\n        assemble_cmd = [\"python3\", os.path.join(current_dir, \"zx16asm.py\"), asm_file, \"-o\", bin_file]\n        print(f\"[DEBUG] Running assembler: {' '.join(assemble_cmd)}\")\n        try:\n            result = subprocess.run(assemble_cmd, capture_output=True, text=True, cwd=current_dir, timeout=10)\n        except subprocess.TimeoutExpired:\n            print(f\"[DEBUG] Assembler timed out!\")\n            if os.path.exists(asm_file):\n                os.remove(asm_file)\n            return {\"output\": \"Assembly process timed out!\"}\n        print(f\"[DEBUG] Assembler return code: {result.returncode}\")\n        print(f\"[DEBUG] Assembler stdout: {result.stdout}\")\n        print(f\"[DEBUG] Assembler stderr: {result.stderr}\")\n\n        output = \"\"\n        if result.returncode != 0:\n            output += f\"Assembly failed.\\nStderr:\\n{result.stderr}\\nStdout:\\n{result.stdout}\"\n            if os.path.exists(asm_file):\n                os.remove(asm_file)\n            print(f\"[DEBUG] Assembly failed, returning output.\")\n            return {\"output\": output}\n\n        # Simulate\n        simulator_path = os.path.join(current_dir, \"ZX16_System_Simulator\")\n        sim_cmd = [simulator_path, bin_file]\n        print(f\"[DEBUG] Running simulator: {' '.join(sim_cmd)}\")\n        try:\n            result = subprocess.run(sim_cmd, capture_output=True, text=True, cwd=current_dir, timeout=10)\n        except subprocess.TimeoutExpired:\n            print(f\"[DEBUG] Simulator timed out!\")\n            if os.path.exists(asm_file):\n                os.remove(asm_file)\n            if os.path.exists(bin_file):\n                os.remove(bin_file)\n            return {\"output\": \"Simulation process timed out!\"}\n        print(f\"[DEBUG] Simulator return code: {result.returncode}\")\n        print(f\"[DEBUG] Simulator stdout: {result.stdout}\")\n        print(f\"[DEBUG] Simulator stderr: {result.stderr}\")\n\n        if os.path.exists(asm_file):\n            os.remove(asm_file)\n        if os.path.exists(bin_file):\n            os.remove(bin_file)\n        print(f\"[DEBUG] Temp files cleaned up.\")\n\n        if result.returncode != 0:\n            output += f\"Simulation failed.\\nStderr:\\n{result.stderr}\\nStdout:\\n{result.stdout}\"\n            return {\"output\": output, \"registers\": None, \"memory\": None}\n        else:\n            output += f\"Simulation succeeded.\\nStdout:\\n{result.stdout}\"\n            if result.stderr:\n                output += f\"\\nStderr:\\n{result.stderr}\"\n\n        # --- Always initialize registers and memory with zeros ---\n        default_registers = {reg: 0 for reg in [\"t0\", \"ra\", \"sp\", \"s0\", \"s1\", \"t1\", \"a0\", \"a1\"]}\n        default_memory = []\n        for addr in range(0, 256, 16):\n            default_memory.append({\n                \"address\": f\"0x{addr:04X}\",\n                \"bytes\": [\"00\"] * 16\n            })\n        registers = default_registers.copy()\n        memory = [dict(m) for m in default_memory]\n        # --- Parse register and memory dump from output if present ---\n        lines = result.stdout.splitlines()\n        reg_section = False\n        mem_section = False\n        for line in lines:\n            if any(line.strip().startswith(f\"{reg} =\") for reg in registers):\n                reg_section = True\n            if reg_section and line.strip() == '':\n                reg_section = False\n            if reg_section:\n                parts = line.strip().split('=')\n                if len(parts) == 2:\n                    reg, val = parts\n                    reg = reg.strip()\n                    if reg in registers:\n                        registers[reg] = int(val.strip())\n            if line.strip().startswith(\"Memory Dump\"):\n                mem_section = True\n                continue\n            if mem_section:\n                if line.strip() == '':\n                    mem_section = False\n                    continue\n                if ':' in line:\n                    addr, bytestr = line.split(':', 1)\n                    bytes_list = [b for b in bytestr.strip().split(' ') if b]\n                    for m in memory:\n                        if m[\"address\"] == addr.strip():\n                            m[\"bytes\"] = bytes_list\n                            break\n        return {\"output\": output, \"registers\": registers, \"memory\": memory}\n    except Exception as e:\n        return JSONResponse(content={\"error\": f\"Server error: {str(e)}\"}, status_code=500)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Backend/main.py b/Backend/main.py
+--- a/Backend/main.py	(revision bf9028fa69eb33d0f9e4f77df71241cfe7e4f7dc)
++++ b/Backend/main.py	(date 1751478171828)
+@@ -4,10 +4,10 @@
+ import uuid
+ import os
+ from fastapi.responses import JSONResponse
++from pydantic import BaseModel
+ 
+ app = FastAPI()
+ 
+-# Add CORS middleware configuration
+ app.add_middleware(
+     CORSMiddleware,
+     allow_origins=["http://127.0.0.1:8080"],  # Allow frontend origin
+@@ -16,6 +16,10 @@
+     allow_headers=["*"],
+ )
+ 
++@app.get("/")
++def root():
++    return {"message": "ZX16 System Simulator Backend Running"}
++
+ @app.get("/state")
+ def get_default_state():
+     # Only the correct 8 registers
+@@ -28,11 +32,13 @@
+         })
+     return {"registers": registers, "memory": memory}
+ 
++class SimulateRequest(BaseModel):
++    code: str
++
+ @app.post("/simulate")
+-async def simulate_code(request: Request):
++async def simulate_code(request: SimulateRequest):
+     try:
+-        data = await request.json()
+-        code = data["code"]
++        code = request.code
+ 
+         # Create unique temp files
+         uid = str(uuid.uuid4())
