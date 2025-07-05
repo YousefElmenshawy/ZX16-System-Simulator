@@ -6,6 +6,8 @@
 #include <iostream>
 #include<bitset>
 #include <iomanip>  // for setw, setfill
+#include "Graphics.h"
+#include <thread>
 
 using namespace std;
 
@@ -494,6 +496,15 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             running = false;
             return false;
         }
+        case 11: { //render the screen
+            if (graphics) {
+                graphics->tick();  // Trigger screen update
+            }
+            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            running = true;
+            return false;
+            break;
+        }
         default:
             std::cerr << "Unknown service number: " << svc << "\n";
             break;
@@ -655,3 +666,33 @@ void ZX16_Simulator::step() {
         running = false;
     }
 }
+void ZX16_Simulator::runInteractive(Graphics* g) {
+    graphics = g;  // store the graphics pointer
+
+    if (!graphics) return;
+
+    pc = 0;
+    running = true;
+
+    while (graphics->isOpen() && running) {
+        // Fetch instruction
+        uint16_t instBin = memory[pc] | (memory[pc + 1] << 8);
+        Instruction inst(instBin);
+        PrintDynamicDiassembley(pc);  // optional disassembler output
+
+        bool jumped = executeInstruction(inst);
+
+        // Advance PC only if no jump occurred
+        if (!jumped) pc += 2;
+
+        // Slow down simulation to make movement visible
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+        // Optional: stop if program ends
+        if (pc >= programEnd) {
+            std::cerr << "Program ended at 0x" << std::hex << pc << std::endl;
+            running = false;
+        }
+    }
+}
+

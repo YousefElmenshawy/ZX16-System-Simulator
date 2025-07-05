@@ -10,6 +10,7 @@
 #include <fstream>
 #include "Instruction.h"
 using namespace std;
+#include "Graphics.h"
 
 class ZX16_Simulator {
 private:
@@ -37,6 +38,7 @@ private:
     void PrintDynamicDiassembley(uint16_t PC);
     void dumpRegisters() const;
     void dumpMemory(uint16_t address, uint16_t size) const;
+    Graphics* graphics= nullptr;
 public:
     uint16_t pc;
     bool halted = false;
@@ -55,6 +57,7 @@ public:
     }
     void step();
     bool running;
+    void runInteractive(Graphics* graphics);
 };
 
 

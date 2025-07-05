@@ -171,6 +171,10 @@ int main(int argc, char* argv[]) {
     mem[0x8002] = 1;   // dx
     mem[0x8003] = 1;   // dy
 
+    // Run in main thread — no need for thread////  (to test moving bal run this and comment simulation and graphics run)
+    //sim.runInteractive(&graphics);
+
+
     // while (graphics.isOpen()) {
     //     if (!sim.halted) {
     //         sim.step();  // Execute one instruction from assembly code

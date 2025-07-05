@@ -16,7 +16,7 @@ public:
 
     void draw(uint8_t* mem);
     void tick() {
-        if (!Gmemory) return;
+        if (!window||!Gmemory) return;
         draw(Gmemory->getMemory());
         render();
     }
@@ -27,8 +27,9 @@ public:
     ~Graphics() {
         delete window;
     }
-private:
     sf::RenderWindow* window = nullptr;
+private:
+
     sf::RectangleShape tile;
     sf::RectangleShape pixel;
 

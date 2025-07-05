@@ -42,7 +42,18 @@ FetchContent_MakeAvailable(googletest)
 add_executable(zx16_gtest
         Instruction.cpp
     ZX16_Simulator.cpp
+        Graphics.cpp
+        GraphicsMemory.cpp
 )
+target_link_libraries(zx16_gtest
+        gtest
+        gtest_main
+        pthread
+        sfml-graphics
+        sfml-window
+        sfml-system
+)
+
 add_dependencies(ZX16_System_Simulator zx16_gtest)
 
 target_link_libraries(zx16_gtest gtest gtest_main pthread)
@@ -51,6 +62,8 @@ add_test(NAME zx16_gtest COMMAND zx16_gtest)
 add_executable(zx16_disasm_gtest
         Instruction.cpp
     ZX16_Simulator.cpp
+        Graphics.cpp
+        GraphicsMemory.cpp
 )
 target_link_libraries(zx16_disasm_gtest gtest gtest_main pthread)
 add_test(NAME zx16_disasm_gtest COMMAND zx16_disasm_gtest)
@@ -58,6 +71,8 @@ add_test(NAME zx16_disasm_gtest COMMAND zx16_disasm_gtest)
 add_executable(zx16_exec_gtest
         Instruction.cpp
     ZX16_Simulator.cpp
+        Graphics.cpp
+        GraphicsMemory.cpp
 )
 target_link_libraries(zx16_exec_gtest gtest gtest_main pthread)
 add_test(NAME zx16_exec_gtest COMMAND zx16_exec_gtest)
@@ -67,6 +82,7 @@ add_executable(disassembly_tests
     Instruction.cpp
     ZX16_Simulator.cpp
         GraphicsMemory.cpp
+        Graphics.cpp
 )
 target_link_libraries(disassembly_tests gtest gtest_main pthread)
 add_test(NAME disassembly_tests COMMAND disassembly_tests)
@@ -75,6 +91,8 @@ add_executable(execution_tests
     TestCases/Execution\ Tests.cpp
     Instruction.cpp
     ZX16_Simulator.cpp
+        Graphics.cpp
+        GraphicsMemory.cpp
 )
 target_link_libraries(execution_tests gtest gtest_main pthread)
 add_test(NAME execution_tests COMMAND execution_tests)

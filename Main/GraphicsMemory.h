@@ -7,8 +7,8 @@
 #include <regex>
 #include <SFML/Graphics/RenderWindow.hpp>
 
-#include "ZX16_Simulator.h"
-#include "Instruction.h"
+// #include "ZX16_Simulator.h"
+// #include "Instruction.h"
 
 #define TILE_MAP_BASE 0xF000
 #define tilesPerCol 15
