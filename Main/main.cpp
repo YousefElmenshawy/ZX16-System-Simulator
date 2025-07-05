@@ -1,41 +1,62 @@
 #include <iostream>
-#include<cstdlib>
+#include <cstdlib>
 #include "ZX16_Simulator.h"
+#ifdef _WIN32
+#include <io.h>
+#define isatty _isatty
+#define fileno _fileno
+#else
+#include <unistd.h>
+#endif
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    std::string file;
-    if (argc < 2) {
-        std::cout << "No file path provided. Running default test program.\n";
-        std::string asmFile = "../TestCases/TC-ZX16-03.s";
-        std::string binFile = "../TestCases/TC-ZX16-03.bin";
-        // Assemble the default test case using the assembler script
-        // This assumes you are running the executable from: Main/cmake-build-debug/
-        std::string command = "python ../../assembler/zx16asm.py " + asmFile + " -o " + binFile;
-        int status = system(command.c_str());
-        if (status != 0) {
-            std::cerr << "Default assembler failed.\n";
-            return 1;
-        }
-        file=binFile;
-    }
-    else {
-        std::string asmFile = argv[1];  // e.g. "prog.asm"
-        std::string binFile = asmFile.substr(0, asmFile.find_last_of(".")) + ".bin";
-
-        std::string command = "python ../../assembler/zx16asm.py " + asmFile + " -o " + binFile;
-        int status = system(command.c_str());
-        if (status != 0) {
-            std::cerr << "Assembler failed.\n";
-            return 1;
-        }
-
-        file = binFile;
-    }
-
     ZX16_Simulator sim;
-    sim.loadBinaryFile(file);    // Load the binary program file
-    sim.run();// run the simulator
+    if (argc < 2) {
+        std::cerr << "No .bin file provided.\n";
+        return 1;
+    }
 
+    sim.loadBinaryFile(argv[1]); // Load binary file from args
+
+    // Check for step mode argument
+    if (argc >= 3 && std::string(argv[2]) == "step") {
+        bool interactive = isatty(fileno(stdin));
+        if (interactive) {
+            std::string dummy;
+            while (sim.step()) {
+                std::getline(std::cin, dummy);
+            }
+            std::cout << "Simulation ended.\n";
+            sim.dumpRegisters();
+            sim.dumpMemory(0, 256);
+        } else if (argc >= 4) {
+            // Execute exactly N steps (N = argv[3])
+            int steps_to_execute = std::stoi(argv[3]);
+            bool running = true;
+            for (int i = 0; i < steps_to_execute && running; i++) {
+                running = sim.step();
+            }
+            if (!running) {
+                std::cout << "Simulation ended.\n";
+                sim.dumpRegisters();
+                sim.dumpMemory(0, 256);
+            }
+        } else {
+            // Just one step
+            bool running = sim.step();
+            if (!running) {
+                std::cout << "Simulation ended.\n";
+                sim.dumpRegisters();
+                sim.dumpMemory(0, 256);
+            }
+        }
+    } else {
+        // Normal run mode
+        sim.run();
+        std::cout << "Simulation ended.\n";
+        sim.dumpRegisters();
+        sim.dumpMemory(0, 256);
+    }
     return 0;
 }

@@ -20,6 +20,9 @@ sw a0, 2(a1)      # store to memory[62]
 lw s0, 2(a1)      # should load -12345 into s0
 
 ecall 8           # Dump again
+li a0, 60 	  # address=60
+li a1, 4 	  # 4 bytes
+ecall 9 	  #Dump Memory
 
 # Exit
 ecall 10

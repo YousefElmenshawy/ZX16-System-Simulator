@@ -124,7 +124,7 @@ class ZX16Lexer:
         if peek_pos >= len(self.text):
             return ''
         return self.text[peek_pos]
-    
+
     def advance(self) -> None:
         """Advance to the next character."""
         if self.pos < len(self.text) and self.text[self.pos] == '\n':
@@ -132,8 +132,9 @@ class ZX16Lexer:
             self.column = 1
         else:
             self.column += 1
-        self.pos += 1
-    
+        self.pos += 1  # <-- Ensure position advances every time
+
+
     def skip_whitespace(self) -> None:
         """Skip whitespace except newlines."""
         while self.current_char() in ' \t\r':
@@ -161,50 +162,43 @@ class ZX16Lexer:
             self.advance()  # Skip closing quote
         
         return result
-    
+
     def read_number(self) -> int:
         """Read a numeric literal."""
         start_pos = self.pos
-        
-        # Handle different number bases
+
         if self.current_char() == '0' and self.peek_char():
             self.advance()
-            if self.current_char().lower() == 'x':
-                # Hexadecimal
+            if self.current_char() != '' and self.current_char().lower() == 'x':
                 self.advance()
-                while self.current_char().lower() in '0123456789abcdef':
+                while self.current_char() != '' and self.current_char().lower() in '0123456789abcdef':
                     self.advance()
                 return int(self.text[start_pos:self.pos], 16)
-            elif self.current_char().lower() == 'b':
-                # Binary
+            elif self.current_char() != '' and self.current_char().lower() == 'b':
                 self.advance()
-                while self.current_char() in '01':
+                while self.current_char() != '' and self.current_char() in '01':
                     self.advance()
                 return int(self.text[start_pos:self.pos], 2)
-            elif self.current_char().lower() == 'o':
-                # Octal
+            elif self.current_char() != '' and self.current_char().lower() == 'o':
                 self.advance()
-                while self.current_char() in '01234567':
+                while self.current_char() != '' and self.current_char() in '01234567':
                     self.advance()
                 return int(self.text[start_pos:self.pos], 8)
             else:
-                # Decimal starting with 0
                 self.pos = start_pos
-        
-        # Decimal number
-        while self.current_char().isdigit():
+
+        while self.current_char() != '' and self.current_char().isdigit():
             self.advance()
-        
+
         return int(self.text[start_pos:self.pos])
-    
+
     def read_identifier(self) -> str:
         """Read an identifier."""
         start_pos = self.pos
-        
-        while (self.current_char().isalnum() or 
-               self.current_char() in '_'):
+
+        while self.current_char() != '' and (self.current_char().isalnum() or self.current_char() in '_'):
             self.advance()
-        
+
         return self.text[start_pos:self.pos]
     
     def is_register(self, identifier: str) -> bool:
@@ -248,7 +242,8 @@ class ZX16Lexer:
                 ',': TokenType.COMMA,
                 ':': TokenType.COLON,
                 '(': TokenType.LPAREN,
-                ')': TokenType.RPAREN
+                ')': TokenType.RPAREN,
+                '-': TokenType.INSTRUCTION  # Explicitly handle minus sign
             }
 
             if self.current_char() in char_tokens:
@@ -508,6 +503,59 @@ class ZX16Parser:
             expansions.append(('add', [0, 0]))
         
         return expansions
+
+    def parse_operands(self):
+        """Parse operands for an instruction, skipping stray identifiers."""
+        operands = []
+        negative = False
+        while self.current_token.type not in [TokenType.NEWLINE, TokenType.EOF, TokenType.COMMENT]:
+            if self.current_token.type == TokenType.COMMA:
+                self.advance()
+                continue
+            # Handle negative sign for immediates
+            if self.current_token.type == TokenType.INSTRUCTION and self.current_token.value == '-':
+                negative = True
+                self.advance()
+                continue
+            if self.current_token.type == TokenType.IMMEDIATE:
+                val = int(self.current_token.value)
+                if negative:
+                    val = -val
+                    negative = False
+                operands.append(val)
+                self.advance()
+            elif self.current_token.type == TokenType.REGISTER:
+                reg_name = self.current_token.value.lower()
+                reg_num = self.register_map.get(reg_name, 0)
+                operands.append(reg_num)
+                self.advance()
+            elif self.current_token.type == TokenType.CHARACTER:
+                operands.append(int(self.current_token.value))
+                self.advance()
+            elif self.current_token.type == TokenType.INSTRUCTION:
+                # Only treat as symbol if not a stray identifier after ecall or similar
+                symbol_name = self.current_token.value
+                # Only treat as symbol if not a known instruction or register
+                if symbol_name in self.register_map or symbol_name in self.pseudo_instructions or symbol_name in self.r_type_instructions or symbol_name in self.i_type_instructions or symbol_name in self.shift_instructions or symbol_name in self.b_type_instructions or symbol_name in self.s_type_instructions or symbol_name in self.l_type_instructions:
+                    # Known instruction or register, skip as it's likely a parsing error
+                    self.advance()
+                    continue
+                # Otherwise, treat as symbol
+                operands.append(symbol_name)
+                self.advance()
+            elif self.current_token.type == TokenType.LPAREN:
+                self.advance()
+                if self.current_token.type == TokenType.REGISTER:
+                    reg_name = self.current_token.value.lower()
+                    reg_num = self.register_map.get(reg_name, 0)
+                    operands.append(reg_num)
+                    self.advance()
+                if self.current_token.type == TokenType.RPAREN:
+                    self.advance()
+            else:
+                # Skip unknown tokens
+                self.advance()
+        return operands
 
 
 class ZX16Assembler:
@@ -792,14 +840,14 @@ class ZX16Assembler:
             if parser.current_token.type in [TokenType.COMMENT, TokenType.NEWLINE]:
                 parser.advance()
                 continue
-            
+
             line = parser.current_token.line
-            
+
             # Handle labels (already processed in pass 1)
             if parser.current_token.type == TokenType.LABEL:
                 parser.advance()
                 continue
-            
+
             # Handle directives
             if parser.current_token.type == TokenType.DIRECTIVE:
                 directive = parser.current_token.value.lower()
@@ -876,49 +924,9 @@ class ZX16Assembler:
                 mnemonic = parser.current_token.value.lower()
                 parser.advance()
                 
-                # Parse operands
-                operands = []
-                while parser.current_token.type not in [TokenType.NEWLINE, TokenType.EOF, TokenType.COMMENT]:
-                    
-                    if parser.current_token.type == TokenType.COMMA:
-                        parser.advance()
-                        continue
-                    
-                    if parser.current_token.type == TokenType.REGISTER:
-                        reg_name = parser.current_token.value.lower()
-                        reg_num = parser.register_map.get(reg_name, 0)
-                        operands.append(reg_num)
-                        parser.advance()
-                    
-                    elif parser.current_token.type == TokenType.IMMEDIATE:
-                        operands.append(int(parser.current_token.value))
-                        parser.advance()
-                    
-                    elif parser.current_token.type == TokenType.CHARACTER:
-                        operands.append(int(parser.current_token.value))
-                        parser.advance()
-                    
-                    elif parser.current_token.type == TokenType.INSTRUCTION:
-                        # Symbol reference
-                        symbol_name = parser.current_token.value
-                        symbol_value = self.resolve_symbol(symbol_name, line)
-                        operands.append(symbol_value)
-                        parser.advance()
-                    
-                    elif parser.current_token.type == TokenType.LPAREN:
-                        # Memory operand: offset(register)
-                        parser.advance()  # Skip '('
-                        if parser.current_token.type == TokenType.REGISTER:
-                            reg_name = parser.current_token.value.lower()
-                            reg_num = parser.register_map.get(reg_name, 0)
-                            operands.append(reg_num)
-                            parser.advance()
-                        if parser.current_token.type == TokenType.RPAREN:
-                            parser.advance()  # Skip ')'
-                    
-                    else:
-                        parser.advance()
-                
+                # Use improved operand parsing
+                operands = parser.parse_operands()
+
                 # Generate machine code
                 try:
                     # Special handling for LI instruction
@@ -980,7 +988,7 @@ class ZX16Assembler:
             # Skip unknown tokens
             parser.advance()
     
-    def encode_instruction(self, mnemonic: str, operands: List[Union[int, str]], parser: ZX16Parser) -> int:
+    def encode_instruction(self, mnemonic: str, operands: list, parser: 'ZX16Parser') -> int:
         """Encode an instruction to machine code."""
         mnemonic = mnemonic.lower()
         
@@ -1016,12 +1024,14 @@ class ZX16Assembler:
             if isinstance(imm, str):
                 raise SyntaxError(f"Unresolved symbol in immediate: {imm}")
             
-            # Sign extend 7-bit immediate
-            imm = parser.sign_extend(imm, 7)
+            # Check range for 7-bit signed immediate
             if imm < -64 or imm > 63:
-                raise SyntaxError(f"Immediate out of range: {imm}")
-            
-            encoding = ((imm & 0x7F) << 9) | (rd << 6) | (func3 << 3) | InstructionFormat.I_TYPE.value
+                raise SyntaxError(f"I-Type immediate out of range (-64..63): {imm}")
+
+            # Encode as 7-bit two's complement (this masks correctly for both positive and negative values)
+            imm7 = imm & 0x7F
+
+            encoding = (imm7 << 9) | (rd << 6) | (func3 << 3) | InstructionFormat.I_TYPE.value
             return encoding
         
         # Shift instructions (special I-Type)
