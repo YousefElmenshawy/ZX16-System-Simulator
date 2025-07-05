@@ -485,35 +485,38 @@
   </style>
 </head>
 <body>
-  <!-- Top Panel -->
-  <div class="top-panel">
-    <div class="ide-title">ZX16Code</div>
-    <button class="control-button run" id="run-btn">
-      <div class="play-icon"></div>
-      Run
-    </button>
-    <button class="control-button step" id="step-mode-btn">
-      <div class="step-icon"></div>
-      Step Mode
-    </button>
-    <button class="control-button" id="step-btn" disabled>
-      Step
-    </button>
-  </div>
+<!-- Top Panel -->
+<div class="top-panel">
+  <div class="ide-title">ZX16Code</div>
+  <button class="control-button run" id="run-btn">
+    <div class="play-icon"></div>
+    Run
+  </button>
+  <button class="control-button step" id="step-mode-btn">
+    <div class="step-icon"></div>
+    Step Mode
+  </button>
+  <button class="control-button" id="step-btn" disabled>
+    Step
+  </button>
+  <button class="control-button" id="upload-btn">Upload .s</button>
+  <input type="file" id="file-input" accept=".s" style="display:none">
+  <button class="control-button" id="download-btn">Download .s</button>
+</div>
 
-  <!-- Main Content -->
-  <div class="main-content">
-    <!-- Code Editor Panel -->
-    <div class="code-panel">
-      <div class="code-tabs" id="code-tabs">
-        <div class="code-tab active" data-tab-id="0">
-          <input type="text" class="tab-name" value="main.zx16">
-          <button class="tab-close" onclick="closeTab(0)">×</button>
-        </div>
-        <button class="new-tab-btn" onclick="createNewTab()">+</button>
+<!-- Main Content -->
+<div class="main-content">
+  <!-- Code Editor Panel -->
+  <div class="code-panel">
+    <div class="code-tabs" id="code-tabs">
+      <div class="code-tab active" data-tab-id="0">
+        <input type="text" class="tab-name" value="main.zx16">
+        <button class="tab-close" onclick="closeTab(0)">×</button>
       </div>
-      <div class="code-content">
-        <div class="editor-container">
+      <button class="new-tab-btn" onclick="createNewTab()">+</button>
+    </div>
+    <div class="code-content">
+      <div class="editor-container">
           <textarea class="code-editor active" id="editor-0" placeholder="# Enter your ZX16 assembly code here
 li s0, 5
 li s1, 0
@@ -522,504 +525,578 @@ loop:
   addi s0, s0, -1
   bne s0, zero, loop
 halt"></textarea>
-        </div>
-      </div>
-    </div>
-
-    <!-- Registers Panel -->
-    <div class="registers-panel">
-      <div class="registers-header">Registers</div>
-      <div class="registers-content">
-        <table class="reg-table" id="reg-table">
-          <thead>
-            <tr>
-              <th>Register</th>
-              <th>Value</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
       </div>
     </div>
   </div>
 
-  <!-- Bottom Panel -->
-  <div class="bottom-panel">
-    <div class="bottom-tabs">
-      <button class="bottom-tab active" data-tab="console">Console</button>
-      <button class="bottom-tab" data-tab="memory">Memory</button>
-    </div>
-    <div class="bottom-content">
-      <div class="tab-panel active" id="console-panel">
-        <div class="console-output" id="console-output">Ready to run...</div>
-      </div>
-      <div class="tab-panel" id="memory-panel">
-        <table class="memory-table" id="memory-table">
-          <thead>
-            <tr>
-              <th>Address</th>
-              <th>Bytes</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
+  <!-- Registers Panel -->
+  <div class="registers-panel">
+    <div class="registers-header">Registers</div>
+    <div class="registers-content">
+      <table class="reg-table" id="reg-table">
+        <thead>
+        <tr>
+          <th>Register</th>
+          <th>Value</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
+</div>
 
-  <script>
-    // Global variables for tab management
-    let tabCounter = 1;
-    let activeTabId = 0;
+<!-- Bottom Panel -->
+<div class="bottom-panel">
+  <div class="bottom-tabs">
+    <button class="bottom-tab active" data-tab="console">Console</button>
+    <button class="bottom-tab" data-tab="memory">Memory</button>
+  </div>
+  <div class="bottom-content">
+    <div class="tab-panel active" id="console-panel">
+      <div class="console-output" id="console-output">Ready to run...</div>
+    </div>
+    <div class="tab-panel" id="memory-panel">
+      <table class="memory-table" id="memory-table">
+        <thead>
+        <tr>
+          <th>Address</th>
+          <th>Bytes</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
-    // Add a flag to track if we're in step mode
-    let isStepMode = false;
+<script>
+  // Global variables for tab management
+  let tabCounter = 1;
+  let activeTabId = 0;
 
-    // Tab creation function
-    function createNewTab() {
-      const tabId = tabCounter++;
-      const tabName = `file${tabId}.zx16`;
-      
-      // Create tab element
-      const tabsContainer = document.getElementById('code-tabs');
-      const newTabBtn = tabsContainer.querySelector('.new-tab-btn');
-      
-      const tabElement = document.createElement('div');
-      tabElement.className = 'code-tab';
-      tabElement.dataset.tabId = tabId;
-      tabElement.innerHTML = `
-        <input type="text" class="tab-name" value="${tabName}">
-        <button class="tab-close" onclick="closeTab(${tabId})">×</button>
-      `;
-      
-      // Insert before the new tab button
-      tabsContainer.insertBefore(tabElement, newTabBtn);
-      
-      // Create editor element
-      const codeContent = document.querySelector('.code-content');
-      const editorElement = document.createElement('textarea');
-      editorElement.className = 'code-editor';
-      editorElement.id = `editor-${tabId}`;
-      editorElement.placeholder = '# Enter your ZX16 assembly code here';
-      
-      codeContent.appendChild(editorElement);
-      
-      // Add click handler to tab (but not to tab name input)
-      tabElement.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('tab-name') && !e.target.classList.contains('tab-close')) {
-          switchTab(tabId);
-        }
-      });
-      
-      // Add editing functionality to tab name
-      const tabNameInput = tabElement.querySelector('.tab-name');
-      setupTabNameEditing(tabNameInput, tabName);
-      
-      // Switch to new tab
-      switchTab(tabId);
-    }
+  // Add a flag to track if we're in step mode
+  let isStepMode = false;
 
-    // Setup tab name editing functionality
-    function setupTabNameEditing(tabNameInput, defaultName) {
-      // Remove readonly, allow editing by default
-      tabNameInput.removeAttribute('readonly');
-      tabNameInput.addEventListener('blur', () => {
-        if (tabNameInput.value.trim() === '') {
-          tabNameInput.value = defaultName;
-        }
-      });
-      tabNameInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          tabNameInput.blur();
-        }
-      });
-      tabNameInput.addEventListener('click', (e) => {
-        e.stopPropagation();
-        // Switch tab if not editing
-        const tabId = parseInt(tabNameInput.closest('.code-tab').dataset.tabId);
+  // Tab creation function
+  // Tab creation function
+  function createNewTab() {
+    const tabId = tabCounter++;
+    const tabName = `file${tabId}.zx16`;
+
+    // Create tab element
+    const tabsContainer = document.getElementById('code-tabs');
+    const newTabBtn = tabsContainer.querySelector('.new-tab-btn');
+
+    const tabElement = document.createElement('div');
+    tabElement.className = 'code-tab';
+    tabElement.dataset.tabId = tabId;
+    tabElement.innerHTML = `
+      <input type="text" class="tab-name" value="${tabName}">
+      <button class="tab-close" onclick="closeTab(${tabId})">×</button>
+    `;
+
+    // Insert before the new tab button
+    tabsContainer.insertBefore(tabElement, newTabBtn);
+
+    // Create editor element
+    const codeContent = document.querySelector('.code-content');
+    const editorElement = document.createElement('textarea');
+    editorElement.className = 'code-editor';
+    editorElement.id = `editor-${tabId}`;
+    editorElement.placeholder = '# Enter your ZX16 assembly code here';
+
+    codeContent.appendChild(editorElement);
+
+    // Add click handler to tab (but not to tab name input)
+    tabElement.addEventListener('click', (e) => {
+      if (!e.target.classList.contains('tab-name') && !e.target.classList.contains('tab-close')) {
         switchTab(tabId);
-      });
-    }
-
-    // Tab switching function
-    function switchTab(tabId) {
-      // Remove active class from all tabs and editors
-      document.querySelectorAll('.code-tab').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      document.querySelectorAll('.code-editor').forEach(editor => {
-        editor.classList.remove('active');
-      });
-      
-      // Add active class to selected tab and editor
-      const selectedTab = document.querySelector(`[data-tab-id="${tabId}"]`);
-      const selectedEditor = document.getElementById(`editor-${tabId}`);
-      
-      if (selectedTab && selectedEditor) {
-        selectedTab.classList.add('active');
-        selectedEditor.classList.add('active');
-        activeTabId = tabId;
       }
-    }
-
-    // Tab closing function
-    function closeTab(tabId) {
-      const tabElement = document.querySelector(`[data-tab-id="${tabId}"]`);
-      const editorElement = document.getElementById(`editor-${tabId}`);
-      
-      if (!tabElement || !editorElement) return;
-      
-      // Don't close if it's the last tab
-      const allTabs = document.querySelectorAll('.code-tab');
-      if (allTabs.length <= 1) {
-        alert('Cannot close the last tab!');
-        return;
-      }
-      
-      // If closing the active tab, switch to another tab first
-      if (activeTabId === tabId) {
-        const otherTabs = Array.from(allTabs).filter(tab => 
-          parseInt(tab.dataset.tabId) !== tabId
-        );
-        
-        if (otherTabs.length > 0) {
-          const nextTabId = parseInt(otherTabs[0].dataset.tabId);
-          switchTab(nextTabId);
-        }
-      }
-      
-      // Remove tab and editor
-      tabElement.remove();
-      editorElement.remove();
-    }
-
-    // Get active editor content
-    function getActiveEditorContent() {
-      const activeEditor = document.querySelector('.code-editor.active');
-      return activeEditor ? activeEditor.value : '';
-    }
-
-    // Tab switching for bottom panel
-    document.querySelectorAll('.bottom-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        // Remove active class from all tabs and panels
-        document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        
-        // Add active class to clicked tab and corresponding panel
-        tab.classList.add('active');
-        document.getElementById(tab.dataset.tab + '-panel').classList.add('active');
-      });
     });
 
-    // Update IDE state
-    async function updateIDE(data) {
-      window._lastStepData = data; // Store data for reference
+    // Add editing functionality to tab name
+    const tabNameInput = tabElement.querySelector('.tab-name');
+    setupTabNameEditing(tabNameInput, tabName);
 
-      // Update console output
-      const consoleOutput = document.getElementById("console-output");
-      consoleOutput.innerHTML = "";  // Clear existing content
+    // Switch to new tab
+    switchTab(tabId);
+  }
 
-      // Check if simulation ended
-      const simulationEnded = data.output && data.output.includes("Simulation ended.");
+  // Setup tab name editing functionality
+  function setupTabNameEditing(tabNameInput, defaultName) {
+    // Remove readonly, allow editing by default
+    tabNameInput.removeAttribute('readonly');
+    tabNameInput.addEventListener('blur', () => {
+      if (tabNameInput.value.trim() === '') {
+        tabNameInput.value = defaultName;
+      }
+    });
+    tabNameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        tabNameInput.blur();
+      }
+    });
+    tabNameInput.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Switch tab if not editing
+      const tabId = parseInt(tabNameInput.closest('.code-tab').dataset.tabId);
+      switchTab(tabId);
+    });
+  }
 
-      // Clear highlights if simulation ended
-      if (simulationEnded) {
-        clearEditorHighlight();
-        isStepMode = false;
+  // Tab switching function
+  function switchTab(tabId) {
+    // Remove active class from all tabs and editors
+    document.querySelectorAll('.code-tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    document.querySelectorAll('.code-editor').forEach(editor => {
+      editor.classList.remove('active');
+    });
+
+    // Add active class to selected tab and editor
+    const selectedTab = document.querySelector(`[data-tab-id="${tabId}"]`);
+    const selectedEditor = document.getElementById(`editor-${tabId}`);
+
+    if (selectedTab && selectedEditor) {
+      selectedTab.classList.add('active');
+      selectedEditor.classList.add('active');
+      activeTabId = tabId;
+    }
+  }
+
+  // Tab closing function
+  function closeTab(tabId) {
+    const tabElement = document.querySelector(`[data-tab-id="${tabId}"]`);
+    const editorElement = document.getElementById(`editor-${tabId}`);
+
+    if (!tabElement || !editorElement) return;
+
+    // Don't close if it's the last tab
+    const allTabs = document.querySelectorAll('.code-tab');
+    if (allTabs.length <= 1) {
+      alert('Cannot close the last tab!');
+      return;
+    }
+
+    // If closing the active tab, switch to another tab first
+    if (activeTabId === tabId) {
+      const otherTabs = Array.from(allTabs).filter(tab =>
+              parseInt(tab.dataset.tabId) !== tabId
+      );
+
+      if (otherTabs.length > 0) {
+        const nextTabId = parseInt(otherTabs[0].dataset.tabId);
+        switchTab(nextTabId);
+      }
+    }
+
+    // Remove tab and editor
+    tabElement.remove();
+    editorElement.remove();
+  }
+
+  // Get active editor content
+  function getActiveEditorContent() {
+    const activeEditor = document.querySelector('.code-editor.active');
+    return activeEditor ? activeEditor.value : '';
+  }
+
+  // Tab switching for bottom panel
+  document.querySelectorAll('.bottom-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and panels
+      document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+      // Add active class to clicked tab and corresponding panel
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab + '-panel').classList.add('active');
+    });
+  });
+
+  // Update IDE state
+  async function updateIDE(data) {
+    window._lastStepData = data; // Store data for reference
+
+    // Update console output
+    const consoleOutput = document.getElementById("console-output");
+    consoleOutput.innerHTML = "";  // Clear existing content
+
+    // Check if simulation ended
+    const simulationEnded = data.output && data.output.includes("Simulation ended.");
+
+    // Clear highlights if simulation ended
+    if (simulationEnded) {
+      clearEditorHighlight();
+      isStepMode = false;
+    }
+
+    // Parse and display output
+    let currentInstructionText = null;
+    let currentPC = null;
+    if (data.output) {
+      const lines = data.output.split('\n');
+
+      // Use backend-provided current_pc and current_instruction if available
+      if ('current_pc' in data && data.current_pc !== null && data.current_pc !== undefined) {
+        // Accept both hex string and int
+        if (typeof data.current_pc === "string") {
+          currentPC = parseInt(data.current_pc, 16);
+        } else {
+          currentPC = data.current_pc;
+        }
+      }
+      if ('current_instruction' in data && data.current_instruction) {
+        currentInstructionText = data.current_instruction;
       }
 
-      // Parse and display output
-      let currentInstructionText = null;
-      let currentPC = null;
-      if (data.output) {
-        const lines = data.output.split('\n');
-
-        // Use backend-provided current_pc and current_instruction if available
-        if ('current_pc' in data && data.current_pc !== null && data.current_pc !== undefined) {
-          // Accept both hex string and int
-          if (typeof data.current_pc === "string") {
-            currentPC = parseInt(data.current_pc, 16);
-          } else {
-            currentPC = data.current_pc;
-          }
-        }
-        if ('current_instruction' in data && data.current_instruction) {
-          currentInstructionText = data.current_instruction;
-        }
-
-        // Fallback: try to extract from output if not present
-        if (currentPC === null || currentInstructionText === null) {
-          for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            // Look for executed instruction line (format: [0000] 0xXXXX instruction)
-            if (line.match(/^\[\w+\]\s+0x\w+\s+\w+/)) {
-              // Extract the instruction part
-              const instMatch = line.match(/(?:\[\w+\]\s+0x\w+\s+)(.+)$/);
-              if (instMatch && instMatch[1]) {
-                currentInstructionText = instMatch[1].trim();
-                // If next line says "Executed:", this is the current instruction
-                if (i + 1 < lines.length && lines[i + 1].includes("Executed:")) {
-                  // Try to extract PC from [xxxx]
-                  const pcMatch = line.match(/^\[(\w+)\]/);
-                  if (pcMatch) {
-                    currentPC = parseInt(pcMatch[1], 16);
-                  }
-                  break;
+      // Fallback: try to extract from output if not present
+      if (currentPC === null || currentInstructionText === null) {
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          // Look for executed instruction line (format: [0000] 0xXXXX instruction)
+          if (line.match(/^\[\w+\]\s+0x\w+\s+\w+/)) {
+            // Extract the instruction part
+            const instMatch = line.match(/(?:\[\w+\]\s+0x\w+\s+)(.+)$/);
+            if (instMatch && instMatch[1]) {
+              currentInstructionText = instMatch[1].trim();
+              // If next line says "Executed:", this is the current instruction
+              if (i + 1 < lines.length && lines[i + 1].includes("Executed:")) {
+                // Try to extract PC from [xxxx]
+                const pcMatch = line.match(/^\[(\w+)\]/);
+                if (pcMatch) {
+                  currentPC = parseInt(pcMatch[1], 16);
                 }
+                break;
               }
             }
           }
         }
-
-        // Display the output
-        for (const line of lines) {
-          const lineDiv = document.createElement("div");
-          lineDiv.textContent = line;
-
-          // Highlight current instruction line in console
-          if (line.includes("Executed:")) {
-            lineDiv.classList.add("current-instruction");
-          }
-
-          consoleOutput.appendChild(lineDiv);
-        }
-      } else {
-        consoleOutput.textContent = "Ready to run...";
       }
 
-      // Always update registers and memory, even if simulation is not ended
-      // Update registers with highlighting
-      const regTableBody = document.getElementById("reg-table").querySelector("tbody");
-      regTableBody.innerHTML = "";
+      // Display the output
+      for (const line of lines) {
+        const lineDiv = document.createElement("div");
+        lineDiv.textContent = line;
 
-      if (data.registers) {
-        const changedRegs = data.changed_registers || [];
+        // Highlight current instruction line in console
+        if (line.includes("Executed:")) {
+          lineDiv.classList.add("current-instruction");
+        }
 
-        Object.entries(data.registers).forEach(([reg, val]) => {
-          const row = document.createElement("tr");
-          if (changedRegs.includes(reg)) {
-            row.classList.add("reg-changed");
-          }
-          // Show both signed and hex
-          let signedVal = val;
-          if (typeof signedVal === "string") signedVal = parseInt(signedVal, 10);
-          if (signedVal > 32767) signedVal -= 65536;
-          row.innerHTML = `<td>${reg}</td><td>${signedVal} <span style="color:#888;">(0x${(val & 0xFFFF).toString(16).padStart(4, '0')})</span></td>`;
-          regTableBody.appendChild(row);
+        consoleOutput.appendChild(lineDiv);
+      }
+    } else {
+      consoleOutput.textContent = "Ready to run...";
+    }
+
+    // Always update registers and memory, even if simulation is not ended
+    // Update registers with highlighting
+    const regTableBody = document.getElementById("reg-table").querySelector("tbody");
+    regTableBody.innerHTML = "";
+
+    if (data.registers) {
+      const changedRegs = data.changed_registers || [];
+
+      Object.entries(data.registers).forEach(([reg, val]) => {
+        const row = document.createElement("tr");
+        if (changedRegs.includes(reg)) {
+          row.classList.add("reg-changed");
+        }
+        // Show both signed and hex
+        let signedVal = val;
+        if (typeof signedVal === "string") signedVal = parseInt(signedVal, 10);
+        if (signedVal > 32767) signedVal -= 65536;
+        row.innerHTML = `<td>${reg}</td><td>${signedVal} <span style="color:#888;">(0x${(val & 0xFFFF).toString(16).padStart(4, '0')})</span></td>`;
+        regTableBody.appendChild(row);
+      });
+    }
+
+    // Update memory
+    const memTableBody = document.getElementById("memory-table").querySelector("tbody");
+    memTableBody.innerHTML = "";
+    if (data.memory && data.memory.length > 0) {
+      data.memory.slice(0, 32).forEach(memRow => {
+        const row = document.createElement("tr");
+        const bytesFormatted = memRow.bytes.map(b => b.toString(16).padStart(2, '0')).join(' ');
+        row.innerHTML = `<td>0x${memRow.address.toString(16).padStart(4, '0')}</td><td class="memory-bytes">${bytesFormatted}</td>`;
+        memTableBody.appendChild(row);
+      });
+    }
+
+    // If we're in step mode and found a current instruction, highlight it in the editor
+    if (isStepMode && (currentInstructionText || currentPC !== null) && !simulationEnded) {
+      highlightInstructionInEditor(currentInstructionText, currentPC);
+    } else {
+      clearEditorHighlight();
+    }
+  }
+
+  // Function to clear editor highlight
+  function clearEditorHighlight() {
+    // Remove all highlight overlays in all editors
+    document.querySelectorAll('.highlight-overlay').forEach(overlay => overlay.innerHTML = '');
+  }
+
+  // Function to ensure highlight overlay exists for the active editor
+  function ensureHighlightOverlay(editor) {
+    // Always wrap the editor in .editor-container if not already
+    let parent = editor.parentElement;
+    if (!parent.classList.contains('editor-container')) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'editor-container';
+      parent.replaceChild(wrapper, editor);
+      wrapper.appendChild(editor);
+      parent = wrapper;
+    }
+    let overlay = parent.querySelector('.highlight-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.className = 'highlight-overlay';
+      parent.appendChild(overlay);
+    }
+    // Resize overlay to match editor
+    overlay.style.top = editor.offsetTop + 'px';
+    overlay.style.left = editor.offsetLeft + 'px';
+    overlay.style.width = editor.offsetWidth + 'px';
+    overlay.style.height = editor.offsetHeight + 'px';
+    return overlay;
+  }
+
+  // Function to highlight the current instruction in the editor
+  // Now accepts currentPC as a second argument
+  function highlightInstructionInEditor(instructionText, currentPC) {
+    const editor = document.querySelector('.code-editor.active');
+    if (!editor) return;
+
+    const content = editor.value;
+    const lines = content.split('\n');
+
+    let highlightLine = -1;
+
+    // Use PC mapping if available
+    if (typeof currentPC === 'number' && !isNaN(currentPC)) {
+      // Assume code starts at 0x20, each instruction is 2 bytes, and each line is an instruction
+      // Map PC to line: line = (PC - 0x20) / 2
+      const basePC = 0x20;
+      if (currentPC >= basePC) {
+        const lineIdx = Math.floor((currentPC - basePC) / 2);
+        if (lineIdx >= 0 && lineIdx < lines.length) {
+          highlightLine = lineIdx;
+        }
+      }
+    }
+
+    // Fallback: Try to match instruction text if PC mapping fails
+    if (highlightLine === -1 && instructionText) {
+      // ...existing normalization logic...
+      const normalize = s => s.replace(/[,]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+      function cleanLine(line) {
+        let l = line.split('#')[0];
+        if (l.includes(':')) l = l.split(':').slice(1).join(':');
+        return normalize(l);
+      }
+      const normInst = normalize(instructionText);
+      let bestLine = -1;
+      let bestScore = -1;
+      for (let i = 0; i < lines.length; i++) {
+        const codeNorm = cleanLine(lines[i]);
+        if (!codeNorm) continue;
+        let score = 0;
+        if (codeNorm === normInst) score = 100;
+        else if (codeNorm.startsWith(normInst)) score = 80;
+        else if (codeNorm.includes(normInst)) score = 60;
+        if (score > bestScore) {
+          bestScore = score;
+          bestLine = i;
+        }
+      }
+      if (bestLine !== -1) highlightLine = bestLine;
+    }
+
+    // Always ensure overlay exists for the active editor
+    const overlay = ensureHighlightOverlay(editor);
+    overlay.innerHTML = '';
+
+    if (highlightLine !== -1) {
+      // Highlight the mapped line
+      const highlight = document.createElement('div');
+      highlight.className = 'editor-line-highlight';
+      highlight.style.top = `${highlightLine * 1.5}em`;
+      highlight.style.height = `1.5em`;
+      overlay.appendChild(highlight);
+
+      // Scroll to the highlighted line if needed
+      const fontSize = parseFloat(getComputedStyle(editor).fontSize);
+      const lineTop = highlightLine * 1.5 * fontSize;
+      const lineBottom = lineTop + 1.5 * fontSize;
+      const editorScrollTop = editor.scrollTop;
+      const editorClientHeight = editor.clientHeight;
+
+      if (lineTop < editorScrollTop) {
+        editor.scrollTop = lineTop;
+      } else if (lineBottom > editorScrollTop + editorClientHeight) {
+        editor.scrollTop = lineBottom - editorClientHeight;
+      }
+    }
+  }
+
+  // Button event listeners
+  document.addEventListener('DOMContentLoaded', function() {
+    // Run button
+    document.getElementById('run-btn').addEventListener('click', async function() {
+      const code = getActiveEditorContent();
+      if (!code.trim()) return;
+      try {
+        document.getElementById('run-btn').disabled = true;
+        document.getElementById('step-mode-btn').disabled = true;
+        document.getElementById('step-btn').disabled = true;
+        const response = await fetch('http://localhost:8000/simulate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ code: code }),
         });
+        const data = await response.json();
+        isStepMode = false;
+        updateIDE(data);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        document.getElementById('run-btn').disabled = false;
+        document.getElementById('step-mode-btn').disabled = false;
       }
-      
-      // Update memory
-      const memTableBody = document.getElementById("memory-table").querySelector("tbody");
-      memTableBody.innerHTML = "";
-      if (data.memory && data.memory.length > 0) {
-        data.memory.slice(0, 32).forEach(memRow => {
-          const row = document.createElement("tr");
-          const bytesFormatted = memRow.bytes.map(b => b.toString(16).padStart(2, '0')).join(' ');
-          row.innerHTML = `<td>0x${memRow.address.toString(16).padStart(4, '0')}</td><td class="memory-bytes">${bytesFormatted}</td>`;
-          memTableBody.appendChild(row);
+      const initialTab = document.querySelector('[data-tab-id="0"]');
+      if (initialTab) {
+        initialTab.addEventListener('click', (e) => {
+          if (!e.target.classList.contains('tab-name') && !e.target.classList.contains('tab-close')) {
+            switchTab(0);
+          }
         });
-      }
 
-      // If we're in step mode and found a current instruction, highlight it in the editor
-      if (isStepMode && (currentInstructionText || currentPC !== null) && !simulationEnded) {
-        highlightInstructionInEditor(currentInstructionText, currentPC);
-      } else {
-        clearEditorHighlight();
-      }
-    }
-
-    // Function to clear editor highlight
-    function clearEditorHighlight() {
-      // Remove all highlight overlays in all editors
-      document.querySelectorAll('.highlight-overlay').forEach(overlay => overlay.innerHTML = '');
-    }
-
-    // Function to ensure highlight overlay exists for the active editor
-    function ensureHighlightOverlay(editor) {
-      // Always wrap the editor in .editor-container if not already
-      let parent = editor.parentElement;
-      if (!parent.classList.contains('editor-container')) {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'editor-container';
-        parent.replaceChild(wrapper, editor);
-        wrapper.appendChild(editor);
-        parent = wrapper;
-      }
-      let overlay = parent.querySelector('.highlight-overlay');
-      if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.className = 'highlight-overlay';
-        parent.appendChild(overlay);
-      }
-      // Resize overlay to match editor
-      overlay.style.top = editor.offsetTop + 'px';
-      overlay.style.left = editor.offsetLeft + 'px';
-      overlay.style.width = editor.offsetWidth + 'px';
-      overlay.style.height = editor.offsetHeight + 'px';
-      return overlay;
-    }
-
-    // Function to highlight the current instruction in the editor
-    // Now accepts currentPC as a second argument
-    function highlightInstructionInEditor(instructionText, currentPC) {
-      const editor = document.querySelector('.code-editor.active');
-      if (!editor) return;
-
-      const content = editor.value;
-      const lines = content.split('\n');
-
-      let highlightLine = -1;
-
-      // Use PC mapping if available
-      if (typeof currentPC === 'number' && !isNaN(currentPC)) {
-        // Assume code starts at 0x20, each instruction is 2 bytes, and each line is an instruction
-        // Map PC to line: line = (PC - 0x20) / 2
-        const basePC = 0x20;
-        if (currentPC >= basePC) {
-          const lineIdx = Math.floor((currentPC - basePC) / 2);
-          if (lineIdx >= 0 && lineIdx < lines.length) {
-            highlightLine = lineIdx;
-          }
+        // Setup tab name editing for the initial tab
+        const initialTabName = initialTab.querySelector('.tab-name');
+        if (initialTabName) {
+          setupTabNameEditing(initialTabName, 'main.zx16');
         }
       }
-
-      // Fallback: Try to match instruction text if PC mapping fails
-      if (highlightLine === -1 && instructionText) {
-        // ...existing normalization logic...
-        const normalize = s => s.replace(/[,]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
-        function cleanLine(line) {
-          let l = line.split('#')[0];
-          if (l.includes(':')) l = l.split(':').slice(1).join(':');
-          return normalize(l);
-        }
-        const normInst = normalize(instructionText);
-        let bestLine = -1;
-        let bestScore = -1;
-        for (let i = 0; i < lines.length; i++) {
-          const codeNorm = cleanLine(lines[i]);
-          if (!codeNorm) continue;
-          let score = 0;
-          if (codeNorm === normInst) score = 100;
-          else if (codeNorm.startsWith(normInst)) score = 80;
-          else if (codeNorm.includes(normInst)) score = 60;
-          if (score > bestScore) {
-            bestScore = score;
-            bestLine = i;
-          }
-        }
-        if (bestLine !== -1) highlightLine = bestLine;
-      }
-
-      // Always ensure overlay exists for the active editor
-      const overlay = ensureHighlightOverlay(editor);
-      overlay.innerHTML = '';
-
-      if (highlightLine !== -1) {
-        // Highlight the mapped line
-        const highlight = document.createElement('div');
-        highlight.className = 'editor-line-highlight';
-        highlight.style.top = `${highlightLine * 1.5}em`;
-        highlight.style.height = `1.5em`;
-        overlay.appendChild(highlight);
-
-        // Scroll to the highlighted line if needed
-        const fontSize = parseFloat(getComputedStyle(editor).fontSize);
-        const lineTop = highlightLine * 1.5 * fontSize;
-        const lineBottom = lineTop + 1.5 * fontSize;
-        const editorScrollTop = editor.scrollTop;
-        const editorClientHeight = editor.clientHeight;
-
-        if (lineTop < editorScrollTop) {
-          editor.scrollTop = lineTop;
-        } else if (lineBottom > editorScrollTop + editorClientHeight) {
-          editor.scrollTop = lineBottom - editorClientHeight;
-        }
-      }
-    }
-
-    // Button event listeners
-    document.addEventListener('DOMContentLoaded', function() {
-      // Run button
-      document.getElementById('run-btn').addEventListener('click', async function() {
-        const code = getActiveEditorContent();
-        if (!code.trim()) return;
-        try {
-          document.getElementById('run-btn').disabled = true;
-          document.getElementById('step-mode-btn').disabled = true;
-          document.getElementById('step-btn').disabled = true;
-          const response = await fetch('http://localhost:8000/simulate', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code: code }),
-          });
-          const data = await response.json();
-          isStepMode = false;
-          updateIDE(data);
-        } catch (error) {
-          console.error('Error:', error);
-        } finally {
-          document.getElementById('run-btn').disabled = false;
-          document.getElementById('step-mode-btn').disabled = false;
-        }
-      });
-
-      // Step Mode button
-      document.getElementById('step-mode-btn').addEventListener('click', async function() {
-        const code = getActiveEditorContent();
-        if (!code.trim()) return;
-        try {
-          document.getElementById('run-btn').disabled = true;
-          document.getElementById('step-mode-btn').disabled = true;
-          document.getElementById('step-btn').disabled = true;
-          const response = await fetch('http://localhost:8000/simulate_step', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code: code }),
-          });
-          const data = await response.json();
-          isStepMode = true;
-          document.getElementById('step-btn').disabled = false;
-          updateIDE(data);
-        } catch (error) {
-          console.error('Error:', error);
-        } finally {
-          document.getElementById('run-btn').disabled = false;
-          document.getElementById('step-mode-btn').disabled = false;
-        }
-      });
-
-      // Step button
-      document.getElementById('step-btn').addEventListener('click', async function() {
-        if (!isStepMode || this.disabled) return;
-        this.disabled = true;
-        try {
-          const response = await fetch('http://localhost:8000/step', {
-            method: 'POST',
-          });
-          const data = await response.json();
-          updateIDE(data);
-          // Disable step button if simulation ended
-          if (data.output && data.output.includes("Simulation ended.")) {
-            document.getElementById('step-btn').disabled = true;
-            isStepMode = false;
-          } else {
-            document.getElementById('step-btn').disabled = false;
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          document.getElementById('step-btn').disabled = false;
-        }
-      });
     });
 
-    // ...existing code...
-  </script>
+    // Step Mode button
+    document.getElementById('step-mode-btn').addEventListener('click', async function() {
+      const code = getActiveEditorContent();
+      if (!code.trim()) return;
+      try {
+        document.getElementById('run-btn').disabled = true;
+        document.getElementById('step-mode-btn').disabled = true;
+        document.getElementById('step-btn').disabled = true;
+        const response = await fetch('http://localhost:8000/simulate_step', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ code: code }),
+        });
+        const data = await response.json();
+        isStepMode = true;
+        document.getElementById('step-btn').disabled = false;
+        updateIDE(data);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        document.getElementById('run-btn').disabled = false;
+        document.getElementById('step-mode-btn').disabled = false;
+      }
+    });
+
+    // Step button
+    document.getElementById('step-btn').addEventListener('click', async function() {
+      if (!isStepMode || this.disabled) return;
+      this.disabled = true;
+      try {
+        const response = await fetch('http://localhost:8000/step', {
+          method: 'POST',
+        });
+        const data = await response.json();
+        updateIDE(data);
+        // Disable step button if simulation ended
+        if (data.output && data.output.includes("Simulation ended.")) {
+          document.getElementById('step-btn').disabled = true;
+          isStepMode = false;
+        } else {
+          document.getElementById('step-btn').disabled = false;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('step-btn').disabled = false;
+      }
+    });
+    // Upload file functionality
+    document.getElementById('upload-btn').addEventListener('click', function() {
+      document.getElementById('file-input').click();
+    });
+
+    document.getElementById('file-input').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file && file.name.endsWith('.s')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const content = e.target.result;
+          const activeEditor = document.querySelector('.code-editor.active');
+          if (activeEditor) {
+            activeEditor.value = content;
+          }
+          // Update tab name to match file name
+          const activeTab = document.querySelector('.code-tab.active');
+          if (activeTab) {
+            const tabNameInput = activeTab.querySelector('.tab-name');
+            tabNameInput.value = file.name;
+          }
+        };
+        reader.readAsText(file);
+      } else {
+        alert('Please select a valid .s file');
+      }
+      // Reset file input
+      event.target.value = '';
+    });
+
+// Download file functionality
+    document.getElementById('download-btn').addEventListener('click', function() {
+      const activeEditor = document.querySelector('.code-editor.active');
+      const activeTab = document.querySelector('.code-tab.active');
+
+      if (activeEditor && activeTab) {
+        const content = activeEditor.value;
+        const tabNameInput = activeTab.querySelector('.tab-name');
+        let fileName = tabNameInput.value;
+
+        // Ensure .s extension
+        if (!fileName.endsWith('.s')) {
+          fileName += '.s';
+        }
+
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    });
+
+  });
+
+
+
+  // ...existing code...
+</script>
 </body>
 </html>
