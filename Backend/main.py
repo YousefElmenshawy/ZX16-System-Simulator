@@ -54,9 +54,8 @@ async def simulate_code(request: Request):
             f.write(code)
 
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        assemble_cmd = ["python3", os.path.join(current_dir, "zx16asm.py"), asm_file, "-o", bin_file]
+        assemble_cmd = ["python", os.path.join(current_dir, "zx16asm.py"), asm_file, "-o", bin_file]
         try:
-
             result = subprocess.run(assemble_cmd, capture_output=True, text=True, cwd=current_dir, timeout=30)
         except subprocess.TimeoutExpired:
             if os.path.exists(asm_file):
@@ -174,7 +173,7 @@ async def simulate_step(request: Request):
             f.write(code)
 
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        assemble_cmd = ["python3", os.path.join(current_dir, "zx16asm.py"), asm_file, "-o", bin_file]
+        assemble_cmd = ["python", os.path.join(current_dir, "zx16asm.py"), asm_file, "-o", bin_file]
         try:
             result = subprocess.run(assemble_cmd, capture_output=True, text=True, cwd=current_dir, timeout=30)
         except subprocess.TimeoutExpired:

@@ -1,0 +1,2 @@
+li s1, 5
+ecall 0xA

@@ -10,19 +10,157 @@
       box-sizing: border-box;
     }
 
+    /* Updated Default Light Theme Styles */
     body {
       font-family: 'Segoe UI', Arial, sans-serif;
-      background: #1e1e1e;
-      color: #cccccc;
+      background: #ffffff;
+      color: #333333;
       height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
+    /* Dark Theme Styles */
+    body.dark-theme {
+      background: #121212;
+      color: #e0e0e0;
+    }
+    body.dark-theme .top-panel {
+      background: #1e1e1e;
+      border-bottom: 1px solid #333333;
+    }
+    body.dark-theme .ide-title {
+      color: #ffffff;
+    }
+    /* Override control buttons to use light mode styling in dark-theme */
+    body.dark-theme .control-button {
+      background: #007ACC;
+      color: white;
+      border: none;
+    }
+    body.dark-theme .control-button:hover {
+      background: #005F9E;
+    }
+    /* Optionally, override specific variants if needed */
+    body.dark-theme .control-button.run {
+      background: #16a085;
+    }
+    body.dark-theme .control-button.run:hover {
+      background: #138d75;
+    }
+    body.dark-theme .control-button.step {
+      background: #f39c12;
+    }
+    body.dark-theme .control-button.step:hover {
+      background: #e67e22;
+    }
+    body.dark-theme .code-editor {
+      background: #1e1e1e;
+      color: #e0e0e0;
+    }
+    body.dark-theme .line-numbers {
+      background: #1e1e1e;
+      color: #cccccc;
+      border-right: 1px solid #444444;
+    }
+    body.dark-theme .registers-panel {
+      background: #1e1e1e;
+      border-left: 1px solid #444444;
+    }
+    /* New: Ensure registers header is dark */
+    body.dark-theme .registers-header {
+      background: #1e1e1e;
+      border-bottom: 1px solid #333333;
+      color: #ffffff;
+    }
+    body.dark-theme .reg-table th {
+      background: #333333;
+      color: #0d7377;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+    body.dark-theme .reg-table td {
+      color: #e0e0e0;
+    }
+    body.dark-theme .reg-table tr:hover {
+      background: #444444;
+    }
+    body.dark-theme .bottom-panel {
+      background: #1e1e1e;
+      border-top: 1px solid #333333;
+    }
+    /* New: Dark styling for code tabs header and tab boxes */
+    body.dark-theme .code-tabs {
+      background: #1e1e1e;
+      border-bottom: 1px solid #333333;
+    }
+    body.dark-theme .code-tab {
+      background: #1e1e1e;
+      color: #e0e0e0;
+      border-right: 1px solid #333333;
+    }
+    body.dark-theme .code-tab.active {
+      background: #2a2a2a;
+      color: #ffffff;
+    }
+    body.dark-theme .tab-name {
+      background: transparent;
+      border: none;
+      color: inherit;
+    }
+    body.dark-theme .tab-close {
+      color: #e0e0e0;
+    }
+    body.dark-theme .tab-close:hover {
+      background: #333333;
+    }
+    body.dark-theme .new-tab-btn {
+      background: #1e1e1e;
+      color: #e0e0e0;
+      border-left: 1px solid #333333;
+    }
+    body.dark-theme .new-tab-btn:hover {
+      background: #2a2a2a;
+    }
+    /* New: Dark styling for bottom panel (console/memory bars) */
+    body.dark-theme .bottom-tabs {
+      background: #1e1e1e;
+      border-bottom: 1px solid #333333;
+    }
+    body.dark-theme .bottom-tab {
+      background: transparent;
+      color: #e0e0e0;
+      border-bottom: 2px solid transparent;
+    }
+    body.dark-theme .bottom-tab:hover {
+      background: #333333;
+    }
+    body.dark-theme .bottom-tab.active {
+      color: #ffffff;
+      border-bottom-color: #0d7377;
+      background: #2a2a2a;
+    }
+    body.dark-theme .console-output {
+      background: #1e1e1e;
+      color: #e0e0e0;
+      border: 1px solid #333333;
+    }
+    body.dark-theme .memory-table th {
+      background: #333333;
+      color: #0d7377;
+    }
+    body.dark-theme .memory-table td {
+      color: #e0e0e0;
+    }
+    body.dark-theme .memory-table tr:hover {
+      background: #444444;
+    }
+
     /* Top Panel */
     .top-panel {
-      background: #2d2d30;
-      border-bottom: 1px solid #3e3e42;
+      background: #f0f0f0;
+      border-bottom: 1px solid #ccc;
       padding: 8px 16px;
       display: flex;
       align-items: center;
@@ -33,12 +171,12 @@
     .ide-title {
       font-size: 16px;
       font-weight: 600;
-      color: #ffffff;
+      color: #000000;
       margin-right: 24px;
     }
 
     .control-button {
-      background: #0e639c;
+      background: #007ACC;
       color: white;
       border: none;
       border-radius: 4px;
@@ -52,13 +190,13 @@
     }
 
     .control-button:hover {
-      background: #1177bb;
+      background: #005F9E;
     }
 
     .control-button:disabled,
     #step-btn:disabled {
-      background: #464647;
-      color: #8c8c8c;
+      background: #cccccc;
+      color: #888888;
       cursor: not-allowed !important;
     }
 
@@ -109,14 +247,14 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      border-right: 1px solid #3e3e42;
+      border-right: 1px solid #ccc;
       min-width: 400px;
     }
 
     .code-tabs {
       display: flex;
-      background: #2d2d30;
-      border-bottom: 1px solid #3e3e42;
+      background: #f0f0f0;
+      border-bottom: 1px solid #ccc;
       overflow-x: auto;
       min-height: 35px;
     }
@@ -124,13 +262,13 @@
     .code-tab {
       display: flex;
       align-items: center;
-      background: #37373d;
+      background: #e8e8e8;
       border: none;
-      color: #cccccc;
+      color: #333333;
       padding: 8px 4px 8px 12px;
       font-size: 13px;
       cursor: pointer;
-      border-right: 1px solid #3e3e42;
+      border-right: 1px solid #ccc;
       white-space: nowrap;
       min-width: 120px;
       max-width: 200px;
@@ -138,12 +276,12 @@
     }
 
     .code-tab.active {
-      background: #1e1e1e;
-      color: #ffffff;
+      background: #ffffff;
+      color: #000000;
     }
 
     .code-tab:hover:not(.active) {
-      background: #424242;
+      background: #dedede;
     }
 
     .tab-name {
@@ -157,6 +295,9 @@
       padding: 0;
       cursor: pointer;
       min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .tab-name:focus {
@@ -166,7 +307,7 @@
     .tab-close {
       background: none;
       border: none;
-      color: #cccccc;
+      color: #333333;
       font-size: 16px;
       cursor: pointer;
       padding: 0 4px;
@@ -177,23 +318,23 @@
     }
 
     .tab-close:hover {
-      background: #464647;
+      background: #cccccc;
       opacity: 1;
     }
 
     .new-tab-btn {
-      background: #2d2d30;
+      background: #f0f0f0;
       border: none;
-      color: #cccccc;
+      color: #333333;
       font-size: 18px;
       cursor: pointer;
       padding: 8px 12px;
-      border-left: 1px solid #3e3e42;
+      border-left: 1px solid #ccc;
       transition: background 0.2s;
     }
 
     .new-tab-btn:hover {
-      background: #37373d;
+      background: #dedede;
     }
 
     .code-content {
@@ -209,8 +350,8 @@
       right: 0;
       bottom: 0;
       border: none;
-      background: #1e1e1e;
-      color: #d4d4d4;
+      background: #f7f7f7;
+      color: #333333;
       font-family: 'Fira Code', 'Consolas', monospace;
       font-size: 14px;
       line-height: 1.5;
@@ -228,7 +369,7 @@
     }
 
     .code-editor::placeholder {
-      color: #6a6a6a;
+      color: #888888;
     }
 
     /* Editor line highlighting */
@@ -245,7 +386,7 @@
       right: 0;
       bottom: 0;
       pointer-events: none;
-      z-index: 1;
+      z-index: 2;
     }
 
     .editor-line-highlight {
@@ -253,8 +394,8 @@
       left: 0;
       right: 0;
       height: 1.5em;
-      background-color: #2c4b6e36;
-      border-left: 3px solid #569cd6;
+      background-color: #d0e0f036;
+      border-left: 3px solid #007ACC;
     }
 
     /* Line numbers */
@@ -266,12 +407,12 @@
       font-family: 'Fira Code', 'Consolas', monospace;
       font-size: 14px;
       line-height: 1.5;
-      color: #858585;
+      color: #555555;
       text-align: right;
       padding: 16px 5px 16px 0;
-      background: #1e1e1e;
+      background: #f7f7f7;
       user-select: none;
-      border-right: 1px solid #3e3e42;
+      border-right: 1px solid #ccc;
     }
 
     .code-editor-with-line-numbers {
@@ -286,19 +427,21 @@
     /* Right Panel - Registers */
     .registers-panel {
       width: 320px;
-      background: #252526;
-      border-right: 1px solid #3e3e42;
+      background: #e0e0e0;
+      /* Changed border-right to border-left to separate from code panel */
+      border-left: 1px solid #ccc;
       display: flex;
       flex-direction: column;
+
     }
 
     .registers-header {
-      background: #2d2d30;
+      background: #f0f0f0;
       padding: 8px 16px;
-      border-bottom: 1px solid #3e3e42;
+      border-bottom: 1px solid #ccc;
       font-size: 13px;
       font-weight: 600;
-      color: #cccccc;
+      color: #333333;
     }
 
     .registers-content {
@@ -318,44 +461,44 @@
     .reg-table td {
       padding: 4px 8px;
       text-align: left;
-      border-bottom: 1px solid #3e3e42;
+      border-bottom: 1px solid #ccc;
     }
 
     .reg-table th {
-      background: #2d2d30;
-      color: #569cd6;
+      background: #d0d0d0;
+      color: #007ACC;
       font-weight: 600;
       position: sticky;
       top: 0;
     }
 
     .reg-table td {
-      color: #d4d4d4;
+      color: #333333;
     }
 
     .reg-table tr:hover {
-      background: #2a2a2a;
+      background: #e0e0e0;
     }
 
     /* Bottom Panel */
     .bottom-panel {
       height: 250px;
-      background: #252526;
-      border-top: 1px solid #3e3e42;
+      background: #e0e0e0;
+      border-top: 1px solid #ccc;
       display: flex;
       flex-direction: column;
     }
 
     .bottom-tabs {
       display: flex;
-      background: #2d2d30;
-      border-bottom: 1px solid #3e3e42;
+      background: #f0f0f0;
+      border-bottom: 1px solid #ccc;
     }
 
     .bottom-tab {
       background: transparent;
       border: none;
-      color: #cccccc;
+      color: #333333;
       padding: 8px 16px;
       font-size: 13px;
       cursor: pointer;
@@ -364,13 +507,13 @@
     }
 
     .bottom-tab:hover {
-      background: #37373d;
+      background: #dedede;
     }
 
     .bottom-tab.active {
-      color: #ffffff;
-      border-bottom-color: #0e639c;
-      background: #1e1e1e;
+      color: #000000;
+      border-bottom-color: #007ACC;
+      background: #ffffff;
     }
 
     .bottom-content {
@@ -395,13 +538,13 @@
     }
 
     .console-output {
-      background: #1e1e1e;
-      border: 1px solid #3e3e42;
+      background: #ffffff;
+      border: 1px solid #ccc;
       border-radius: 4px;
       padding: 12px;
       font-family: 'Fira Code', 'Consolas', monospace;
       font-size: 13px;
-      color: #d4d4d4;
+      color: #333333;
       white-space: pre-wrap;
       min-height: 180px;
       overflow-y: auto;
@@ -418,44 +561,39 @@
     .memory-table td {
       padding: 4px 8px;
       text-align: left;
-      border-bottom: 1px solid #3e3e42;
+      border-bottom: 1px solid #ccc;
     }
 
     .memory-table th {
-      background: #2d2d30;
-      color: #569cd6;
+      background: #f0f0f0;
+      color: #007ACC;
       font-weight: 600;
       position: sticky;
       top: 0;
     }
 
     .memory-table td {
-      color: #d4d4d4;
+      color: #333333;
     }
 
     .memory-table tr:hover {
-      background: #2a2a2a;
-    }
-
-    .memory-bytes {
-      font-family: 'Fira Code', 'Consolas', monospace;
-      color: #ce9178;
+      background: #dedede;
     }
 
     /* Highlighting styles */
     .reg-changed {
       animation: highlight-fade 2s;
-      background-color: #563c2736;
+      background-color: #ffc10736;
     }
 
     .current-instruction {
-      background-color: #2c4b6e36;
-      border-left: 3px solid #569cd6;
+      background-color: #d0e0f036;
+      border-left: 3px solid #007ACC;
       padding-left: 5px;
     }
 
     @keyframes highlight-fade {
-      0% { background-color: #c27c0e36; }
+      0% { background-color: #ffca2836; }
       100% { background-color: transparent; }
     }
 
@@ -471,16 +609,106 @@
     }
 
     ::-webkit-scrollbar-track {
-      background: #1e1e1e;
+      background: #ffffff;
     }
 
     ::-webkit-scrollbar-thumb {
-      background: #424242;
+      background: #cccccc;
       border-radius: 4px;
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: #4f4f4f;
+      background: #bbbbbb;
+    }
+
+    /* Updated scrollbar styling for dark theme */
+    body.dark-theme ::-webkit-scrollbar-track {
+      background: #1e1e1e;  /* Dark track */
+    }
+    body.dark-theme ::-webkit-scrollbar-thumb {
+      background: #444444;  /* Dark thumb */
+      border-radius: 4px;
+    }
+    body.dark-theme ::-webkit-scrollbar-thumb:hover {
+      background: #555555;
+    }
+    /* New: Line count display in code editor */
+    .line-count {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: rgba(0, 0, 0, 0.5);
+      color: #ffffff;
+      padding: 2px 6px;
+      font-size: 12px;
+      border-radius: 3px;
+      z-index: 3;
+    }
+    /* In light theme use a dark text on light background */
+    body.light-theme .line-count {
+      background: rgba(0, 0, 0, 0.2);
+      color: #000000;
+    }
+
+    /* Additional dark theme fixes */
+    body.dark-theme .code-panel {
+      /* Add a right border to visually separate the code editor from registers */
+      border-right: 1px solid #444444;
+    }
+    body.dark-theme .line-count {
+      /* Ensure the line count indicator uses subtle dark styling */
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border: 1px solid #333333;
+    }
+    body.dark-theme .bottom-panel {
+      /* Ensure bottom panel borders are consistent */
+      border-top: 1px solid #333333;
+    }
+
+    /* Updated dark theme for Register Table - bring back blue text for registers and their values */
+    body.dark-theme .reg-table th {
+      background: #2a2a2a;  /* kept dark for contrast */
+      color: #007ACC;      /* blue header text */
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+    body.dark-theme .reg-table td {
+      color: #e0e0e0;      /* changed from blue to light text for register values */
+      border-bottom: 1px solid #444444;
+    }
+
+    /* Updated dark mode for Memory Table - bring back blue text for address and bytes */
+    body.dark-theme .memory-table th {
+      background: #2a2a2a;
+      color: #007ACC;      /* blue header text */
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+    body.dark-theme .memory-table td {
+      color: #e0e0e0;      /* changed from blue to light text for memory values */
+      border-bottom: 1px solid #444444;
+    }
+
+    /* New modern styling for theme select */
+    .theme-select {
+      background: transparent;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 13px;
+      color: #333333;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .theme-select:focus {
+      border-color: #007ACC;
+    }
+    body.dark-theme .theme-select {
+      border: 1px solid #444444;
+      color: #e0e0e0;
     }
   </style>
 </head>
@@ -502,6 +730,13 @@
   <button class="control-button" id="upload-btn">Upload .s</button>
   <input type="file" id="file-input" accept=".s" style="display:none">
   <button class="control-button" id="download-btn">Download .s</button>
+  <!-- Moved Theme dropdown to far right -->
+  <div style="margin-left: auto;">
+    <select id="theme-select" class="theme-select">
+      <option value="dark">Dark</option>
+      <option value="light" selected>Light</option>
+    </select>
+  </div>
 </div>
 
 <!-- Main Content -->
@@ -517,7 +752,7 @@
     </div>
     <div class="code-content">
       <div class="editor-container">
-          <textarea class="code-editor active" id="editor-0" placeholder="# Enter your ZX16 assembly code here
+        <textarea class="code-editor active" id="editor-0" placeholder="# Enter your ZX16 assembly code here
 li s0, 5
 li s1, 0
 loop:
@@ -525,6 +760,8 @@ loop:
   addi s0, s0, -1
   bne s0, zero, loop
 halt"></textarea>
+        <!-- New element for displaying the line count -->
+        <div id="line-count" class="line-count"></div>
       </div>
     </div>
   </div>
@@ -664,6 +901,14 @@ halt"></textarea>
       selectedTab.classList.add('active');
       selectedEditor.classList.add('active');
       activeTabId = tabId;
+
+      // --- Highlight current line in step mode when switching tabs ---
+      if (isStepMode && window._lastStepData && (window._lastStepData.current_instruction || window._lastStepData.current_pc !== null)) {
+        highlightInstructionInEditor(window._lastStepData.current_instruction, window._lastStepData.current_pc);
+      } else {
+        clearEditorHighlight();
+      }
+      updateLineCount(); // Refresh the line count when switching tabs
     }
   }
 
@@ -719,7 +964,8 @@ halt"></textarea>
 
   // Update IDE state
   async function updateIDE(data) {
-    window._lastStepData = data; // Store data for reference
+    window._lastStepData = data;
+    console.log("[Debug] updateIDE called with data:", data);
 
     // Update console output
     const consoleOutput = document.getElementById("console-output");
@@ -728,21 +974,20 @@ halt"></textarea>
     // Check if simulation ended
     const simulationEnded = data.output && data.output.includes("Simulation ended.");
 
-    // Clear highlights if simulation ended
+    // Disable step button if simulation ended
     if (simulationEnded) {
-      clearEditorHighlight();
-      isStepMode = false;
+      document.getElementById('step-btn').disabled = true;
+      document.getElementById('step-btn').textContent = 'Step (Done)';
+    } else {
+      document.getElementById('step-btn').disabled = false;
+      document.getElementById('step-btn').textContent = 'Step';
     }
 
-    // Parse and display output
     let currentInstructionText = null;
     let currentPC = null;
     if (data.output) {
       const lines = data.output.split('\n');
-
-      // Use backend-provided current_pc and current_instruction if available
       if ('current_pc' in data && data.current_pc !== null && data.current_pc !== undefined) {
-        // Accept both hex string and int
         if (typeof data.current_pc === "string") {
           currentPC = parseInt(data.current_pc, 16);
         } else {
@@ -752,20 +997,14 @@ halt"></textarea>
       if ('current_instruction' in data && data.current_instruction) {
         currentInstructionText = data.current_instruction;
       }
-
-      // Fallback: try to extract from output if not present
       if (currentPC === null || currentInstructionText === null) {
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i];
-          // Look for executed instruction line (format: [0000] 0xXXXX instruction)
           if (line.match(/^\[\w+\]\s+0x\w+\s+\w+/)) {
-            // Extract the instruction part
             const instMatch = line.match(/(?:\[\w+\]\s+0x\w+\s+)(.+)$/);
             if (instMatch && instMatch[1]) {
               currentInstructionText = instMatch[1].trim();
-              // If next line says "Executed:", this is the current instruction
               if (i + 1 < lines.length && lines[i + 1].includes("Executed:")) {
-                // Try to extract PC from [xxxx]
                 const pcMatch = line.match(/^\[(\w+)\]/);
                 if (pcMatch) {
                   currentPC = parseInt(pcMatch[1], 16);
@@ -776,24 +1015,19 @@ halt"></textarea>
           }
         }
       }
-
-      // Display the output
       for (const line of lines) {
         const lineDiv = document.createElement("div");
         lineDiv.textContent = line;
-
-        // Highlight current instruction line in console
         if (line.includes("Executed:")) {
           lineDiv.classList.add("current-instruction");
         }
-
         consoleOutput.appendChild(lineDiv);
       }
     } else {
       consoleOutput.textContent = "Ready to run...";
     }
 
-    // Always update registers and memory, even if simulation is not ended
+    // Update registers and memory
     // Update registers with highlighting
     const regTableBody = document.getElementById("reg-table").querySelector("tbody");
     regTableBody.innerHTML = "";
@@ -813,7 +1047,8 @@ halt"></textarea>
         row.innerHTML = `<td>${reg}</td><td>${signedVal} <span style="color:#888;">(0x${(val & 0xFFFF).toString(16).padStart(4, '0')})</span></td>`;
         regTableBody.appendChild(row);
       });
-    }
+
+
 
     // Update memory
     const memTableBody = document.getElementById("memory-table").querySelector("tbody");
@@ -826,12 +1061,29 @@ halt"></textarea>
         memTableBody.appendChild(row);
       });
     }
+      console.log("Calling highlightInstructionInEditor? isStepMode =", isStepMode, "currentInstructionText =", currentInstructionText, "currentPC =", currentPC, "simulationEnded =", simulationEnded);
 
     // If we're in step mode and found a current instruction, highlight it in the editor
     if (isStepMode && (currentInstructionText || currentPC !== null) && !simulationEnded) {
-      highlightInstructionInEditor(currentInstructionText, currentPC);
+      highlightInstructionInEditor(currentInstructionText);
     } else {
       clearEditorHighlight();
+    }
+      highlightInstructionInEditor(currentInstructionText);
+      if (simulationEnded) {
+        clearEditorHighlight();
+        isStepMode = false;
+      }
+    }
+
+    console.log("updateIDE: isStepMode =", isStepMode, "simulationEnded =", simulationEnded);
+    console.log("updateIDE: currentInstructionText =", currentInstructionText, "currentPC =", currentPC);
+    // Force calling highlightInstructionInEditor in step mode, even if currentInstructionText is empty
+    if (isStepMode && !simulationEnded) {
+       console.log("updateIDE: Forcing call to highlightInstructionInEditor");
+       highlightInstructionInEditor(currentInstructionText || "");
+    } else {
+       clearEditorHighlight();
     }
   }
 
@@ -843,109 +1095,120 @@ halt"></textarea>
 
   // Function to ensure highlight overlay exists for the active editor
   function ensureHighlightOverlay(editor) {
-    // Always wrap the editor in .editor-container if not already
-    let parent = editor.parentElement;
-    if (!parent.classList.contains('editor-container')) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'editor-container';
-      parent.replaceChild(wrapper, editor);
-      wrapper.appendChild(editor);
-      parent = wrapper;
-    }
-    let overlay = parent.querySelector('.highlight-overlay');
+    // Check if highlight overlay already exists
+    let overlay = editor.parentElement.querySelector('.highlight-overlay');
     if (!overlay) {
+      // Create the overlay
       overlay = document.createElement('div');
       overlay.className = 'highlight-overlay';
-      parent.appendChild(overlay);
+      editor.parentElement.appendChild(overlay);
+
+      // Make sure parent is positioned
+      const parentStyle = window.getComputedStyle(editor.parentElement);
+      if (parentStyle.position === 'static') {
+        editor.parentElement.style.position = 'relative';
+      }
     }
-    // Resize overlay to match editor
-    overlay.style.top = editor.offsetTop + 'px';
-    overlay.style.left = editor.offsetLeft + 'px';
-    overlay.style.width = editor.offsetWidth + 'px';
-    overlay.style.height = editor.offsetHeight + 'px';
+
+    // Match size & position
+    overlay.style.position = 'absolute';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.right = '0';
+    overlay.style.bottom = '0';
+    overlay.style.pointerEvents = 'none';
+    overlay.style.zIndex = '2';  // Changed from 1 to 2 so the highlight appears on top
+
     return overlay;
   }
 
-  // Function to highlight the current instruction in the editor
-  // Now accepts currentPC as a second argument
-  function highlightInstructionInEditor(instructionText, currentPC) {
+  // Restore correct highlight logic based on executed instruction matching
+  function highlightInstructionInEditor(executedInstruction) {
     const editor = document.querySelector('.code-editor.active');
-    if (!editor) return;
+    if (!editor) {
+      console.log("[Debug] highlightInstructionInEditor: No active editor found.");
+      return;
+    }
+    // Remove the early-return when executedInstruction is empty; log instead.
+    if (!executedInstruction) {
+      console.log("[Debug] highlightInstructionInEditor: executedInstruction is empty.");
+      // For debugging, you may choose to continue with a default value or simply return.
+      // Here we'll default to an empty string so the function still runs.
+      executedInstruction = "";
+    }
 
     const content = editor.value;
     const lines = content.split('\n');
 
+    // Normalize text by removing extra spaces, commas, and converting to lowercase
+    const normalize = s => s.replace(/[,\s]+/g, ' ').trim().toLowerCase();
+    const normInst = normalize(executedInstruction);
+    console.log("[Debug] Normalized Executed Instruction:", normInst);
+
     let highlightLine = -1;
+    for (let i = 0; i < lines.length; i++) {
+      // Skip placeholder line if present in the first line
+      if (i === 0 && lines[i].includes("Enter your ZX16 assembly code here"))
+        continue;
 
-    // Use PC mapping if available
-    if (typeof currentPC === 'number' && !isNaN(currentPC)) {
-      // Assume code starts at 0x20, each instruction is 2 bytes, and each line is an instruction
-      // Map PC to line: line = (PC - 0x20) / 2
-      const basePC = 0x20;
-      if (currentPC >= basePC) {
-        const lineIdx = Math.floor((currentPC - basePC) / 2);
-        if (lineIdx >= 0 && lineIdx < lines.length) {
-          highlightLine = lineIdx;
-        }
+      let code = lines[i].split('#')[0];
+      if (code.includes(':')) {
+         code = code.split(':').slice(1).join(':');
+      }
+      code = normalize(code);
+      if (!code) continue;
+      console.log(`[Debug] Line ${i}:`, code);
+      if (code === normInst || code.startsWith(normInst) || code.includes(normInst)) {
+        highlightLine = i;
+        console.log(`[Debug] Match found on line ${i}:`, code);
+        break;
       }
     }
 
-    // Fallback: Try to match instruction text if PC mapping fails
-    if (highlightLine === -1 && instructionText) {
-      // ...existing normalization logic...
-      const normalize = s => s.replace(/[,]/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
-      function cleanLine(line) {
-        let l = line.split('#')[0];
-        if (l.includes(':')) l = l.split(':').slice(1).join(':');
-        return normalize(l);
-      }
-      const normInst = normalize(instructionText);
-      let bestLine = -1;
-      let bestScore = -1;
-      for (let i = 0; i < lines.length; i++) {
-        const codeNorm = cleanLine(lines[i]);
-        if (!codeNorm) continue;
-        let score = 0;
-        if (codeNorm === normInst) score = 100;
-        else if (codeNorm.startsWith(normInst)) score = 80;
-        else if (codeNorm.includes(normInst)) score = 60;
-        if (score > bestScore) {
-          bestScore = score;
-          bestLine = i;
-        }
-      }
-      if (bestLine !== -1) highlightLine = bestLine;
-    }
-
-    // Always ensure overlay exists for the active editor
     const overlay = ensureHighlightOverlay(editor);
     overlay.innerHTML = '';
-
     if (highlightLine !== -1) {
-      // Highlight the mapped line
+      const style = getComputedStyle(editor);
+      const paddingTop = parseFloat(style.paddingTop) || 0;
+      const fontSize = parseFloat(style.fontSize);
+      const lineHeight = parseFloat(style.lineHeight) || (1.5 * fontSize);
+      const highlightY = paddingTop + highlightLine * lineHeight;
+
       const highlight = document.createElement('div');
       highlight.className = 'editor-line-highlight';
-      highlight.style.top = `${highlightLine * 1.5}em`;
-      highlight.style.height = `1.5em`;
+      highlight.style.top = `${highlightY}px`;
+      highlight.style.height = `${lineHeight}px`;
       overlay.appendChild(highlight);
 
-      // Scroll to the highlighted line if needed
-      const fontSize = parseFloat(getComputedStyle(editor).fontSize);
-      const lineTop = highlightLine * 1.5 * fontSize;
-      const lineBottom = lineTop + 1.5 * fontSize;
-      const editorScrollTop = editor.scrollTop;
-      const editorClientHeight = editor.clientHeight;
-
-      if (lineTop < editorScrollTop) {
-        editor.scrollTop = lineTop;
-      } else if (lineBottom > editorScrollTop + editorClientHeight) {
-        editor.scrollTop = lineBottom - editorClientHeight;
+      // Scroll editor if highlighted line is out of view
+      const lineBottom = highlightY + lineHeight;
+      if (highlightY < editor.scrollTop) {
+        editor.scrollTop = highlightY;
+      } else if (lineBottom > editor.scrollTop + editor.clientHeight) {
+        editor.scrollTop = lineBottom - editor.clientHeight;
       }
+      console.log(`[Debug] Highlight applied on line ${highlightLine} at ${highlightY}px`);
+    } else {
+      console.log("[Debug] No matching line found for the executed instruction.");
     }
   }
 
   // Button event listeners
   document.addEventListener('DOMContentLoaded', function() {
+    // --- Fix: Add click handler for main tab on page load ---
+    const initialTab = document.querySelector('[data-tab-id="0"]');
+    if (initialTab) {
+      initialTab.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('tab-name') && !e.target.classList.contains('tab-close')) {
+          switchTab(0);
+        }
+      });
+      // Setup tab name editing for the initial tab
+      const initialTabName = initialTab.querySelector('.tab-name');
+      if (initialTabName) {
+        setupTabNameEditing(initialTabName, 'main.zx16');
+      }
+    }
     // Run button
     document.getElementById('run-btn').addEventListener('click', async function() {
       const code = getActiveEditorContent();
@@ -963,26 +1226,12 @@ halt"></textarea>
         });
         const data = await response.json();
         isStepMode = false;
-        updateIDE(data);
+        updateIDE(data, code); // Pass code to updateIDE
       } catch (error) {
         console.error('Error:', error);
       } finally {
         document.getElementById('run-btn').disabled = false;
         document.getElementById('step-mode-btn').disabled = false;
-      }
-      const initialTab = document.querySelector('[data-tab-id="0"]');
-      if (initialTab) {
-        initialTab.addEventListener('click', (e) => {
-          if (!e.target.classList.contains('tab-name') && !e.target.classList.contains('tab-close')) {
-            switchTab(0);
-          }
-        });
-
-        // Setup tab name editing for the initial tab
-        const initialTabName = initialTab.querySelector('.tab-name');
-        if (initialTabName) {
-          setupTabNameEditing(initialTabName, 'main.zx16');
-        }
       }
     });
 
@@ -1004,7 +1253,7 @@ halt"></textarea>
         const data = await response.json();
         isStepMode = true;
         document.getElementById('step-btn').disabled = false;
-        updateIDE(data);
+        updateIDE(data, code); // Pass code to updateIDE
       } catch (error) {
         console.error('Error:', error);
       } finally {
@@ -1017,24 +1266,35 @@ halt"></textarea>
     document.getElementById('step-btn').addEventListener('click', async function() {
       if (!isStepMode || this.disabled) return;
       this.disabled = true;
+      this.textContent = 'Step...';
       try {
+        const code = getActiveEditorContent();
         const response = await fetch('http://localhost:8000/step', {
           method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ code })
         });
         const data = await response.json();
         updateIDE(data);
-        // Disable step button if simulation ended
-        if (data.output && data.output.includes("Simulation ended.")) {
-          document.getElementById('step-btn').disabled = true;
-          isStepMode = false;
+        // If simulation ended, keep disabled and show 'Step (Done)'
+        const simulationEnded = data.output && data.output.includes("Simulation ended.");
+        if (simulationEnded) {
+          this.disabled = true;
+          this.textContent = 'Step (Done)';
         } else {
-          document.getElementById('step-btn').disabled = false;
+          this.disabled = false;
+          this.textContent = 'Step';
         }
       } catch (error) {
         console.error('Error:', error);
-        document.getElementById('step-btn').disabled = false;
+        this.disabled = false;
+        this.textContent = 'Step';
       }
+      switchTab(activeTabId);
     });
+
     // Upload file functionality
     document.getElementById('upload-btn').addEventListener('click', function() {
       document.getElementById('file-input').click();
@@ -1096,7 +1356,76 @@ halt"></textarea>
 
 
 
-  // ...existing code...
+  // Updated Theme selection event listener
+  document.getElementById('theme-select').addEventListener('change', function() {
+    if (this.value === 'light') {
+      document.body.classList.remove('dark-theme');
+      document.body.classList.add('light-theme');
+    } else if (this.value === 'dark') {
+      document.body.classList.remove('light-theme');
+      document.body.classList.add('dark-theme');
+    }
+  });
+
+  // New function to update line count of active editor
+  function updateLineCount() {
+    const activeEditor = document.querySelector('.code-editor.active');
+    const lineCountDiv = document.getElementById('line-count');
+    if (activeEditor && lineCountDiv) {
+      const lines = activeEditor.value.split('\n').length;
+      lineCountDiv.textContent = `Lines: ${lines}`;
+    }
+  }
+
+  // Add input event listener to update line count dynamically
+  document.querySelectorAll('.code-editor').forEach(editor => {
+    editor.addEventListener('input', updateLineCount);
+  });
+
+  // Call updateLineCount initially and after tab switching
+  function switchTab(tabId) {
+    // Remove active class from all tabs and editors
+    document.querySelectorAll('.code-tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    document.querySelectorAll('.code-editor').forEach(editor => {
+      editor.classList.remove('active');
+    });
+
+    // Add active class to selected tab and editor
+    const selectedTab = document.querySelector(`[data-tab-id="${tabId}"]`);
+    const selectedEditor = document.getElementById(`editor-${tabId}`);
+
+    if (selectedTab && selectedEditor) {
+      selectedTab.classList.add('active');
+      selectedEditor.classList.add('active');
+      activeTabId = tabId;
+      if (isStepMode && window._lastStepData && (window._lastStepData.current_instruction || window._lastStepData.current_pc !== null)) {
+        highlightInstructionInEditor(window._lastStepData.current_instruction, window._lastStepData.current_pc);
+      } else {
+        clearEditorHighlight();
+      }
+      updateLineCount(); // Refresh the line count when switching tabs
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // --- Fix: Add click handler for main tab on page load ---
+    const initialTab = document.querySelector('[data-tab-id="0"]');
+    if (initialTab) {
+      initialTab.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('tab-name') && !e.target.classList.contains('tab-close')) {
+          switchTab(0);
+        }
+      });
+      // Setup tab name editing for the initial tab
+      const initialTabName = initialTab.querySelector('.tab-name');
+      if (initialTabName) {
+        setupTabNameEditing(initialTabName, 'main.zx16');
+      }
+    }
+    updateLineCount();
+  });
 </script>
 </body>
 </html>
