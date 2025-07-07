@@ -1,46 +1,23 @@
 ecall 11
-
-li t0, 0x8000      # Pointer to ball data
+li t0, 0x8000      # Pointer to ball data (x, y, dx, dy)
 li s0, 0xF000      # Pointer to graphics memory
-li ra, 0           # Used for negation
 
 j main_loop
 
 main_loop:
-lb a0, 0(t0)       # Load x
-lb a1, 2(t0)       # Load dx
+# Update x position
+lb a0, 0(t0)       # x
+lb a1, 2(t0)       # dx
 add a0, a0, a1
-sb a0, 0(t0)
+sb a0, 0(t0)       # store new x
 
-li t1, 0
-blt a0, t1, flip_dx
-li t1, 19
-blt t1, a0, flip_dx
-j after_x_check
-
-flip_dx:
-lb a1, 2(t0)
-sub a1, ra, a1
-sb a1, 2(t0)
-
-after_x_check:
+# Update y position
 lb a0, 1(t0)       # y
 lb a1, 3(t0)       # dy
 add a0, a0, a1
-sb a0, 1(t0)
+sb a0, 1(t0)       # store new y
 
-li t1, 0
-blt a0, t1, flip_dy
-li t1, 14
-blt t1, a0, flip_dy
-j after_y_check
-
-flip_dy:
-lb a1, 3(t0)
-sub a1, ra, a1
-sb a1, 3(t0)
-
-after_y_check:
+# Compute tile index: (y * 20 + x)
 lb a0, 1(t0)       # y
 li a1, 0
 li t1, 0
@@ -52,11 +29,12 @@ blt t1, a0, loop_y
 
 lb t1, 0(t0)       # x
 add a1, a1, t1
-add a1, a1, s0
+add a1, a1, s0     # a1 now points to tile memory
+
 li t1, 1           # ball tile index
 sb t1, 0(a1)
 
-# Call ecall to trigger screen render
+li ra, 0
 ecall 11
 
 j main_loop

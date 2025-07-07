@@ -94,7 +94,7 @@ int main(int argc, char* argv[]) {
     sim.loadBinaryFile(file);    // Load the binary program file
     GraphicsMemory Gmem;
     Gmem.setMemory(sim.getMemoryPtr());
-    sim.run();
+
 
 
     Graphics graphics;
@@ -163,7 +163,7 @@ int main(int argc, char* argv[]) {
         Gmem.setTileAt(10, y, 2);  // tile 2 = thin vertical white line
     }
 
-    graphics.run();
+    //graphics.run();
 
     //setting initial values for movement
     mem[0x8000] = 10;  // x
@@ -171,6 +171,9 @@ int main(int argc, char* argv[]) {
     mem[0x8002] = 1;   // dx
     mem[0x8003] = 1;   // dy
 
+
+    graphics.tick();
+    sim.run();
     // Run in main thread — no need for thread////  (to test moving bal run this and comment simulation and graphics run)
     //sim.runInteractive(&graphics);
 
@@ -179,7 +182,7 @@ int main(int argc, char* argv[]) {
     //     if (!sim.halted) {
     //         sim.step();  // Execute one instruction from assembly code
     //     }
-    //     graphics.draw(mem);  // Draw the screen based on memory
+    //     graphics.draw(sim.getMemoryPtr());  // Draw the screen based on memory
     //     graphics.tick();     // Update the window
     //     std::this_thread::sleep_for(std::chrono::milliseconds(16)); // ~60 FPS
     // }

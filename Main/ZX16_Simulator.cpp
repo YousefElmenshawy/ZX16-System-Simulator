@@ -498,7 +498,8 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
         }
         case 11: { //render the screen
             if (graphics) {
-                graphics->tick();  // Trigger screen update
+                graphics->draw(memory);  // Draw current tilemap
+                graphics->render();                // Push to window
             }
             std::cout << "ECALL done. Continuing the simulator." << std::endl;
             running = true;
@@ -632,43 +633,21 @@ void ZX16_Simulator::dumpMemory(uint16_t address, uint16_t size) const {
 uint8_t* ZX16_Simulator::getMemoryPtr() { return memory; }
 
 void ZX16_Simulator::step() {
-    if (!running) {
-        std::cout << "Simulator is halted.\n";
-        return;
-    }
-
-    if (halted) return;
-
     if (pc >= programEnd) {
-        std::cerr << "PC out of program bounds at 0x" << std::hex << pc << ". Halting execution.\n";
-        running = false;
+        std::cerr << "PC out of program bounds at 0x" << std::hex << pc << ". Halting.\n";
+        halted = true;
         return;
     }
 
-    // Fetch 16-bit instruction from memory (little-endian)
-    uint16_t binaryInstruction = memory[pc] | (memory[pc + 1] << 8);
+    uint16_t BinaryInstruction = memory[pc] | (memory[pc + 1] << 8);
+    Instruction inst(BinaryInstruction);
+    PrintDynamicDiassembley(BinaryInstruction); // Optional for debugging
 
-    // Decode instruction
-    Instruction inst(binaryInstruction);
-    PrintDynamicDiassembley(binaryInstruction);
-
-    // Execute instruction
     bool jumped = executeInstruction(inst);
-
-    // If instruction didn't jump, increment PC normally
-    if (!jumped) {
-        pc += 2;
-    }
-
-    // Check bounds again
-    if (pc >= programEnd) {
-        std::cerr << "PC out of program bounds at 0x" << std::hex << pc << ". Halting execution.\n";
-        running = false;
-    }
+    if (!jumped) pc += 2;
 }
 void ZX16_Simulator::runInteractive(Graphics* g) {
-    graphics = g;  // store the graphics pointer
-
+    graphics = g;
     if (!graphics) return;
 
     pc = 0;
@@ -678,21 +657,23 @@ void ZX16_Simulator::runInteractive(Graphics* g) {
         // Fetch instruction
         uint16_t instBin = memory[pc] | (memory[pc + 1] << 8);
         Instruction inst(instBin);
-        PrintDynamicDiassembley(pc);  // optional disassembler output
+        PrintDynamicDiassembley(pc);  // Optional
 
         bool jumped = executeInstruction(inst);
 
-        // Advance PC only if no jump occurred
         if (!jumped) pc += 2;
 
-        // Slow down simulation to make movement visible
+        // Draw updated memory contents to graphics
+        graphics->draw(memory);
+        graphics->tick(); // Trigger rendering
+
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-        // Optional: stop if program ends
         if (pc >= programEnd) {
             std::cerr << "Program ended at 0x" << std::hex << pc << std::endl;
             running = false;
         }
     }
 }
+
 

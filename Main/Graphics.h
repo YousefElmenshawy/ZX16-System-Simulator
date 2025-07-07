@@ -14,16 +14,20 @@ public:
     void run();  // Starts the main rendering loop
     void updateTilePixel(int tileIndex, int x, int y, uint8_t colorIndex);
 
+    void drawPixel(int x, int y, uint8_t colorIndex);
+
+
+    void drawTile(int tileX, int tileY, uint8_t tileIndex);
     void draw(uint8_t* mem);
     void tick() {
         if (!window||!Gmemory) return;
-        draw(Gmemory->getMemory());
+        //draw(Gmemory->getMemory());
         render();
     }
     bool isOpen() const {
         return (window&&window->isOpen());
     }
-
+    void render();
     ~Graphics() {
         delete window;
     }
@@ -38,7 +42,7 @@ private:
     int tileSize;
 
     void processEvents();
-    void render();
+
 
     GraphicsMemory* Gmemory = nullptr;
 

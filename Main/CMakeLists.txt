@@ -83,6 +83,7 @@ add_executable(disassembly_tests
     ZX16_Simulator.cpp
         GraphicsMemory.cpp
         Graphics.cpp
+        main.cpp
 )
 target_link_libraries(disassembly_tests gtest gtest_main pthread)
 add_test(NAME disassembly_tests COMMAND disassembly_tests)
