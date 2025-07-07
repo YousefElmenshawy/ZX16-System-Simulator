@@ -21,9 +21,16 @@ using namespace std;
 class GraphicsMemory {
 private:
     uint8_t* memory = nullptr;
+    bool memoryChanged=true;
 
 public:
     // For Tile map buffer
+    bool hasChanged() const { return memoryChanged; }
+    void clearChanged() { memoryChanged = false; }
+    void markChanged() {
+        memoryChanged = true;
+    }
+
     void setMemory(uint8_t* mem);
     void setTileAt(int x, int y, uint8_t tile);
     uint8_t getTileAt(int x, int y) const;

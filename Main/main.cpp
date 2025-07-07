@@ -172,8 +172,22 @@ int main(int argc, char* argv[]) {
     mem[0x8003] = 1;   // dy
 
 
-    graphics.tick();
-    sim.run();
+    graphics.tick();  // initial draw
+
+    // 👉 Run simulator in a new thread (NOT graphics)
+    std::thread simThread([&sim]() {
+        sim.run();
+    });
+
+    //  Run SFML window loop in main thread
+    graphics.run();  // This must stay in main thread
+
+    if (simThread.joinable()) {
+        simThread.join();
+    }
+
+    // graphics.tick();
+    // sim.run();
     // Run in main thread — no need for thread////  (to test moving bal run this and comment simulation and graphics run)
     //sim.runInteractive(&graphics);
 

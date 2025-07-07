@@ -14,6 +14,7 @@ public:
     void run();  // Starts the main rendering loop
     void updateTilePixel(int tileIndex, int x, int y, uint8_t colorIndex);
 
+
     void drawPixel(int x, int y, uint8_t colorIndex);
 
 
@@ -32,10 +33,12 @@ public:
         delete window;
     }
     sf::RenderWindow* window = nullptr;
+    GraphicsMemory* Gmemory = nullptr;
 private:
 
     sf::RectangleShape tile;
     sf::RectangleShape pixel;
+
 
     int tilesX;
     int tilesY;
@@ -44,7 +47,7 @@ private:
     void processEvents();
 
 
-    GraphicsMemory* Gmemory = nullptr;
+
 
 };
 

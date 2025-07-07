@@ -496,16 +496,19 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             running = false;
             return false;
         }
-        case 11: { //render the screen
-            if (graphics) {
-                graphics->draw(memory);  // Draw current tilemap
-                graphics->render();                // Push to window
+        case 11: {
+            if (graphics && graphics->isOpen()) {
+                graphics->render();
+                if (graphics->Gmemory) {
+                    graphics->Gmemory->clearChanged();  // Reset dirty flag
+                }
             }
             std::cout << "ECALL done. Continuing the simulator." << std::endl;
             running = true;
             return false;
             break;
         }
+
         default:
             std::cerr << "Unknown service number: " << svc << "\n";
             break;

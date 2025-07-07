@@ -21,13 +21,20 @@ Graphics::Graphics(int width, int height, int tileSize)
     tile.setOutlineThickness(1);  //outline thickness
     pixel.setSize(sf::Vector2f(1, 1)); // Each pixel is drawn as 1x1 and positioned accordingly
 }
-// run the graphics window
 void Graphics::run() {
     while (window->isOpen()) {
-        processEvents();  //handle window events
-        render();  //draw the frame
+        processEvents();
+
+        if (Gmemory && Gmemory->hasChanged()) {
+            render();
+            Gmemory->clearChanged(); // Reset flag
+        }
+
+        // Optional: add a small sleep to reduce CPU usage
+        sf::sleep(sf::milliseconds(10));
     }
 }
+
 // window events
 void Graphics::processEvents() {
     sf::Event event;
