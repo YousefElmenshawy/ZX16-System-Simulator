@@ -42,11 +42,28 @@ main:
     lw ra, 0(sp)
     addi sp, 2
     L2:
+    li t0, 18
+    li t1, 63
+    addi t1, 11
+    bne a0, t0, L3
+    addi sp, -2
+    sw ra, 0(sp)
+    call p1down
+    lw ra, 0(sp)
+    addi sp, 2
+    L3:
+    bne a0, t1, L4
+    addi sp, -2
+    sw ra, 0(sp)
+    call p2down
+    lw ra, 0(sp)
+    addi sp, 2
+    L4:
     ret   	    
 
 
 p2up:
-  
+
     addi s1, 20
     li t1, 0
     sb t1, 0(s1)
@@ -55,6 +72,17 @@ p2up:
     sb t1, 0(s1)
     addi s1, 20
     ret
+
+p1down:
+    addi s0, -20
+    li t0, 0
+    sb t0, 0(s0)
+    addi s0, 60
+    li t0, 2
+    sb t0, 0(s0)
+    addi s0, -20
+    ret                   # Jump back to loop
+
 
 p1up:
     addi s0, 20
@@ -67,6 +95,16 @@ p1up:
     ret                  # Jump back to loop
 
                 # Jump back to loop
+
+p2down:
+    addi s1, -20
+    li t0, 0
+    sb t0, 0(s1)
+    addi s1, 60
+    li t0, 3
+    sb t0, 0(s1)
+    addi s1, -20
+    ret                   # Jump back to loop
 
 
 
