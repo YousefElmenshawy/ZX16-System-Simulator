@@ -36,10 +36,11 @@ private:
     bool executeSysType(const Instruction& inst);
     bool executeInstruction( Instruction& inst);
     void PrintDynamicDiassembley(uint16_t PC);
-    void dumpRegisters() const;
+
     void dumpMemory(uint16_t address, uint16_t size) const;
     Graphics* graphics= nullptr;
 public:
+    void dumpRegisters() const;
     uint16_t pc;
     bool halted = false;
     ZX16_Simulator();

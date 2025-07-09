@@ -38,9 +38,10 @@ private:
     int tilesX, tilesY;
 
     // Add for keyboard input
-    sf::Keyboard::Key lastKeyPressed = sf::Keyboard::Unknown;
+
     bool keyPressedFlag = false;
 public:
+    sf::Keyboard::Key lastKeyPressed = sf::Keyboard::Unknown;
     void drawPixel(int x, int y, uint8_t colorIndex);
     void drawTile(int tileX, int tileY, uint8_t tileIndex);
     // Add for keyboard input
