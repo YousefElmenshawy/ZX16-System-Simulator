@@ -56,6 +56,7 @@ public:
             registers[index] = value;
         }
     }
+    void dumpTileMap(uint16_t start, uint16_t width, uint16_t height)const;
     void step();
     bool running;
     void runInteractive(Graphics* graphics);

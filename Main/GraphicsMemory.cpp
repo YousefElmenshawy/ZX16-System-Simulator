@@ -62,3 +62,15 @@ sf::Color GraphicsMemory:: colorPalette(uint8_t index) const {
 uint8_t* GraphicsMemory::getMemory() {
     return memory;
 }
+void GraphicsMemory::printTileMap() const {
+    if (!memory) {
+        std::cout << "No memory set.\n";
+        return;
+    }
+    for (int y = 0; y < tilesPerCol; ++y) {
+        for (int x = 0; x < tilesPerRow; ++x) {
+            std::cout << std::hex << (int)getTileAt(x, y) << " ";
+        }
+        std::cout << std::endl;
+    }
+}
