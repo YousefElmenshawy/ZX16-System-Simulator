@@ -463,20 +463,26 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             return false;
         }
         case 7: { // Read Keyboard
-            if (graphics) {
-                if (graphics->hasKeyPressed()) {
-                    // Map SFML key code to a simple value (e.g., just use the code)
-                    registers[6] = static_cast<int>(graphics->getLastKeyPressed()); // a0 = key code
-                    registers[7] = 1; // a1 = key pressed
-                    graphics->resetKeyFlag(); // clear flag after reading
+
+
+                if (graphics) {
+                    if (graphics->hasKeyPressed()) {
+
+                        // Map SFML key code to a simple value (e.g., just use the code)
+                        registers[6] = static_cast<int>(graphics->getLastKeyPressed()); // a0 = key code
+                        registers[7] = 1; // a1 = key pressed
+
+                        graphics->resetKeyFlag(); // clear flag after reading
+                    } else {
+                        registers[7] = 0; // a1 = no key pressed
+                    }
                 } else {
                     registers[7] = 0; // a1 = no key pressed
                 }
-            } else {
-                registers[7] = 0; // a1 = no key pressed
-            }
-            std::cout << "ECALL done. Continuing the simulator." << std::endl;
-            running = true;
+
+                std::cout << "ECALL done. Continuing the simulator." << std::endl;
+                running = true;
+
             return false;
         }
         case 8: { // Registers Dump
@@ -671,63 +677,40 @@ void ZX16_Simulator::step() {
     }
 }
 void ZX16_Simulator::runInteractive(Graphics* g) {
-    graphics = g;  // store the graphics pointer
-
+    graphics = g;
     if (!graphics) return;
 
     pc = 0;
     running = true;
 
+    int frameCounter = 0;
+    const int RENDER_EVERY_N_FRAMES = 10; // Render every 10 instruction cycles
+
     while (graphics->isOpen() && running) {
-        // Fetch instruction
-        uint16_t instBin = memory[pc] | (memory[pc + 1] << 8);
-        Instruction inst(instBin);
-        PrintDynamicDiassembley(pc);  // optional disassembler output
-
-        bool jumped = executeInstruction(inst);
-
-        // Debug: Print first 16 bytes of tile map memory
-        std::cout << "[DEBUG] Tile map @0xF000 (first 16): ";
-        for (int i = 0; i < 16; ++i) {
-            std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)memory[0xF000 + i] << " ";
-        }
-        std::cout << std::dec << std::endl;
-        // Print all 300 bytes of tile map as a grid
-        std::cout << "[DEBUG] Tile map full grid:" << std::endl;
-        for (int y = 0; y < 15; ++y) {
-            for (int x = 0; x < 20; ++x) {
-                std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)memory[0xF000 + y * 20 + x] << " ";
-            }
-            std::cout << std::endl;
-        }
-        // Print first 16 bytes of tile 1 definition
-        std::cout << "[DEBUG] Tile 1 def @0xF200: ";
-        for (int i = 0; i < 16; ++i) {
-            std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)memory[0xF200 + i] << " ";
-        }
-        std::cout << std::dec << std::endl;
-        // Print first 16 bytes of palette
-        std::cout << "[DEBUG] Palette @0xFA00: ";
-        for (int i = 0; i < 16; ++i) {
-            std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)memory[0xFA00 + i] << " ";
-        }
-        std::cout << std::dec << std::endl;
-
-        // Process window events to keep window responsive
+        // Process events every cycle to maintain responsiveness
         graphics->processEvents();
-        // Force graphics redraw every cycle
-        graphics->render();
 
-        // Advance PC only if no jump occurred
-        if (!jumped) pc += 2;
+        // Execute instruction
+        if (pc < programEnd) {
+            uint16_t instBin = memory[pc] | (memory[pc + 1] << 8);
+            Instruction inst(instBin);
 
-        // Slow down simulation to make movement visible
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            bool jumped = executeInstruction(inst);
+            if (!jumped) pc += 2;
 
-        // Optional: stop if program ends
-        if (pc >= programEnd) {
-            std::cerr << "Program ended at 0x" << std::hex << pc << std::endl;
-            running = false;
+            if (pc >= programEnd) {
+                running = false;
+            }
         }
+
+        // Render less frequently to maintain speed
+        frameCounter++;
+        if (frameCounter >= RENDER_EVERY_N_FRAMES) {
+            graphics->render();
+            frameCounter = 0;
+        }
+
+        // Tiny sleep to prevent 100% CPU usage
+        std::this_thread::sleep_for(std::chrono::microseconds(1));
     }
 }

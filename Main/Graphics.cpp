@@ -4,6 +4,8 @@
 
 #include "Graphics.h"
 #include "GraphicsMemory.h"
+#include<iostream>
+using namespace std;
 // initialize the graphics window & tile paremeters
 Graphics::Graphics(int width, int height, int tileSize)
     : tileSize(tileSize)
@@ -35,9 +37,12 @@ void Graphics::processEvents() {
         if (event.type == sf::Event::Closed)
             window->close();  //for closing the window
         // Keyboard event handling for ECALL 7
+        std::cout<< "No " << static_cast<int>(lastKeyPressed) << endl;
         if (event.type == sf::Event::KeyPressed) {
             lastKeyPressed = event.key.code;
             keyPressedFlag = true;
+            std::cout<< "Key pressed: " << static_cast<int>(lastKeyPressed) << endl;
+
         }
     }
 }
