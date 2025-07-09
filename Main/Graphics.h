@@ -28,20 +28,26 @@ public:
         delete window;
     }
     sf::RenderWindow* window = nullptr;
+    void render();
+    void processEvents();
 private:
-
+    GraphicsMemory* Gmemory = nullptr;
     sf::RectangleShape tile;
     sf::RectangleShape pixel;
-
-    int tilesX;
-    int tilesY;
     int tileSize;
+    int tilesX, tilesY;
 
-    void processEvents();
-    void render();
-
-    GraphicsMemory* Gmemory = nullptr;
-
+    // Add for keyboard input
+    sf::Keyboard::Key lastKeyPressed = sf::Keyboard::Unknown;
+    bool keyPressedFlag = false;
+public:
+    void drawPixel(int x, int y, uint8_t colorIndex);
+    void drawTile(int tileX, int tileY, uint8_t tileIndex);
+    // Add for keyboard input
+    void resetKeyFlag() { keyPressedFlag = false; }
+    bool hasKeyPressed() const { return keyPressedFlag; }
+    sf::Keyboard::Key getLastKeyPressed() const { return lastKeyPressed; }
+    void setLastKeyPressed(sf::Keyboard::Key key) { lastKeyPressed = key; keyPressedFlag = true; }
 };
 
 #endif // GRAPHICS_H

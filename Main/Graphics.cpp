@@ -34,6 +34,11 @@ void Graphics::processEvents() {
     while (window->pollEvent(event)) {
         if (event.type == sf::Event::Closed)
             window->close();  //for closing the window
+        // Keyboard event handling for ECALL 7
+        if (event.type == sf::Event::KeyPressed) {
+            lastKeyPressed = event.key.code;
+            keyPressedFlag = true;
+        }
     }
 }
 //renders the tile grid to the window
@@ -79,25 +84,46 @@ void Graphics::updateTilePixel(int tileIndex, int x, int y, uint8_t colorIndex) 
         byte = (byte & 0x0F) | ((colorIndex & 0x0F) << 4);
 }
 void Graphics::draw(uint8_t* memory) {
-    const uint16_t BALL_DATA_ADDR = 0x8000;
     const uint16_t TILEMAP_BASE = 0xF000;
     const int TILEMAP_WIDTH = 20;
     const int TILEMAP_HEIGHT = 15;
-    const uint8_t BALL_TILE = 1;
 
-    // Clear screen
     for (int y = 0; y < TILEMAP_HEIGHT; ++y) {
         for (int x = 0; x < TILEMAP_WIDTH; ++x) {
-            memory[TILEMAP_BASE + y * TILEMAP_WIDTH + x] = 0;
+            uint8_t tileIndex = memory[TILEMAP_BASE + y * TILEMAP_WIDTH + x];
+            drawTile(x, y, tileIndex);  // You must implement drawTile()
         }
     }
+}
+void Graphics::drawTile(int tileX, int tileY, uint8_t tileIndex) {
+    const int TILE_SIZE = 16; // 16x16 pixels
+    const uint32_t TILE_DATA_BASE = 0xF200;
+    const int BYTES_PER_TILE = 128;
 
-    // Read ball position
-    uint8_t x = memory[BALL_DATA_ADDR];
-    uint8_t y = memory[BALL_DATA_ADDR + 1];
+    int screenX = tileX * TILE_SIZE;
+    int screenY = tileY * TILE_SIZE;
 
-    //  Check bounds before drawing
-    if (x < TILEMAP_WIDTH && y < TILEMAP_HEIGHT) {
-        memory[TILEMAP_BASE + y * TILEMAP_WIDTH + x] = BALL_TILE;
+    uint8_t* memory = Gmemory->getMemory();
+    uint32_t tileAddress = TILE_DATA_BASE + tileIndex * BYTES_PER_TILE;
+
+    for (int y = 0; y < TILE_SIZE; ++y) {
+        for (int x = 0; x < TILE_SIZE; ++x) {
+            int byteOffset = y * 8 + x / 2;
+            uint8_t byte = memory[tileAddress + byteOffset];
+
+            // Extract color index (4 bits)
+            uint8_t colorIndex = (x % 2 == 0) ? (byte & 0x0F) : ((byte >> 4) & 0x0F);
+
+            // Draw the pixel at (screenX + x, screenY + y)
+            drawPixel(screenX + x, screenY + y, colorIndex);
+        }
     }
+}
+void Graphics::drawPixel(int x, int y, uint8_t colorIndex) {
+    if (!Gmemory) return;
+
+    sf::Color color = Gmemory->colorPalette(colorIndex & 0x0F);
+    pixel.setFillColor(color);
+    pixel.setPosition(static_cast<float>(x), static_cast<float>(y));
+    window->draw(pixel);
 }

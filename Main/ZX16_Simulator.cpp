@@ -30,7 +30,7 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
         return;
     }
 
-    file.seekg(0x20);  // Skip header
+   // file.seekg(0x20);  // Skip header
 
     uint16_t address = 0;
     uint8_t bytes[2];
@@ -38,19 +38,20 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
     std::vector<uint16_t> rawInstructions;
 
     while (file.read(reinterpret_cast<char*>(bytes), 2)) {
-        if (address >= MEMORY_SIZE - 2) {
+        if (address >= MEMORY_SIZE-2 ) {
             std::cerr << "Error: Program exceeds memory bounds.\n";
             break;
         }
 
-        uint16_t value = bytes[0] | (bytes[1] << 8);  // Little endian
+uint16_t value = bytes[0] | (bytes[1] << 8);  // Little endian
 
         memory[address]     = bytes[0];
         memory[address + 1] = bytes[1];
-
-        Instruction inst(value);
-        tempProgram.push_back(inst);
-        rawInstructions.push_back(value);
+        if (address>=20&&address<0xf000) {
+            Instruction inst(value);
+            tempProgram.push_back(inst);
+            rawInstructions.push_back(value);
+        }
 
         address += 2;
     }
@@ -462,15 +463,18 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             return false;
         }
         case 7: { // Read Keyboard
-            char key;
-            if (std::cin.peek() != EOF) {
-                key = std::cin.get();
-                registers[6] = key; // Set a0 to the key code
-                registers[7] = 1;   // Set a1 to 1 (key pressed)
+            if (graphics) {
+                if (graphics->hasKeyPressed()) {
+                    // Map SFML key code to a simple value (e.g., just use the code)
+                    registers[6] = static_cast<int>(graphics->getLastKeyPressed()); // a0 = key code
+                    registers[7] = 1; // a1 = key pressed
+                    graphics->resetKeyFlag(); // clear flag after reading
+                } else {
+                    registers[7] = 0; // a1 = no key pressed
+                }
             } else {
-                registers[7] = 0;   // Set a1 to 0 (nothing pressed)
+                registers[7] = 0; // a1 = no key pressed
             }
-
             std::cout << "ECALL done. Continuing the simulator." << std::endl;
             running = true;
             return false;
@@ -682,6 +686,38 @@ void ZX16_Simulator::runInteractive(Graphics* g) {
 
         bool jumped = executeInstruction(inst);
 
+        // Debug: Print first 16 bytes of tile map memory
+        std::cout << "[DEBUG] Tile map @0xF000 (first 16): ";
+        for (int i = 0; i < 16; ++i) {
+            std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)memory[0xF000 + i] << " ";
+        }
+        std::cout << std::dec << std::endl;
+        // Print all 300 bytes of tile map as a grid
+        std::cout << "[DEBUG] Tile map full grid:" << std::endl;
+        for (int y = 0; y < 15; ++y) {
+            for (int x = 0; x < 20; ++x) {
+                std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)memory[0xF000 + y * 20 + x] << " ";
+            }
+            std::cout << std::endl;
+        }
+        // Print first 16 bytes of tile 1 definition
+        std::cout << "[DEBUG] Tile 1 def @0xF200: ";
+        for (int i = 0; i < 16; ++i) {
+            std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)memory[0xF200 + i] << " ";
+        }
+        std::cout << std::dec << std::endl;
+        // Print first 16 bytes of palette
+        std::cout << "[DEBUG] Palette @0xFA00: ";
+        for (int i = 0; i < 16; ++i) {
+            std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)memory[0xFA00 + i] << " ";
+        }
+        std::cout << std::dec << std::endl;
+
+        // Process window events to keep window responsive
+        graphics->processEvents();
+        // Force graphics redraw every cycle
+        graphics->render();
+
         // Advance PC only if no jump occurred
         if (!jumped) pc += 2;
 
@@ -695,4 +731,3 @@ void ZX16_Simulator::runInteractive(Graphics* g) {
         }
     }
 }
-
