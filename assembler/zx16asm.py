@@ -164,22 +164,22 @@ class ZX16Lexer:
         # Handle different number bases
         if self.current_char() == '0' and self.peek_char():
             self.advance()
-            if self.current_char().lower() == 'x':
+            if self.current_char() and self.current_char().lower() == 'x':
                 # Hexadecimal
                 self.advance()
-                while self.current_char().lower() in '0123456789abcdef':
+                while self.current_char() and self.current_char().lower() in '0123456789abcdef':
                     self.advance()
                 return int(self.text[start_pos:self.pos], 16)
-            elif self.current_char().lower() == 'b':
+            elif self.current_char() and self.current_char().lower() == 'b':
                 # Binary
                 self.advance()
-                while self.current_char() in '01':
+                while self.current_char() and self.current_char() in '01':
                     self.advance()
                 return int(self.text[start_pos:self.pos], 2)
-            elif self.current_char().lower() == 'o':
+            elif self.current_char() and self.current_char().lower() == 'o':
                 # Octal
                 self.advance()
-                while self.current_char() in '01234567':
+                while self.current_char() and self.current_char() in '01234567':
                     self.advance()
                 return int(self.text[start_pos:self.pos], 8)
             else:
@@ -187,7 +187,7 @@ class ZX16Lexer:
                 self.pos = start_pos
 
         # Decimal number
-        while self.current_char().isdigit():
+        while self.current_char() and self.current_char().isdigit():
             self.advance()
 
         return int(self.text[start_pos:self.pos])
@@ -688,9 +688,13 @@ class ZX16Assembler:
                 parser.advance()
                 continue
 
-            # Handle directives
-            if parser.current_token.type == TokenType.DIRECTIVE:
+            # Handle directives (modified to accept tokens without a leading dot)
+            if (parser.current_token.type == TokenType.DIRECTIVE or
+                    (parser.current_token.type == TokenType.INSTRUCTION and parser.current_token.value.lower() in
+                     ['org', 'text', 'data', 'bss', 'byte', 'fill'])):
                 directive = parser.current_token.value.lower()
+                if not directive.startswith('.'):
+                    directive = '.' + directive
                 parser.advance()
 
                 if directive == '.org':
@@ -745,9 +749,21 @@ class ZX16Assembler:
                     else:
                         self.add_error("Expected symbol name after .global", line)
 
-                elif directive in ['.byte', '.word', '.string', '.ascii', '.space']:
-                    # Calculate space for data directives
-                    if directive == '.byte':
+                elif directive in ['.byte', '.word', '.string', '.ascii', '.space', '.fill']:
+                    if directive == '.fill':
+                        if parser.current_token.type == TokenType.IMMEDIATE:
+                            fill_count = int(parser.current_token.value)
+                            parser.advance()
+                            fill_value = 0
+                            if parser.current_token.type == TokenType.COMMA:
+                                parser.advance()
+                                if parser.current_token.type == TokenType.IMMEDIATE:
+                                    fill_value = int(parser.current_token.value)
+                                    parser.advance()
+                            self.current_address += fill_count
+                        else:
+                            self.add_error("Expected fill count after .fill", line)
+                    elif directive == '.byte':
                         while parser.current_token.type in [TokenType.IMMEDIATE, TokenType.CHARACTER]:
                             self.current_address += 1
                             parser.advance()
@@ -755,7 +771,6 @@ class ZX16Assembler:
                                 parser.advance()
                             else:
                                 break
-
                     elif directive == '.word':
                         while parser.current_token.type == TokenType.IMMEDIATE:
                             self.current_address += 2
@@ -764,7 +779,6 @@ class ZX16Assembler:
                                 parser.advance()
                             else:
                                 break
-
                     elif directive in ['.string', '.ascii']:
                         if parser.current_token.type == TokenType.STRING:
                             string_len = len(parser.current_token.value)
@@ -774,7 +788,6 @@ class ZX16Assembler:
                             parser.advance()
                         else:
                             self.add_error(f"Expected string after {directive}", line)
-
                     elif directive == '.space':
                         if parser.current_token.type == TokenType.IMMEDIATE:
                             space_size = int(parser.current_token.value)
@@ -783,8 +796,7 @@ class ZX16Assembler:
                         else:
                             self.add_error("Expected size after .space", line)
 
-                # Skip to end of line for other directives
-                while (parser.current_token.type not in [TokenType.NEWLINE, TokenType.EOF]):
+                while parser.current_token.type not in [TokenType.NEWLINE, TokenType.EOF]:
                     parser.advance()
                 continue
 
@@ -857,31 +869,37 @@ class ZX16Assembler:
                 parser.advance()
                 continue
 
-            # Handle directives
-            if parser.current_token.type == TokenType.DIRECTIVE:
+            # Handle directives (modified to accept tokens without dot)
+            if (parser.current_token.type == TokenType.DIRECTIVE or
+                    (parser.current_token.type == TokenType.INSTRUCTION and parser.current_token.value.lower() in
+                     ['org', 'text', 'data', 'bss', 'byte', 'fill'])):
                 directive = parser.current_token.value.lower()
+                if not directive.startswith('.'):
+                    directive = '.' + directive
                 parser.advance()
 
                 if directive == '.org':
                     if parser.current_token.type == TokenType.IMMEDIATE:
-                        self.current_address = int(parser.current_token.value)
+                        new_addr = int(parser.current_token.value)
+                        if new_addr > self.current_address:
+                            gap = new_addr - self.current_address
+                            current_section_data.extend([0] * gap)
+                        self.current_address = new_addr
                         parser.advance()
-
+                    else:
+                        self.add_error("Expected address after .org", line)
                 elif directive == '.text':
                     self.current_section = '.text'
                     self.current_address = self.section_addresses['.text']
                     current_section_data = self.sections['.text']
-
                 elif directive == '.data':
                     self.current_section = '.data'
                     self.current_address = self.section_addresses['.data']
                     current_section_data = self.sections['.data']
-
                 elif directive == '.bss':
                     self.current_section = '.bss'
                     self.current_address = self.section_addresses['.bss']
                     current_section_data = self.sections['.bss']
-
                 elif directive == '.byte':
                     while parser.current_token.type in [TokenType.IMMEDIATE, TokenType.CHARACTER]:
                         value = int(parser.current_token.value) & 0xFF
@@ -892,11 +910,9 @@ class ZX16Assembler:
                             parser.advance()
                         else:
                             break
-
                 elif directive == '.word':
                     while parser.current_token.type == TokenType.IMMEDIATE:
                         value = int(parser.current_token.value) & 0xFFFF
-                        # Little-endian encoding
                         current_section_data.append(value & 0xFF)
                         current_section_data.append((value >> 8) & 0xFF)
                         self.current_address += 2
@@ -905,29 +921,43 @@ class ZX16Assembler:
                             parser.advance()
                         else:
                             break
-
                 elif directive in ['.string', '.ascii']:
                     if parser.current_token.type == TokenType.STRING:
                         string_data = parser.current_token.value.encode('utf-8')
                         current_section_data.extend(string_data)
                         self.current_address += len(string_data)
                         if directive == '.string':
-                            current_section_data.append(0)  # Null terminator
+                            current_section_data.append(0)
                             self.current_address += 1
                         parser.advance()
-
+                    else:
+                        self.add_error(f"Expected string after {directive}", line)
                 elif directive == '.space':
                     if parser.current_token.type == TokenType.IMMEDIATE:
                         space_size = int(parser.current_token.value)
                         current_section_data.extend([0] * space_size)
                         self.current_address += space_size
                         parser.advance()
+                    else:
+                        self.add_error("Expected size after .space", line)
+                elif directive == '.fill':
+                    if parser.current_token.type == TokenType.IMMEDIATE:
+                        fill_count = int(parser.current_token.value)
+                        parser.advance()
+                        fill_value = 0
+                        if parser.current_token.type == TokenType.COMMA:
+                            parser.advance()
+                            if parser.current_token.type == TokenType.IMMEDIATE:
+                                fill_value = int(parser.current_token.value)
+                                parser.advance()
+                        current_section_data.extend([fill_value & 0xFF] * fill_count)
+                        self.current_address += fill_count
+                    else:
+                        self.add_error("Expected fill count after .fill", line)
 
-                # Skip remaining tokens on this line
                 while parser.current_token.type not in [TokenType.NEWLINE, TokenType.EOF]:
                     parser.advance()
                 continue
-
             # Handle instructions (including special LI handling)
             if parser.current_token.type == TokenType.INSTRUCTION:
                 mnemonic = parser.current_token.value.lower()
@@ -1568,3 +1598,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+

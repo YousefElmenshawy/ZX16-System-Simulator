@@ -41,7 +41,7 @@ public:
     sf::Color colorPalette(uint8_t index) const;
 
     uint8_t* getMemory();
-
+    void printTileMap() const;
 
 };
 

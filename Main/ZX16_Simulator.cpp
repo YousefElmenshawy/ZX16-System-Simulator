@@ -30,7 +30,7 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
         return;
     }
 
-   // file.seekg(0x20);  // Skip header
+   //file.seekg(0x20);  // Skip header
 
     uint16_t address = 0;
     uint8_t bytes[2];
@@ -44,14 +44,16 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
         }
 
 uint16_t value = bytes[0] | (bytes[1] << 8);  // Little endian
-
         memory[address]     = bytes[0];
-        memory[address + 1] = bytes[1];
-        if (address>=20&&address<0xf000) {
-            Instruction inst(value);
-            tempProgram.push_back(inst);
-            rawInstructions.push_back(value);
-        }
+            memory[address + 1] = bytes[1];
+
+if (address>20&&address<0xF000) {
+    // Skip first 20 bytes and tile map area
+    Instruction inst(value);
+    tempProgram.push_back(inst);
+    rawInstructions.push_back(value);
+}
+
 
         address += 2;
     }
@@ -684,17 +686,16 @@ void ZX16_Simulator::runInteractive(Graphics* g) {
     running = true;
 
     int frameCounter = 0;
-    const int RENDER_EVERY_N_FRAMES = 10; // Render every 10 instruction cycles
+    const int RENDER_EVERY_N_FRAMES = 60; // Render every 10 instruction cycles
 
     while (graphics->isOpen() && running) {
         // Process events every cycle to maintain responsiveness
         graphics->processEvents();
-
         // Execute instruction
         if (pc < programEnd) {
             uint16_t instBin = memory[pc] | (memory[pc + 1] << 8);
             Instruction inst(instBin);
-
+            PrintDynamicDiassembley(instBin);
             bool jumped = executeInstruction(inst);
             if (!jumped) pc += 2;
 
@@ -709,9 +710,20 @@ void ZX16_Simulator::runInteractive(Graphics* g) {
             graphics->render();
             frameCounter = 0;
         }
-        dumpRegisters();
-
+       //dumpTileMap(0xF000, 20, 15);
+        //dumpRegisters();
         // Tiny sleep to prevent 100% CPU usage
         std::this_thread::sleep_for(std::chrono::microseconds(1));
     }
+}
+void ZX16_Simulator::dumpTileMap(uint16_t start, uint16_t width, uint16_t height) const {
+    std::cout << "\n[TileMap Dump from 0x" << std::hex << start << "]\n";
+    for (uint16_t row = 0; row < height; ++row) {
+        for (uint16_t col = 0; col < width; ++col) {
+            uint16_t addr = start + row * width + col;
+            std::cout << std::setw(2) << std::setfill('0') << std::hex << (int)memory[addr] << " ";
+        }
+        std::cout << "\n";
+    }
+    std::cout << std::dec;
 }
