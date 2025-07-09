@@ -17,8 +17,10 @@ main:
     addi s1, 19
     loop:
     call read_input
+   # call move_ball
     j loop
     ecall 0xA
+
  read_input:	
     ecall 0x7
     li t0, 0
@@ -42,6 +44,23 @@ main:
     lw ra, 0(sp)
     addi sp, 2
     L2:
+    li t1, 63
+    addi t1, 11
+    bne a0, t1, L3
+    addi sp, -2
+    sw ra, 0(sp)
+    call p2down
+    lw ra, 0(sp)
+    addi sp, 2
+    L3:
+    li t1, 18
+    bne a0, t1, L4
+    addi sp, -2
+    sw ra, 0(sp)
+    call p1down
+    lw ra, 0(sp)
+    addi sp, 2
+    L4:
     ret   	    
 
 
@@ -57,16 +76,58 @@ p2up:
     ret
 
 p1up:
-    addi s0, 20
+    li16 t0, TILE_MAP_BUFFER_ADDR
+    #addi s0, -20
+    beq s0, t0, B1
+    addi s0, 40
     li t0, 0
     sb t0, 0(s0)
     addi s0, -60
     addi t0, 2
     sb t0, 0(s0)
-    addi s0, 20
+    B1:
+    #addi s0, 20
     ret                  # Jump back to loop
 
                 # Jump back to loop
+p1down:
+    addi s0, -20
+    li t1, 0
+    sb t1, 0(s0)
+    addi s0, 60
+    addi t1, 2
+    sb t1, 0(s0)
+    addi s0, -20
+    ret
+
+
+p2down:
+    addi s1, -20
+    li t1, 0
+    sb t1, 0(s1)
+    addi s1, 60
+    addi t1, 3
+    sb t1, 0(s1)
+    addi s1, -20
+    ret
+
+move_ball:
+li16 t0, TILE_MAP_BUFFER_ADDR
+call move_up
+
+
+
+move_up:
+
+
+
+move_down:
+
+
+move_left:
+
+
+move_right:
 
 
 
