@@ -7,7 +7,7 @@ using namespace std;
 
 int main() {
     ZX16_Simulator sim;
-    sim.loadBinaryFile("../testA.bin");
+    sim.loadBinaryFile("/Users/kareem/Desktop/Projects/ZX16-System-Simulator/Main/Game.bin");
 
     GraphicsMemory Gmem;
     Gmem.setMemory(sim.getMemoryPtr());
