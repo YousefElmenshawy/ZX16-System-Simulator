@@ -686,7 +686,7 @@ void ZX16_Simulator::runInteractive(Graphics* g) {
     running = true;
 
     int frameCounter = 0;
-    const int RENDER_EVERY_N_FRAMES = 60; // Render every 10 instruction cycles
+    const int RENDER_EVERY_N_FRAMES = 30; // Render every 10 instruction cycles
 
     while (graphics->isOpen() && running) {
         // Process events every cycle to maintain responsiveness
@@ -711,7 +711,7 @@ void ZX16_Simulator::runInteractive(Graphics* g) {
             frameCounter = 0;
         }
        //dumpTileMap(0xF000, 20, 15);
-        //dumpRegisters();
+        dumpRegisters();
         // Tiny sleep to prevent 100% CPU usage
         std::this_thread::sleep_for(std::chrono::microseconds(1));
     }
