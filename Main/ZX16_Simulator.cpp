@@ -19,6 +19,12 @@ ZX16_Simulator::ZX16_Simulator() {
     for (int i = 0; i < 8; i++) {
         registers[i] = 0;
     }
+    if (!hitBuffer.loadFromFile("ballhit.wav"))
+        cerr << "Error loading hit sound file.\n";
+    else hitSound.setBuffer(hitBuffer);
+    if (!loseBuffer.loadFromFile("balllose.wav"))
+        cerr << "Error loading lose sound file.\n";
+    else loseSound.setBuffer(loseBuffer);
 
 }
 
@@ -439,6 +445,11 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             int frequency = registers[6];
             int duration = registers[7];
             std::cout << "Playing tone: Frequency=" << frequency << " Hz, Duration=" << duration << " ms\n";
+            if (frequency >= 10) {
+                playHitSound();  // for hitting the ball
+            } else {
+                playLoseSound(); // for losing
+            }
             std::cout << "ECALL done. Continuing the simulator." << std::endl;
             running = true;
             return false;
@@ -450,6 +461,8 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             } else {
                 volume = value;
                 std::cout << "Setting audio volume to " << volume << "\n";
+                hitSound.setVolume(static_cast<float>(volume));
+                loseSound.setVolume(static_cast<float>(volume));
             }
 
             std::cout << "ECALL done. Continuing the simulator." << std::endl;
@@ -458,7 +471,13 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
         }
         case 6: { // Stop Audio Playback
             std::cout << "Stopping audio playback\n";
-            // Implementation later
+            if (hitSound.getStatus() == sf::Sound::Playing) {
+                hitSound.stop();
+            }
+            if (loseSound.getStatus() == sf::Sound::Playing) {
+                loseSound.stop();
+            }
+
 
             std::cout << "ECALL done. Continuing the simulator." << std::endl;
             running = true;
@@ -726,4 +745,13 @@ void ZX16_Simulator::dumpTileMap(uint16_t start, uint16_t width, uint16_t height
         std::cout << "\n";
     }
     std::cout << std::dec;
+}
+void ZX16_Simulator::playHitSound() {
+    hitSound.setVolume(volume);
+    hitSound.play();
+}
+
+void ZX16_Simulator::playLoseSound() {
+    loseSound.setVolume(volume);
+    loseSound.play();
 }

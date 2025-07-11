@@ -11,6 +11,7 @@
 #include "Instruction.h"
 using namespace std;
 #include "Graphics.h"
+#include <SFML/Audio.hpp>
 
 class ZX16_Simulator {
 private:
@@ -39,6 +40,11 @@ private:
 
     void dumpMemory(uint16_t address, uint16_t size) const;
     Graphics* graphics= nullptr;
+    // for sound
+    sf::SoundBuffer hitBuffer;  // Sound buffers for hit
+    sf::SoundBuffer loseBuffer; // Sound buffers for lose
+    sf::Sound hitSound; // Sound objects for hit
+    sf::Sound loseSound; // Sound objects for lose
 public:
     void dumpRegisters() const;
     uint16_t pc;
@@ -60,6 +66,8 @@ public:
     void step();
     bool running;
     void runInteractive(Graphics* graphics);
+    void playHitSound();
+    void playLoseSound();
 };
 
 

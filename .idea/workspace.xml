@@ -1,50 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
-  </component>
-  <component name="BackendCodeEditorMiscSettings">
-    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="29" type="long" />
-    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
-    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
-    <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
-  </component>
-  <component name="CMakePresetLoader">{
-  &quot;useNewFormat&quot;: true
-}</component>
   <component name="CMakeProjectFlavorService">
     <option name="flavorId" value="CMakePlainProjectFlavor" />
   </component>
-  <component name="CMakeReloadState">
-    <option name="reloaded" value="true" />
-  </component>
-  <component name="CMakeRunConfigurationManager">
-    <generated>
-      <config projectName="ZX16_System_Simulator" targetName="ZX16_System_Simulator" />
-    </generated>
-  </component>
-  <component name="CMakeSettings">
-    <configurations>
-      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
-    </configurations>
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="e8a12868-4b8d-4d92-b848-59434134f2ec" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/sfml-2.5.1/build/CMakeCache.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sfml-2.5.1/build/CMakeFiles/cmake.check_cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ZX16-System-Simulator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ZX16-System-Simulator.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main/Game.bin" beforeDir="false" afterPath="$PROJECT_DIR$/Main/Game.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main/Game.s" beforeDir="false" afterPath="$PROJECT_DIR$/Main/Game.s" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main/ZX16_Simulator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Main/ZX16_Simulator.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sfml-2.5.1/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/sfml-2.5.1/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sfml-2.5.1/cmake/Macros.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/sfml-2.5.1/cmake/Macros.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sfml-2.5.1/doc/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/sfml-2.5.1/doc/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sfml-2.5.1/examples/cocoa/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/sfml-2.5.1/examples/cocoa/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sfml-2.5.1/examples/iOS/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/sfml-2.5.1/examples/iOS/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sfml-2.5.1/src/SFML/System/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/sfml-2.5.1/src/SFML/System/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sfml-2.5.1/src/SFML/Window/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/sfml-2.5.1/src/SFML/Window/CMakeLists.txt" afterDir="false" />
-    </list>
+    <list default="true" id="2fe8a275-8838-433d-8ca9-ed03cb480a0f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -53,99 +13,42 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="ROOT_SYNC" value="DONT_SYNC" />
-  </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Main/Graphics.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Main/Graphics.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Main/GraphicsMemory.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Main/Instruction.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///Users/kareem/Desktop/Projects/ZX16-System-Simulator/Main/ZX16_Simulator.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/kareem/Desktop/Projects/ZX16-System-Simulator/Main/ZX16_Simulator.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Main/main.cpp" root0="FORCE_HIGHLIGHTING" />
-  </component>
-  <component name="ProjectApplicationVersion">
-    <option name="ide" value="CLion" />
-    <option name="majorVersion" value="2025" />
-    <option name="minorVersion" value="1.2" />
-    <option name="productBranch" value="Classic" />
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 2
+  "customColor": "",
+  "associatedIndex": 1
 }]]></component>
-  <component name="ProjectId" id="2zjAGxbpHpqxris7xfClArQECek" />
+  <component name="ProjectId" id="2zeS7rLsY1Mu4LxC7wfRT3NvqGH" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "CMake Application.ZX16_System_Simulator.executor": "Run",
     "RunOnceActivity.RadMigrateCodeStyle": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "RunOnceActivity.west.config.association.type.startup.service": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
+    "last_opened_file_path": "C:/Users/Beba/Documents/GitHub/ZX16-System-Simulator/Main",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "CMakeSettings",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/Main" />
-      <recent name="$PROJECT_DIR$" />
-    </key>
-  </component>
-  <component name="RunManager">
-    <configuration name="ZX16_System_Simulator" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ZX16_System_Simulator" TARGET_NAME="ZX16_System_Simulator" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ZX16_System_Simulator" RUN_TARGET_NAME="ZX16_System_Simulator">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="e8a12868-4b8d-4d92-b848-59434134f2ec" name="Changes" comment="" />
-      <created>1752234017743</created>
+      <changelist id="2fe8a275-8838-433d-8ca9-ed03cb480a0f" name="Changes" comment="" />
+      <created>1752089888616</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1752234017743</updated>
-      <workItem from="1752234018947" duration="7026000" />
+      <updated>1752089888616</updated>
+      <workItem from="1752089891127" duration="48000" />
     </task>
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
-  </component>
-  <component name="VCPKGProject">
-    <isAutomaticCheckingOnLaunch value="false" />
-    <isAutomaticFoundErrors value="true" />
-    <isAutomaticReloadCMake value="true" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
 </project>
