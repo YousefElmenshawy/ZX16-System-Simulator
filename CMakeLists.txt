@@ -24,4 +24,5 @@ target_link_libraries(ZX16_System_Simulator
         sfml-graphics
         sfml-window
         sfml-system
+        sfml-audio
 )

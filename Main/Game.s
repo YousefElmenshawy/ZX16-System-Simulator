@@ -4,6 +4,8 @@
 .equ TILE_DEFINITIONS_ADDR, 0xF200
 .equ COLOR_PALLETE_ADDR, 0xFA00
 .equ Center, 0xF096
+.equ pauseBig, 0x0200
+.equ pauseSmall, 0x0020
 
 
 .text
@@ -23,10 +25,20 @@ main:
   li t1, 10 # x position of the ball
   li a1, 0
   li a0, 0
-  call move_left
   loop:
   call read_input
   call move_ball
+  addi sp, -4
+    sw a0, 0(sp) # store a0 (direction)
+    sw a1, 2(sp) # store a1 (key)
+    li a0, 0
+    li16 a1, pauseSmall   # some arbitrary delay loop count
+        delay_loop:
+          addi a1, -1
+          bne a1, a0, delay_loop
+    lw a0, 0(sp) # restore a0 (direction)
+    lw a1, 2(sp) # restore a1 (key)
+    addi sp, 4
   j loop
   ecall 0xA
 
@@ -205,6 +217,7 @@ move_right_call:
   lw t0, 2(sp)    # Restore ball position
   lw t1, 4(sp)    # Restore ball x-position
   call move_right
+
   sw t0, 2(sp)    # Save updated ball position
   sw t1, 4(sp)    # Save updated ball x-position
 
@@ -358,8 +371,15 @@ L_goal_p2:
   li t1, 1        # ball tile
   sb t1, 0(t0)    # place ball at center
 
-  li t1, 10       # reset x position to center
-  li a1, 0        # reset direction to left
+
+  li t1, 0
+  li16 a1, pauseBig   # some arbitrary delay loop count
+  pause_loop:
+    addi a1, -1
+    bne a1, t1, pause_loop
+
+    li t1, 10       # reset x position to center
+      li a1, 0        # reset direction to left
 
   lw ra, 0(sp)    # restore ra
   addi sp, 6

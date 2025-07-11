@@ -161,6 +161,7 @@ ZX16_System_Simulator: CMakeFiles/ZX16_System_Simulator.dir/Main/GraphicsMemory.
 ZX16_System_Simulator: CMakeFiles/ZX16_System_Simulator.dir/build.make
 ZX16_System_Simulator: /opt/homebrew/opt/sfml@2/lib/libsfml-graphics.2.6.2.dylib
 ZX16_System_Simulator: /opt/homebrew/opt/sfml@2/lib/libsfml-window.2.6.2.dylib
+ZX16_System_Simulator: /opt/homebrew/opt/sfml@2/lib/libsfml-audio.2.6.2.dylib
 ZX16_System_Simulator: /opt/homebrew/opt/sfml@2/lib/libsfml-system.2.6.2.dylib
 ZX16_System_Simulator: CMakeFiles/ZX16_System_Simulator.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/kareem/Desktop/Projects/ZX16-System-Simulator/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable ZX16_System_Simulator"
