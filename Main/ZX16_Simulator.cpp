@@ -686,7 +686,7 @@ void ZX16_Simulator::runInteractive(Graphics* g) {
     running = true;
 
     int frameCounter = 0;
-    const int RENDER_EVERY_N_FRAMES = 30; // Render every 10 instruction cycles
+    const int RENDER_EVERY_N_FRAMES = 60; // Render every 10 instruction cycles
 
     while (graphics->isOpen() && running) {
         // Process events every cycle to maintain responsiveness
