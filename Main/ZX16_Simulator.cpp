@@ -714,7 +714,7 @@ void ZX16_Simulator::runInteractive(Graphics* g) {
         if (pc < programEnd) {
             uint16_t instBin = memory[pc] | (memory[pc + 1] << 8);
             Instruction inst(instBin);
-            PrintDynamicDiassembley(instBin);
+            //PrintDynamicDiassembley(instBin);
             bool jumped = executeInstruction(inst);
             if (!jumped) pc += 2;
 
@@ -730,7 +730,7 @@ void ZX16_Simulator::runInteractive(Graphics* g) {
             frameCounter = 0;
         }
        //dumpTileMap(0xF000, 20, 15);
-        dumpRegisters();
+        //dumpRegisters();
         // Tiny sleep to prevent 100% CPU usage
         std::this_thread::sleep_for(std::chrono::microseconds(1));
     }
