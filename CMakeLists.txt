@@ -6,7 +6,11 @@ set(CMAKE_CXX_STANDARD 17)
 # Set correct SFML location for macOS + Homebrew
 set(SFML_DIR "/opt/homebrew/opt/sfml@2/lib/cmake/SFML")
 
-find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+find_package(SFML 2.5 COMPONENTS graphics window system audio REQUIRED)
+
+# Add to CMakeLists.txt
+configure_file(${CMAKE_SOURCE_DIR}/Main/ballhit.wav ${CMAKE_BINARY_DIR}/ballhit.wav COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/Main/balllose.wav ${CMAKE_BINARY_DIR}/balllose.wav COPYONLY)
 
 include_directories("/opt/homebrew/include")
 link_directories("/opt/homebrew/lib")

@@ -16,6 +16,7 @@ static const std::string regs[8] = {
     "t0", "ra", "sp", "s0", "s1", "t1", "a0", "a1"
 };
 ZX16_Simulator::ZX16_Simulator() {
+    volume = 100;
     for (int i = 0; i < 8; i++) {
         registers[i] = 0;
     }
@@ -431,12 +432,20 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             running = true;
             return false;
         }
-        case 3: {
-            char* str = reinterpret_cast<char*>(&memory[registers[6]]);
-            while (*str != '\0') {
-                std::cout << *str;
-                ++str;
+        case 3: { // Print null-terminated string
+            uint16_t addr = registers[6];
+            if (addr >= MEMORY_SIZE) {
+                std::cerr << "Error: Invalid memory address in a0 (0x" << std::hex << addr << ")\n";
+                running = true;
+                return false;
             }
+
+            while (addr < MEMORY_SIZE && memory[addr] != '\0') {
+                std::cout << static_cast<char>(memory[addr]);
+                addr++;
+            }
+            std::cout.flush(); // Ensure output is displayed immediately
+
             std::cout << "ECALL done. Continuing the simulator." << std::endl;
             running = true;
             return false;
