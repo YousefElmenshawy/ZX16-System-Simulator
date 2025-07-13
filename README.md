@@ -116,17 +116,17 @@ tests/
 
 
 ## 🧱 Project Challenges
-•	Implementing and packing 4-bit color data into memory for 2D tiles.
-•	Designing accurate memory-mapped regions for graphics and audio buffers.
-•	Correctly handling and debugging edge cases in instruction decoding.
-•	Building reliable test cases for all features, especially ecalls and graphics rendering.
 
+*	Implementing and packing 4-bit color data into memory for 2D tiles.
+*	Designing accurate memory-mapped regions for graphics and audio buffers.
+*	Correctly handling and debugging edge cases in instruction decoding.
+*	Building reliable test cases for all features, especially ecalls and graphics rendering.
 
 ## ❌ Known Limitations
 
-•	Limited visual feedback for the graphics screen (unless a GUI is built).
-•	Real-time audio simulation is stubbed with print statements.
-•	Memory size capped to predefined max due to platform simplicity.
+* Limited visual feedback for the graphics screen (unless a GUI is built).
+* Real-time audio simulation is stubbed with print statements.
+* Memory size capped to predefined max due to platform simplicity.
 
 ## 📚 References
 
