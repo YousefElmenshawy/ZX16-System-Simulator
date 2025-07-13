@@ -20,9 +20,9 @@ private:
     uint8_t memory[MEMORY_SIZE];           // Main memory
     int16_t registers[NUM_REGISTERS];      // General-purpose registers
     uint16_t trailingZeroCount = 0;
-                                // Program counter
+    // Program counter
     uint16_t programEnd;                    // address of the Program Ending at Memory
-                             // Execution state
+    // Execution state
     int volume;                           //Needed for ecall/game
     std::vector<Instruction> program;       // Loaded program
     void handleEcall();
@@ -30,16 +30,16 @@ private:
     bool executeRType(const Instruction& inst);
     bool executeIType(const Instruction& inst);
     bool executeSType(const Instruction& inst);
-    bool executeBType( Instruction& inst);
+    bool executeBType(Instruction& inst);
     bool executeLType(const Instruction& inst);
-    bool executeJType( Instruction& inst);
+    bool executeJType(Instruction& inst);
     bool executeUType(const Instruction& inst);
     bool executeSysType(const Instruction& inst);
-    bool executeInstruction( Instruction& inst);
+    bool executeInstruction(Instruction& inst);
     void PrintDynamicDiassembley(uint16_t PC);
 
     void dumpMemory(uint16_t address, uint16_t size) const;
-    Graphics* graphics= nullptr;
+    Graphics* graphics = nullptr;
     // for sound
     sf::SoundBuffer hitBuffer;  // Sound buffers for hit
     sf::SoundBuffer loseBuffer; // Sound buffers for lose

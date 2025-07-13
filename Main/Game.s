@@ -10,6 +10,7 @@
  .equ P2_SCORE_TILE, 0xF012        # Tile on far right (20th column)
  .equ SCORE_PAUSE_DELAY, 0x0800    # Longer pause after scoring
 
+
  .text
  .org 0x0000
  j main
@@ -318,7 +319,6 @@ initiate_game:
    li16 t1, TILE_MAP_BUFFER_ADDR
    addi t1, 20
    bge t0, t1, move_up_normal  # If ball NOT at top, move normally
-
    # Ball hit top boundary - bounce (change direction only)
    li a0, 1        # Set direction flag to down
    lw ra, 0(sp)    # restore ra
@@ -326,7 +326,6 @@ initiate_game:
    lw t1, 4(sp)    # restore t1
    addi sp, 6
    ret
-
  move_up_normal:
    # Move ball up one row
    li t1, 0
@@ -340,7 +339,6 @@ initiate_game:
    lw t1, 4(sp)    # restore t1 (ball x-position)
    addi sp, 6
    ret
-
  move_down:
    addi sp, -6
    sw ra, 0(sp)    # save ra
@@ -351,7 +349,6 @@ initiate_game:
    li16 t1, TILE_MAP_END
    addi t1, -21
    blt t0, t1, move_down_normal  # If ball NOT at bottom, move normally
-
    # Ball hit bottom boundary - bounce (change direction only)
    li a0, 0        # Set direction flag to up
    lw ra, 0(sp)    # restore ra
@@ -422,6 +419,7 @@ initiate_game:
 
  L_goal_p2:
    # Ball reached left edge - goal for player 2
+   call soundhit
    call p2_scores
 
    # Reset ball to center
@@ -444,6 +442,22 @@ initiate_game:
 
    lw ra, 0(sp)    # restore ra
    addi sp, 6
+   ret
+ # Score pause function - longer pause after scoring
+ score_pause:
+   addi sp, -4
+   sw t0, 0(sp)    # save t0
+   sw t1, 2(sp)    # save t1
+
+   li t0, 0
+   li16 t1, SCORE_PAUSE_DELAY
+   score_pause_loop:
+     addi t1, -1
+     bne t1, t0, score_pause_loop
+
+   lw t0, 0(sp)    # restore t0
+   lw t1, 2(sp)    # restore t1
+   addi sp, 4
    ret
 
  move_right:
@@ -493,6 +507,7 @@ initiate_game:
    ret
 
  R_goal_p1:
+   call soundhit
    # Ball reached right edge - goal for player 1
    call p1_scores
 
@@ -511,6 +526,23 @@ initiate_game:
    lw ra, 0(sp)    # restore ra
    addi sp, 6
    ret
+
+soundhit:
+    addi sp, -6
+    sw ra, 0(sp)
+    sw a0, 2(sp)        # Save current a0
+    sw a1, 4(sp)        # Save current a1
+
+    # Play paddle hit sound
+    li a0, 35          # New freq range < 40
+    li a1, 50          # duration
+    ecall 0x4             # Play tone
+
+    lw a0, 2(sp)        # Restore original a0
+    lw a1, 4(sp)        # Restore original a1
+    lw ra, 0(sp)
+    addi sp, 6
+ ret
 
  # Clear entire tilemap function
  clear_screen:
@@ -651,12 +683,17 @@ initiate_game:
 
    # Restore game state
    call restore_game_state
+   li t0, 11
+   beq t1, t0, soundlose1
 
    lw ra, 0(sp)    # restore ra
    lw t0, 2(sp)    # restore t0
    lw t1, 4(sp)    # restore t1
    addi sp, 6
    ret
+
+soundlose1:
+   j soundlose2
 
  # Player 2 scores function
  p2_scores:
@@ -681,28 +718,54 @@ initiate_game:
    # Restore game state
    call restore_game_state
 
+   li t0, 11
+   beq t1, t0, soundlose2
+
    lw ra, 0(sp)    # restore ra
    lw t0, 2(sp)    # restore t0
    lw t1, 4(sp)    # restore t1
    addi sp, 6
    ret
 
- # Score pause function - longer pause after scoring
- score_pause:
-   addi sp, -4
-   sw t0, 0(sp)    # save t0
-   sw t1, 2(sp)    # save t1
+ soundlose2:
 
-   li t0, 0
-   li16 t1, SCORE_PAUSE_DELAY
-   score_pause_loop:
-     addi t1, -1
-     bne t1, t0, score_pause_loop
+     addi sp, -6
+     sw ra, 0(sp)
+     sw a0, 2(sp)        # Save current a0
+     sw a1, 4(sp)        # Save current a1
 
-   lw t0, 0(sp)    # restore t0
-   lw t1, 2(sp)    # restore t1
-   addi sp, 4
+     # Play paddle hit sound
+     li a0, 60          # New freq range >= 40
+     li a1, 10          # duration
+     ecall 0x4             # Play tone
+
+     lw a0, 2(sp)        # Restore original a0
+     lw a1, 4(sp)        # Restore original a1
+     lw ra, 0(sp)
+     addi sp, 6
+
+   lw ra, 0(sp)    # restore ra
+   lw t0, 2(sp)    # restore t0
+   lw t1, 4(sp)    # restore t1
+   addi sp, 6
+
+     addi sp, -4
+     sw a0, 0(sp) # store a0 (direction)
+     sw a1, 2(sp) # store a1 (key)
+     li a0, 0
+     li16 a1, 63   # some arbitrary delay loop count
+     addi a1, 63
+         delayloop2:
+           addi a1, -1
+           bne a1, a0, delayloop2
+     lw a0, 0(sp) # restore a0 (direction)
+     lw a1, 2(sp) # restore a1 (key)
+     addi sp, 4
+     ecall 0xA
    ret
+
+
+
 
  .data
 .org 0xF200
