@@ -36,7 +36,7 @@ This project implements a **simulator for the ZX16 Instruction Set Architecture 
 To run the included Pong game, ensure that `main.cpp` is configured to load the correct binary file (`game.bin`)
 
 > sim.loadBinaryFile("../game.bin") in the main.cpp file.
-> Then, compile and run the simulator to start the game
+Then, compile and run the simulator to start the game
 
 
 
