@@ -63,7 +63,7 @@ zx16sim <machine_code_file_name>
     *   `ecall 8`: Dump the current state of all registers to the console.
     *   `ecall 9`: Dump a specified region of memory to the console.
     *   `ecall 10`: Halt the program.
-    *  
+   
 *   **2D Tiled Graphics** (QVGA: 320x240 screen): Supports a complete graphics pipeline with a 320x240 screen, custom tile definitions, and a 16-color palette, all managed through memory-mapped I/O.
 *   **Audio Playback**: Capable of playing WAV sound files for audio feedback in applications like the Pong game
 *   **Memory and register dumps**: Provides debugging system calls to inspect the machine's state. `ecall 8` prints the current values of all eight general-purpose registers, while `ecall 9` prints a hex dump of a specified memory region. These are crucial for verifying the correctness of algorithms.
