@@ -122,13 +122,17 @@ tests/
 
 ### ✅ Required Test Coverage:
 
-* Arithmetic and logical instructions
-* Load/store instructions
-* Branching and control flow
-* All ecall services (1 to 10)
-* Graphics rendering
-* Audio functionality
-* (Jump Register), error handling
+| Test Case ID | Description | Features Tested |
+| :--- | :--- | :--- |
+| **`TC-ZX16-02.s`** | **Upper Immediate and Shift Instructions Test**: Tests the Load Upper Immediate (LUI) instruction and shift operations. Demonstrates immediate value loading and bit manipulation with operations like `lui a0, 0x0001`, `slli a0, 0x1`, `srli a0, 2`, and `slli a0, 3`. | **Registers**: `a0` (primary register for arithmetic operations and result storage). **Instructions**: U-Type instruction format (LUI), I-Type shift instructions (SLLI, SRLI). |
+| **`TC-ZX16-03.s`** | **Loop and Branch Instructions Test**: Tests loop implementation using branch instructions. Demonstrates counter-based iteration and accumulation with a loop that adds counter value to sum and decrements counter, then branches back if counter is not zero. | **Registers**: `s0` (loop counter), `s1` (accumulator for sum), `a0` (data transfer), `t0` (temporary for zero comparison). **Instructions**: B-Type (BNE), R-Type (ADD, MV), I-Type (ADDI). |
+| **`TC-ZX16-05.s`** | **ECALL Services and I/O Test**: Tests system call (ECALL) functionality for input/output operations. Prompts user for two numbers, performs addition and subtraction, and dumps registers to display results. | **Registers**: `s0, s1` (storage for user input), `a0` (system call parameter), `t0, t1` (temporary for arithmetic results). **Instructions**: SYS-Type (ECALL), various ECALL service numbers (2, 3, 8, 10). |
+| **`TC-ZX16-06.s`** | **ECALL Services Integration Test**: Comprehensive test of ECALL services with symbolic constants. Tests string output and integer input/output operations using proper ECALL service number definitions. | **Registers**: `a0` (primary for ECALL parameters), `t0` (temporary for arithmetic). **Instructions**: Multiple ECALL services: SYS_PUTSTR (3), SYS_GETINT (2), SYS_REGS_DUMP (8), SYS_EXIT (10). |
+| **`TC-ZX16-07.s`** | **Memory Operations and Bubble Sort Test**: Tests memory load/store operations with word-aligned data. Implements bubble sort algorithm to test complex control flow and demonstrates array manipulation with nested loops. | **Registers**: `s0` (base address pointer), `s1` (array size counter), `t0, t1` (loop indices), `ra` (temporary calculations), `a0, a1` (data comparison). **Instructions**: L-Type (LW), S-Type (SW), memory addressing with offsets. |
+| **`TC-ZX16-08.s`** | **Graphics and Tile System Test**: Tests graphics memory mapping and tile-based display system. Demonstrates tile map buffer and tile definition usage, tests color palette functionality with various tile patterns for graphics display. | **Memory regions**: Tile map buffer (0xF000-0xF12B), Tile definitions (0xF200-0xF5FF), Color palette (0xFA00-0xFA0F). **Instructions**: Memory-mapped I/O functionality, data organization for graphics rendering. |
+| **`TC-ZX16-09.s`** | **Jump and Link Instructions Test**: Tests jump and link (JAL) and jump and link register (JALR) instructions. Demonstrates subroutine calls and return mechanisms, tests program counter manipulation and return address handling. | **Registers**: `t0, t1` (test registers for verification), `ra` (return address register - critical for subroutine calls). **Instructions**: J-Type (JAL), R-Type (JALR), subroutine call/return mechanisms. |
+| **`TC-ZX16-10.s`** | **Audio System Test**: Tests audio system functionality through ECALL 4. Demonstrates sound generation with different frequencies (hit sound at 35 Hz, lose sound at 60 Hz), tests audio system integration with continuous looping and delay operations. | **Registers**: `a0` (frequency parameter), `a1` (duration parameter), `t0` (temporary for delay operations). **Instructions**: ECALL service 4 (audio generation), audio parameter passing and system integration. |
+| **`testA.s`** | **Pong Game**: The main application and featured test case. A complete, interactive Pong-style game that integrates nearly all simulator features including graphics rendering, sound effects, and user input. Tests paddle movement, ball physics, and real-time gameplay. | **All registers used**: Complete register file utilization. **Instructions**: `ecall 4` (Audio), `ecall 7` (Keyboard Input), `ecall 11` (Render Graphics), memory-mapped I/O, complex control flow, and state management. |
 
 ### ✅ Featured Test Case: Pong Game
 
