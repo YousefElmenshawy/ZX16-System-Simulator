@@ -1,2 +1,0 @@
-li s0, 5
-ecall 0xA

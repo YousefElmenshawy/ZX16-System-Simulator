@@ -629,21 +629,11 @@ void ZX16_Simulator::dumpMemory(uint32_t address, uint32_t size) const {
 }
 
 void ZX16_Simulator::printState() const {
-<<<<<<< Updated upstream
-    std::cout << "Current PC: 0x" << std::hex << pc << "\n";
-    std::cout << "Registers:\n";
-    for (int i = 0; i < NUM_REGISTERS; ++i) {
-        std::cout << "  " << regs[i] << " = " << std::dec << registers[i] << "\n";
-    }
-
-    std::cout << std::flush; // <- ADD THIS
-=======
     std::cout << "Current PC: 0x" << std::hex << pc << std::dec << "\n";
     for (int i = 0; i < NUM_REGISTERS; ++i) {
         std::cout << regs[i] << " = " << std::dec << registers[i] << "\n";
     }
     std::cout << std::flush;
->>>>>>> Stashed changes
 }
 bool ZX16_Simulator::step() {
     if (!running || pc >= programEnd) {
@@ -653,14 +643,10 @@ bool ZX16_Simulator::step() {
     Instruction inst(BinaryInstruction);
     PrintDynamicDiassembley(BinaryInstruction);
     bool jumped = executeInstruction(inst);
-<<<<<<< Updated upstream
-    if (!jumped) pc += 2;
-=======
     std::cout << std::flush; // Flush after instruction execution
     if (!jumped) pc += 2;
 
     // Check if simulation should end AFTER this instruction
->>>>>>> Stashed changes
     if (pc >= programEnd) {
         std::cout << "Simulation ended.\n";
         running = false;
@@ -670,17 +656,10 @@ bool ZX16_Simulator::step() {
         std::cout << std::flush; // Flush after memory dump
         return false; // End simulation immediately
     }
-<<<<<<< Updated upstream
-    printState();
-    dumpRegisters();
-    dumpMemory(0, 256);
-    return running && pc < programEnd;
-=======
 
     printState();
     std::cout << std::flush; // Flush after state print
     dumpMemory(0, 0x10000); // Dump full memory after each step
     std::cout << std::flush; // Flush after memory dump
     return running;
->>>>>>> Stashed changes
 }

@@ -597,14 +597,6 @@
       100% { background-color: transparent; }
     }
 
-<<<<<<< Updated upstream
-    /* Memory highlighting */
-    .memory-changed {
-      animation: highlight-fade 2s;
-    }
-
-=======
->>>>>>> Stashed changes
     /* Scrollbar styling */
     ::-webkit-scrollbar {
       width: 8px;
@@ -1053,16 +1045,6 @@ halt"></textarea>
 
 
 
-<<<<<<< Updated upstream
-    // Update memory
-    const memTableBody = document.getElementById("memory-table").querySelector("tbody");
-    memTableBody.innerHTML = "";
-    if (data.memory && data.memory.length > 0) {
-      data.memory.slice(0, 32).forEach(memRow => {
-        const row = document.createElement("tr");
-        const bytesFormatted = memRow.bytes.map(b => b.toString(16).padStart(2, '0')).join(' ');
-        row.innerHTML = `<td>0x${memRow.address.toString(16).padStart(4, '0')}</td><td class="memory-bytes">${bytesFormatted}</td>`;
-=======
     // Update memory without highlighting
     const memTableBody = document.getElementById("memory-table").querySelector("tbody");
     memTableBody.innerHTML = "";
@@ -1072,7 +1054,6 @@ halt"></textarea>
         const row = document.createElement("tr");
         const bytesFormatted = memRow.bytes.map(b => b.toString(16).padStart(2, '0')).join(' ');
         row.innerHTML = `<td>${memRow.address}</td><td>${bytesFormatted}</td>`;
->>>>>>> Stashed changes
         memTableBody.appendChild(row);
       });
     }
@@ -1283,21 +1264,13 @@ halt"></textarea>
       this.disabled = true;
       this.textContent = 'Step...';
       try {
-<<<<<<< Updated upstream
-        const code = getActiveEditorContent();
-=======
         // FIX: Do not send code in the body for /step
->>>>>>> Stashed changes
         const response = await fetch('http://localhost:8000/step', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-<<<<<<< Updated upstream
-          body: JSON.stringify({ code })
-=======
           body: JSON.stringify({}) // Send empty body
->>>>>>> Stashed changes
         });
         const data = await response.json();
         updateIDE(data);
