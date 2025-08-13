@@ -609,14 +609,14 @@ bool ZX16_Simulator::executeInstruction(Instruction& inst) {
 }
 
 
-void ZX16_Simulator::dumpMemory(uint16_t address, uint16_t size) const {
+void ZX16_Simulator::dumpMemory(uint32_t address, uint32_t size) const {
     if (address + size > MEMORY_SIZE) {
         std::cerr << "Memory dump out of bounds: address=" << address << ", size=" << size << "\n";
         return;
     }
 
     std::cout << "Memory Dump (address=" << address << ", size=" << size << "):\n";
-    for (uint16_t i = 0; i < size; ++i) {
+    for (uint32_t i = 0; i < size; ++i) {
         if (i % 16 == 0) {
             std::cout << std::hex << std::setw(4) << std::setfill('0') << (address + i) << ": ";
         }
@@ -629,6 +629,7 @@ void ZX16_Simulator::dumpMemory(uint16_t address, uint16_t size) const {
 }
 
 void ZX16_Simulator::printState() const {
+<<<<<<< Updated upstream
     std::cout << "Current PC: 0x" << std::hex << pc << "\n";
     std::cout << "Registers:\n";
     for (int i = 0; i < NUM_REGISTERS; ++i) {
@@ -636,6 +637,13 @@ void ZX16_Simulator::printState() const {
     }
 
     std::cout << std::flush; // <- ADD THIS
+=======
+    std::cout << "Current PC: 0x" << std::hex << pc << std::dec << "\n";
+    for (int i = 0; i < NUM_REGISTERS; ++i) {
+        std::cout << regs[i] << " = " << std::dec << registers[i] << "\n";
+    }
+    std::cout << std::flush;
+>>>>>>> Stashed changes
 }
 bool ZX16_Simulator::step() {
     if (!running || pc >= programEnd) {
@@ -645,13 +653,34 @@ bool ZX16_Simulator::step() {
     Instruction inst(BinaryInstruction);
     PrintDynamicDiassembley(BinaryInstruction);
     bool jumped = executeInstruction(inst);
+<<<<<<< Updated upstream
     if (!jumped) pc += 2;
+=======
+    std::cout << std::flush; // Flush after instruction execution
+    if (!jumped) pc += 2;
+
+    // Check if simulation should end AFTER this instruction
+>>>>>>> Stashed changes
     if (pc >= programEnd) {
-        std::cerr << "PC out of program bounds at 0x" << std::hex << pc << ". Halting execution.\n";
+        std::cout << "Simulation ended.\n";
         running = false;
+        printState();
+        std::cout << std::flush; // Flush after state print
+        dumpMemory(0, 0x10000); // Dump full memory when simulation ends
+        std::cout << std::flush; // Flush after memory dump
+        return false; // End simulation immediately
     }
+<<<<<<< Updated upstream
     printState();
     dumpRegisters();
     dumpMemory(0, 256);
     return running && pc < programEnd;
+=======
+
+    printState();
+    std::cout << std::flush; // Flush after state print
+    dumpMemory(0, 0x10000); // Dump full memory after each step
+    std::cout << std::flush; // Flush after memory dump
+    return running;
+>>>>>>> Stashed changes
 }

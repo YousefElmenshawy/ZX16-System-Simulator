@@ -1,4 +1,3 @@
-
 #ifndef ZX16_SIMULATOR_H
 #define ZX16_SIMULATOR_H
 
@@ -41,7 +40,14 @@ public:
     void reset();
     bool step();
     void dumpRegisters() const;
+<<<<<<< Updated upstream
     void dumpMemory(uint16_t address, uint16_t size) const;
+=======
+    void dumpMemory(uint32_t address, uint32_t size) const;
+    void dumpMemoryPythonArray(uint32_t address, uint32_t size) const;
+    void dumpMemoryJSON(uint32_t address, uint32_t size) const;
+    void dumpMemoryCSV(uint32_t address, uint32_t size) const;
+>>>>>>> Stashed changes
     ZX16_Simulator();
     void run();
     void loadBinaryFile(const std::string& filename);
