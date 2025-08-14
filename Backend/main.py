@@ -64,7 +64,7 @@ async def simulate_code(request: Request):
 
         output = ""
         if result.returncode != 0:
-            output += f"Assembly failed.\nStderr:\n{result.stderr}\nStdout:\n{result.stdout}"
+            output = f"Assembly failed.\n{filter_output(result.stderr)}\n{filter_output(result.stdout)}"
             if os.path.exists(asm_file):
                 os.remove(asm_file)
             return {"output": output, "registers": None, "memory": None}
@@ -80,19 +80,21 @@ async def simulate_code(request: Request):
                 os.remove(bin_file)
             return {"output": "Simulation process timed out!"}
 
-        # Clean up temp files ASAP
+        # Clean up temp files
         if os.path.exists(asm_file):
             os.remove(asm_file)
         if os.path.exists(bin_file):
             os.remove(bin_file)
 
         if result.returncode != 0:
-            output += f"Simulation failed.\nStderr:\n{result.stderr}\nStdout:\n{result.stdout}"
+            output = f"Simulation failed.\n{filter_output(result.stderr)}\n{filter_output(result.stdout)}"
             return {"output": output, "registers": None, "memory": None}
         else:
-            output += f"Simulation succeeded.\nStdout:\n{result.stdout}"
+            output = filter_output(result.stdout)
             if result.stderr:
-                output += f"\nStderr:\n{result.stderr}"
+                stderr_filtered = filter_output(result.stderr)
+                if stderr_filtered:
+                    output += f"\n{stderr_filtered}"
 
         default_registers = {reg: 0 for reg in ["t0", "ra", "sp", "s0", "s1", "t1", "a0", "a1"]}
         default_memory = []
@@ -224,23 +226,20 @@ async def simulate_step(request: Request):
 async def step_simulation():
     global latest_step_bin, step_count, prev_registers, prev_memory, step_proc
     try:
-        # Do not expect or use code from the request
         if not step_proc or step_proc.poll() is not None:
             return {"output": "Step mode not active or process ended.", "registers": None, "memory": None}
 
-        # Send a newline to stdin to trigger a step
         step_proc.stdin.write("\n")
         step_proc.stdin.flush()
 
-        # Read all output from the step, including register state and memory dump
         output = ""
-        timeout = 5.0  # Increased timeout for memory dump
+        timeout = 5.0
         start_time = time.time()
-
-        # Read until we get all output (registers + memory dump)
         registers_found = False
         memory_dump_started = False
         memory_dump_ended = False
+        current_instruction = None
+        current_pc = None
 
         while True:
             try:
@@ -249,19 +248,23 @@ async def step_simulation():
                     break
                 output += line
 
-                # Track what sections we've seen
+                # Track what sections we've seen and capture important info
                 if "Current PC:" in line:
                     registers_found = True
+                    pc_match = re.search(r"0x([0-9a-fA-F]+)", line)
+                    if pc_match:
+                        current_pc = pc_match.group(1)
+                elif "Executed:" in line:
+                    inst_match = re.search(r"Executed:\s*(.+)", line)
+                    if inst_match:
+                        current_instruction = inst_match.group(1).strip()
                 elif "Memory Dump" in line:
                     memory_dump_started = True
                 elif memory_dump_started and line.strip() == "":
-                    # Empty line after memory dump indicates end
                     memory_dump_ended = True
 
-                # Check for simulation end
                 if "Simulation ended." in line or "PC out of program bounds" in line:
-                    # Read a bit more to get final state and memory
-                    for _ in range(4100):  # Enough for full memory dump
+                    for _ in range(4100):
                         try:
                             extra_line = step_proc.stdout.readline()
                             if not extra_line:
@@ -271,17 +274,17 @@ async def step_simulation():
                             break
                     break
 
-                # If we've seen registers and completed memory dump, we're done
                 if registers_found and memory_dump_ended:
                     break
 
-                # Add timeout to prevent hanging
                 if time.time() - start_time > timeout:
                     break
             except:
                 break
 
-        # Check if simulation ended
+        # Filter the output to show only important lines
+        filtered_output = filter_output(output)
+
         simulation_ended = "Simulation ended." in output or "PC out of program bounds" in output
         if simulation_ended:
             step_proc.terminate()
@@ -363,8 +366,6 @@ async def step_simulation():
         prev_memory = [dict(m) for m in memory]
 
         # Extract current PC and instruction for highlighting
-        current_pc = None
-        current_instruction = None
         for line in lines:
             if "Current PC:" in line:
                 pc_match = re.search(r"0x([0-9a-fA-F]+)", line)
@@ -376,13 +377,126 @@ async def step_simulation():
                     current_instruction = inst_match.group(1).strip()
 
         return {
-            "output": output,
+            "output": filtered_output,  # Return filtered output
             "registers": registers,
             "memory": memory,
             "changed_registers": changed_registers,
             "changed_memory": changed_memory,
             "current_pc": current_pc,
-            "current_instruction": current_instruction
+            "current_instruction": current_instruction,
+            "simulationEnded": simulation_ended
         }
+    except Exception as e:
+        if step_proc:
+            step_proc.terminate()
+            step_proc = None
+        return {"output": f"Step error: {str(e)}", "registers": None, "memory": None, "simulationEnded": True}
+
+def filter_output(text):
+    if not text:
+        return ""
+    filtered_lines = []
+    for line in text.split('\n'):
+        if (
+            'simulation' in line.lower() or
+            'ECALL' in line):
+            filtered_lines.append(line)
+    return '\n'.join(filtered_lines)
+
+@app.post("/step")
+async def step_code(request: Request):
+    global step_proc, latest_step_bin, step_count, prev_registers, prev_memory
+    try:
+        if not step_proc or step_proc.poll() is not None:
+            return {"output": "No active simulation. Please compile and run first.", "registers": None, "memory": None}
+
+        # Send newline to trigger next step
+        step_proc.stdin.write('\n')
+        step_proc.stdin.flush()
+
+        # Read output until we get a complete step
+        output = ""
+        while True:
+            line = step_proc.stdout.readline()
+            if not line:
+                break
+            output += line
+            # Check if we've reached the end of the step
+            if "Executed" in line or "ecall" in line.lower():
+                break
+
+        # Filter the output
+        filtered_output = filter_output(output)
+
+        # Check if simulation has ended
+        if "Simulation ended" in output:
+            step_proc.terminate()
+            step_proc = None
+            return {"output": filtered_output, "registers": None, "memory": None, "simulationEnded": True}
+
+        return {"output": filtered_output, "registers": None, "memory": None, "simulationEnded": False}
+
+    except Exception as e:
+        if step_proc:
+            step_proc.terminate()
+            step_proc = None
+        return {"output": f"Step error: {str(e)}", "registers": None, "memory": None, "simulationEnded": True}
+
+@app.post("/compile")
+async def compile_code(request: Request):
+    try:
+        data = await request.json()
+        code = data.get("code", "")
+
+        # Create unique binary file name
+        bin_file = os.path.join(current_dir, f"temp_{uuid.uuid4()}.bin")
+
+        # Write assembly code to temporary file
+        asm_file = bin_file + ".s"
+        with open(asm_file, "w") as f:
+            f.write(code)
+
+        # Assemble the code
+        assembler = ZX16Assembler()
+        try:
+            with open(asm_file, "r") as f:
+                assembly_code = f.read()
+            binary_code = assembler.assemble(assembly_code)
+            with open(bin_file, "wb") as f:
+                f.write(binary_code)
+        except Exception as e:
+            if os.path.exists(asm_file):
+                os.remove(asm_file)
+            return {"output": f"Assembly error: {str(e)}", "registers": None, "memory": None}
+        finally:
+            if os.path.exists(asm_file):
+                os.remove(asm_file)
+
+        # Terminate previous process if running
+        if step_proc and step_proc.poll() is None:
+            step_proc.terminate()
+        step_proc = None
+
+        # Start persistent simulator process in step mode
+        simulator_path = os.path.join(current_dir, "ZX16_System_Simulator")
+        step_proc = subprocess.Popen(
+            [simulator_path, bin_file, "step"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd=current_dir,
+            text=True,
+            bufsize=1
+        )
+        latest_step_bin = bin_file
+        step_count = 0
+        prev_registers = {}
+        prev_memory = []
+
+        # Read and filter initial output
+        initial_output = step_proc.stdout.readline()
+        filtered_output = filter_output(initial_output)
+
+        return {"output": filtered_output, "registers": None, "memory": None}
     except Exception as e:
         return {"output": f"Server error: {str(e)}", "registers": None, "memory": None}

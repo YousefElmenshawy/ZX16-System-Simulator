@@ -149,6 +149,7 @@
       border-left: 2px solid #007acc;
     }
     body.light-theme .memory-table th {
+
       background: #f3f3f3;
       color: #007acc;
     }
@@ -826,28 +827,25 @@
     /* Editor line highlighting for step mode */
     .editor-line-highlight {
       position: absolute;
-      left: 0;
+      left: 40px;
       right: 0;
-      background-color: rgba(0, 122, 204, 0.15);
-      border-left: 3px solid #007acc;
+      background-color: rgba(86, 156, 214, 0.1);
+      border-left: 3px solid #569cd6;
       pointer-events: none;
-      z-index: 4;
+      z-index: 2;
+      transition: all 0.3s ease;
+      animation: highlightPulse 1s ease-in-out;
     }
 
-    /* Highlight pulse animation for step mode */
     @keyframes highlightPulse {
-      0% {
-        background-color: rgba(0, 122, 204, 0.4);
-        border-left-color: #00aaff;
-      }
-      50% {
-        background-color: rgba(0, 122, 204, 0.3);
-        border-left-color: #007acc;
-      }
-      100% {
-        background-color: rgba(0, 122, 204, 0.2);
-        border-left-color: #007acc;
-      }
+      0% { background-color: rgba(86, 156, 214, 0.3); }
+      100% { background-color: rgba(86, 156, 214, 0.1); }
+    }
+
+    /* Light theme support */
+    body.light-theme .editor-line-highlight {
+      background-color: rgba(0, 122, 204, 0.1);
+      border-left: 3px solid #007acc;
     }
   </style>
 </head>
@@ -990,6 +988,10 @@ halt"></textarea>
 
   // Add a flag to track if we're in step mode
   let isStepMode = false;
+
+  // Add PC mapping for editor lines
+  let lineToPCMap = new Map();
+  let currentPC = 0x0002;
 
   // Persistent settings
   const SETTINGS_KEY = 'zx16_settings';
@@ -1174,7 +1176,7 @@ halt"></textarea>
     // If closing the active tab, switch to another tab first
     if (activeTabId === tabId) {
       const otherTabs = Array.from(allTabs).filter(tab =>
-        parseInt(tab.dataset.tabId) !== tabId
+              parseInt(tab.dataset.tabId) !== tabId
       );
 
       if (otherTabs.length > 0) {
@@ -1316,10 +1318,6 @@ halt"></textarea>
       for (const line of lines) {
         const lineDiv = document.createElement("div");
         lineDiv.textContent = line;
-        // Remove highlighting from console output
-        // if (line.includes("Executed:")) {
-        //   lineDiv.classList.add("current-instruction");
-        // }
         consoleOutput.appendChild(lineDiv);
       }
     } else {
@@ -1357,29 +1355,13 @@ halt"></textarea>
         });
       }
 
-      console.log("Calling highlightInstructionInEditor? isStepMode =", isStepMode, "currentInstructionText =", currentInstructionText, "currentPC =", currentPC, "simulationEnded =", simulationEnded);
-
-      // If we're in step mode and found a current instruction, highlight it in the editor
-      if (isStepMode && (currentInstructionText || currentPC !== null) && !simulationEnded) {
-        highlightInstructionInEditor(currentInstructionText);
+      // Handle highlighting in the editor
+      if (isStepMode && !simulationEnded && currentPC !== null) {
+        console.log("Highlighting instruction at PC:", currentPC);
+        highlightInstructionInEditor(window._lastStepData.current_instruction, currentPC);
       } else {
         clearEditorHighlight();
       }
-      highlightInstructionInEditor(currentInstructionText);
-      if (simulationEnded) {
-        clearEditorHighlight();
-        isStepMode = false;
-      }
-    }
-
-    console.log("updateIDE: isStepMode =", isStepMode, "simulationEnded =", simulationEnded);
-    console.log("updateIDE: currentInstructionText =", currentInstructionText, "currentPC =", currentPC);
-
-    if (isStepMode && !simulationEnded) {
-      console.log("updateIDE: Forcing call to highlightInstructionInEditor");
-      highlightInstructionInEditor(currentInstructionText || "");
-    } else {
-      clearEditorHighlight();
     }
 
     // Re-initialize icons after content update
@@ -1420,87 +1402,51 @@ halt"></textarea>
     return overlay;
   }
 
-  // Highlight instruction in editor - DISABLED FOR NOW
-  function highlightInstructionInEditor(executedInstruction) {
-    // HIGHLIGHTING DISABLED - Remove the return statement below to re-enable
-    return;
+  // Highlight instruction in editor using program counter
+  function highlightInstructionInEditor(currentInstruction, currentPC) {
+    if (!isStepMode || currentPC === null || currentPC === undefined) return;
 
-    // Clear any existing highlights first
+    const editor = document.querySelector('.code-editor.active');
+    if (!editor) return;
+
     clearEditorHighlight();
 
-    if (!executedInstruction || executedInstruction.trim() === "") {
-      console.log("[Debug] highlightInstructionInEditor: executedInstruction is empty.");
-      return;
-    }
+    // Convert currentPC to number if it's a hex string
+    const pcValue = typeof currentPC === 'string' ? parseInt(currentPC, 16) : currentPC;
 
-    const content = editor.value;
-    const lines = content.split('\n');
-
-    // Improved instruction matching with multiple strategies
-    const normalize = s => s.replace(/[,\s]+/g, ' ').trim().toLowerCase();
-    const normInst = normalize(executedInstruction);
-    console.log("[Debug] Normalized Executed Instruction:", normInst);
-
-    let highlightLine = -1;
-    let bestMatch = { line: -1, score: 0 };
-
-    for (let i = 0; i < lines.length; i++) {
-      let line = lines[i];
-
-      // Skip placeholder text
-      if (line.includes("Enter your ZX16 assembly code here")) continue;
-
-      // Remove comments
-      let code = line.split('#')[0];
-
-      // Remove labels
-      if (code.includes(':')) {
-        code = code.split(':').slice(1).join(':');
-      }
-
-      const normCode = normalize(code);
-      if (!normCode) continue;
-
-      console.log(`[Debug] Line ${i}:`, normCode);
-
-      // Try exact match first
-      if (normCode === normInst) {
-        highlightLine = i;
-        console.log(`[Debug] Exact match found on line ${i}:`, normCode);
+    // Find the line that matches the current PC
+    let actualLineNumber = null;
+    for (const [lineNum, pc] of lineToPCMap.entries()) {
+      // Convert both to hex strings for comparison to avoid number type issues
+      if (pc.toString(16) === pcValue.toString(16)) {
+        actualLineNumber = parseInt(lineNum);
         break;
       }
-
-      // Try instruction-only match (first word)
-      const instWords = normInst.split(' ');
-      const codeWords = normCode.split(' ');
-      if (instWords.length > 0 && codeWords.length > 0 && instWords[0] === codeWords[0]) {
-        const score = calculateMatchScore(normInst, normCode);
-        if (score > bestMatch.score) {
-          bestMatch = { line: i, score: score };
-        }
-      }
-
-      // Try partial match
-      if (normCode.includes(normInst) || normInst.includes(normCode)) {
-        const score = calculateMatchScore(normInst, normCode);
-        if (score > bestMatch.score) {
-          bestMatch = { line: i, score: score };
-        }
-      }
     }
 
-    // Use best match if no exact match found
-    if (highlightLine === -1 && bestMatch.line !== -1) {
-      highlightLine = bestMatch.line;
-      console.log(`[Debug] Best match found on line ${highlightLine} with score:`, bestMatch.score);
-    }
+    console.log("Current PC:", pcValue.toString(16), "Matched line:", actualLineNumber, "PC Map:", [...lineToPCMap.entries()].map(([line, pc]) => [line, pc.toString(16)]));
 
-    if (highlightLine !== -1) {
-      createLineHighlight(highlightLine, editor);
-      scrollToLine(highlightLine, editor);
-      console.log(`[Debug] Highlight applied on line ${highlightLine}`);
-    } else {
-      console.log("[Debug] No matching line found for the executed instruction.");
+    if (actualLineNumber === null) return;
+
+    // Create highlight element
+    const highlight = document.createElement('div');
+    highlight.className = 'editor-line-highlight';
+
+    // Calculate position
+    const lineHeight = parseInt(getComputedStyle(editor).lineHeight);
+    const paddingTop = parseInt(getComputedStyle(editor).paddingTop);
+
+    highlight.style.top = `${paddingTop + lineHeight * actualLineNumber}px`;
+    highlight.style.height = `${lineHeight}px`;
+    editor.parentElement.appendChild(highlight);
+
+    // Scroll into view if needed
+    const editorRect = editor.getBoundingClientRect();
+    const highlightTop = paddingTop + lineHeight * actualLineNumber;
+    const highlightBottom = highlightTop + lineHeight;
+
+    if (highlightTop < editor.scrollTop || highlightBottom > editor.scrollTop + editorRect.height) {
+        editor.scrollTop = highlightTop - editorRect.height / 2;
     }
   }
 
@@ -1707,6 +1653,34 @@ halt"></textarea>
     document.getElementById('step-mode-btn').addEventListener('click', async function() {
       const code = getActiveEditorContent();
       if (!code.trim()) return;
+
+      // Reset PC mapping
+      lineToPCMap.clear();
+      currentPC = 0x0002;
+
+      // Build PC mapping
+      const lines = code.split('\n');
+      let lineNumber = 0;
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#')) {
+          // If it's a line with an instruction (not just a label)
+          if (trimmed.includes(':')) {
+            const parts = trimmed.split(':');
+            if (parts[1].trim()) {
+              lineToPCMap.set(lineNumber, currentPC);
+              currentPC += 0x0002;
+            }
+          } else {
+            lineToPCMap.set(lineNumber, currentPC);
+            currentPC += 0x0002;
+          }
+        }
+        lineNumber++;
+      }
+
+      console.log("PC Map created:", [...lineToPCMap.entries()]);
+
       try {
         // Set initializing step mode state
         setButtonState('run-btn', 'play', 'Run', true);
@@ -2031,9 +2005,9 @@ halt"></textarea>
 
     // Immediate values (numbers, hex, binary, octal)
     if (/^-?\d+$/.test(trimmed) ||
-        /^0x[0-9a-fA-F]+$/.test(trimmed) ||
-        /^0b[01]+$/.test(trimmed) ||
-        /^0o[0-7]+$/.test(trimmed)) {
+            /^0x[0-9a-fA-F]+$/.test(trimmed) ||
+            /^0b[01]+$/.test(trimmed) ||
+            /^0o[0-7]+$/.test(trimmed)) {
       return `<span class="syntax-immediate">${escapeHtml(operand)}</span>`;
     }
 
@@ -2078,9 +2052,9 @@ halt"></textarea>
 
     // Numbers
     if (/^-?\d+$/.test(trimmed) ||
-        /^0x[0-9a-fA-F]+$/.test(trimmed) ||
-        /^0b[01]+$/.test(trimmed) ||
-        /^0o[0-7]+$/.test(trimmed)) {
+            /^0x[0-9a-fA-F]+$/.test(trimmed) ||
+            /^0b[01]+$/.test(trimmed) ||
+            /^0o[0-7]+$/.test(trimmed)) {
       return `<span class="syntax-immediate">${escapeHtml(arg)}</span>`;
     }
 
