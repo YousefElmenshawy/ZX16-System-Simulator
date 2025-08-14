@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ZX16 IDE</title>
+  <!-- Modern Icons from Lucide -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <!-- Modern web fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Modern Typography */
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+      background: #1e1e1e;
+      color: #cccccc;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: 13px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Light Theme */
+    body.light-theme {
+      background: #ffffff;
+      color: #333333;
+    }
+    body.light-theme .top-panel {
+      background: #f3f3f3;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    /* Removed unused light-theme selectors for activity bar/sidebar */
+    /* body.light-theme .activity-bar { ... } */
+    /* body.light-theme .activity-item { ... } */
+    /* body.light-theme .activity-item:hover { ... } */
+    /* body.light-theme .activity-item.active { ... } */
+    /* body.light-theme .sidebar { ... } */
+    /* body.light-theme .sidebar-header { ... } */
+    body.light-theme .code-panel {
+      background: #ffffff;
+    }
+    body.light-theme .code-tabs {
+      background: #f3f3f3;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    body.light-theme .code-tab {
+      background: transparent;
+      color: #333333;
+      border-right: 1px solid #e5e5e5;
+    }
+    body.light-theme .code-tab:hover:not(.active) {
+      background: #e5e5e5;
+    }
+    body.light-theme .code-tab.active {
+      background: #ffffff;
+      color: #000000;
+      border-bottom: 2px solid #007acc;
+    }
+    body.light-theme .new-tab-btn {
+      color: #666666;
+    }
+    body.light-theme .new-tab-btn:hover {
+      background: #e5e5e5;
+      color: #333333;
+    }
+    body.light-theme .code-editor {
+      background: #ffffff;
+      color: #333333;
+    }
+    body.light-theme .code-editor::placeholder {
+      color: #999999;
+    }
+    body.light-theme .line-numbers {
+      background: #f8f8f8;
+      color: #858585;
+      border-right: 1px solid #e5e5e5;
+      overflow: auto;
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+    body.light-theme .line-numbers::-webkit-scrollbar { /* Chrome, Safari */
+      width: 0;
+      height: 0;
+    }
+    body.light-theme .editor-line-highlight {
+      background-color: rgba(0, 122, 204, 0.1);
+      border-left: 3px solid #007acc;
+    }
+    body.light-theme .line-count {
+      background: rgba(255, 255, 255, 0.9);
+      color: #333333;
+      border: 1px solid #e5e5e5;
+    }
+    body.light-theme .registers-panel {
+      background: #f8f8f8;
+      border-left: 1px solid #e5e5e5;
+    }
+    body.light-theme .registers-header {
+      background: #f3f3f3;
+      border-bottom: 1px solid #e5e5e5;
+      color: #333333;
+    }
+    body.light-theme .reg-table th {
+      background: #f3f3f3;
+      color: #007acc;
+    }
+    body.light-theme .reg-table td {
+      color: #333333;
+    }
+    body.light-theme .reg-table tr:hover {
+      background: #f0f0f0;
+    }
+    body.light-theme .bottom-panel {
+      background: #f8f8f8;
+      border-top: 1px solid #e5e5e5;
+    }
+    body.light-theme .bottom-tabs {
+      background: #f3f3f3;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    body.light-theme .bottom-tab {
+      color: #333333;
+    }
+    body.light-theme .bottom-tab:hover:not(.active) {
+      background: #e5e5e5;
+    }
+    body.light-theme .bottom-tab.active {
+      color: #000000;
+      border-bottom-color: #007acc;
+      background: #f8f8f8;
+    }
+    body.light-theme .console-output {
+      background: #ffffff;
+      color: #333333;
+      border: 1px solid #e5e5e5;
+    }
+    body.light-theme .current-instruction {
+      background-color: rgba(0, 122, 204, 0.15);
+      border-left: 2px solid #007acc;
+    }
+    body.light-theme .memory-table th {
+      background: #f3f3f3;
+      color: #007acc;
+    }
+    body.light-theme .memory-table td {
+      color: #333333;
+    }
+    body.light-theme .memory-table tr:hover {
+      background: #f0f0f0;
+    }
+    body.light-theme .status-bar {
+      background: #007acc;
+      color: #ffffff;
+    }
+    body.light-theme .control-button {
+      background: transparent;
+      border: none;
+      color: #4b5563; /* slate-600 */
+      box-shadow: none;
+    }
+    body.light-theme .control-button:hover {
+      background: transparent;
+      border: none;
+      color: #007acc; /* accent on hover */
+      box-shadow: none;
+    }
+    body.light-theme .control-button:active {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+    body.light-theme .control-button:disabled {
+      background: transparent;
+      border: none;
+      color: #9ca3af; /* slate-400 */
+      box-shadow: none;
+    }
+
+    /* Top Panel - VSCode-like title bar */
+    .top-panel {
+      background: #2d2d30;
+      border-bottom: 1px solid #3e3e42;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      height: 35px;
+      position: relative;
+    }
+
+    .ide-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      color: #cccccc;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 100%;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Better title color in light mode */
+    body.light-theme .ide-title {
+      color: #1f2937; /* slate-800 for crisp text on light bg */
+    }
+
+    .ide-title::before {
+      content: "⚡";
+      font-size: 16px;
+      color: #007acc;
+    }
+
+    /* Modern Control Buttons */
+    .controls-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-left: auto;
+      margin-right: 16px;
+    }
+
+    .control-button {
+      background: transparent;
+      color: #cccccc;
+      border: none;
+      border-radius: 6px;
+      padding: 0;
+      width: 34px;
+      height: 34px;
+      justify-content: center;
+      gap: 0;
+      position: relative;
+      transition: all 0.15s ease;
+    }
+
+    /* Icon size inside buttons */
+    .control-button i[data-lucide] {
+      width: 18px !important;
+      height: 18px !important;
+    }
+
+    /* Tooltip on hover using data-label */
+    .control-button::after {
+      content: attr(data-label);
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.85);
+      color: #fff;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.12s ease;
+      z-index: 10;
+    }
+    .control-button:hover::after {
+      opacity: 1;
+    }
+
+    /* Improve hover/active visuals */
+    .control-button:hover {
+      background: #3e3e42;
+      color: #ffffff;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset;
+    }
+    .control-button:active {
+      transform: translateY(0.5px);
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+    }
+
+    .editor-area {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+    }
+
+    /* Code Panel */
+    .code-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #1e1e1e;
+      min-width: 400px;
+    }
+
+    /* Modern Tabs */
+    .code-tabs {
+      display: flex;
+      background: #2d2d30;
+      border-bottom: 1px solid #3e3e42;
+      overflow-x: auto;
+      min-height: 35px;
+    }
+
+    .code-tab {
+      display: flex;
+      align-items: center;
+      background: transparent;
+      border: none;
+      color: #cccccc;
+      padding: 0;
+      font-size: 13px;
+      cursor: pointer;
+      border-right: 1px solid #3e3e42;
+      white-space: nowrap;
+      min-width: 120px;
+      max-width: 200px;
+      position: relative;
+      height: 35px;
+      transition: all 0.15s ease;
+    }
+
+    .code-tab:hover:not(.active) {
+      background: #3e3e42;
+    }
+
+    .code-tab.active {
+      background: #1e1e1e;
+      color: #ffffff;
+      border-bottom: 2px solid #007acc;
+    }
+
+    .code-tab.dirty::after {
+      content: '●';
+      color: #ffffff;
+      margin-left: 4px;
+      font-size: 12px;
+    }
+
+    .tab-content {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .tab-icon {
+      width: 16px;
+      height: 16px;
+      opacity: 0.7;
+    }
+
+    .tab-name {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: inherit;
+      font-size: inherit;
+      font-family: inherit;
+      outline: none;
+      padding: 0;
+      cursor: pointer;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tab-name:focus {
+      cursor: text;
+    }
+
+    .tab-close {
+      background: none;
+      border: none;
+      color: #858585;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 2px;
+      border-radius: 2px;
+      line-height: 1;
+      opacity: 0;
+      transition: all 0.15s ease;
+      width: 16px;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .code-tab:hover .tab-close {
+      opacity: 1;
+    }
+
+    .tab-close:hover {
+      background: #5a5a5a;
+      color: #ffffff;
+    }
+
+    .new-tab-btn {
+      background: transparent;
+      border: none;
+      color: #858585;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 0 12px;
+      transition: all 0.15s ease;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .new-tab-btn:hover {
+      background: #3e3e42;
+      color: #cccccc;
+    }
+
+    /* Code Editor */
+    .code-content {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .editor-container {
+      position: relative;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .code-editor {
+      position: absolute;
+      top: 0;
+      left: 40px;
+      right: 0;
+      bottom: 0;
+      border: none;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      line-height: 20px;
+      padding: 16px;
+      resize: none;
+      outline: none;
+      display: none;
+      white-space: pre;
+      overflow: auto;
+      tab-size: 2;
+      /* Remove transparency for better text rendering */
+      z-index: 1;
+    }
+
+    .code-editor.active {
+      display: block;
+    }
+
+    .code-editor::placeholder {
+      color: #6a6a6a;
+    }
+
+    /* Syntax highlighting content div - replaces overlay */
+    .syntax-content {
+      position: absolute;
+      top: 0;
+      left: 40px;
+      right: 0;
+      bottom: 0;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      line-height: 20px;
+      padding: 16px;
+      margin: 0;
+      border: none;
+      white-space: pre;
+      overflow: hidden; /* Don't scroll independently */
+      background: transparent;
+      color: #d4d4d4;
+      pointer-events: none;
+      z-index: 2;
+      display: none;
+      /* Force exact positioning match */
+      box-sizing: border-box;
+    }
+
+    /* Hide the textarea when syntax highlighting is active */
+    .editor-container.syntax-active .code-editor {
+      color: transparent;
+      caret-color: #d4d4d4;
+    }
+
+    /* Line Numbers */
+    .line-numbers {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 40px;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      line-height: 20px;
+      color: #858585;
+      text-align: right;
+      padding: 16px 8px 16px 0;
+      background: #1e1e1e;
+      user-select: none;
+      border-right: 1px solid #3e3e42;
+      white-space: pre;
+      overflow: auto;
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+    .line-numbers::-webkit-scrollbar { /* Chrome, Safari */
+      width: 0;
+      height: 0;
+    }
+
+    /* Registers Panel */
+    .registers-panel {
+      width: 300px;
+      background: #252526;
+      border-left: 1px solid #3e3e42;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .registers-header {
+      background: #2d2d30;
+      padding: 8px 16px;
+      border-bottom: 1px solid #3e3e42;
+      font-size: 11px;
+      font-weight: 600;
+      color: #cccccc;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .registers-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0;
+    }
+
+    .reg-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 12px;
+    }
+
+    .reg-table th,
+    .reg-table td {
+      padding: 8px 16px;
+      text-align: left;
+      border-bottom: 1px solid #3e3e42;
+    }
+
+    .reg-table th {
+      background: #2d2d30;
+      color: #007acc;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .reg-table td {
+      color: #d4d4d4;
+    }
+
+    .reg-table tr:hover {
+      background: #2a2a2b;
+    }
+
+    /* Bottom Panel */
+    .bottom-panel {
+      height: 250px;
+      background: #252526;
+      border-top: 1px solid #3e3e42;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bottom-tabs {
+      display: flex;
+      background: #2d2d30;
+      border-bottom: 1px solid #3e3e42;
+      gap: 1px;
+    }
+
+    .bottom-tab {
+      background: transparent;
+      border: none;
+      color: #cccccc;
+      padding: 8px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+
+    .bottom-tab:hover:not(.active) {
+      background: #3e3e42;
+    }
+
+    .bottom-tab.active {
+      color: #ffffff;
+      border-bottom-color: #007acc;
+      background: #252526;
+    }
+
+    .bottom-content {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tab-panel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 16px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .console-output {
+      background: #1e1e1e;
+      border: 1px solid #3e3e42;
+      border-radius: 3px;
+      padding: 12px;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      color: #d4d4d4;
+      white-space: pre-wrap;
+      min-height: 180px;
+      overflow-y: auto;
+    }
+
+    .memory-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 12px;
+    }
+
+    .memory-table th,
+    .memory-table td {
+      padding: 6px 16px;
+      text-align: left;
+      border-bottom: 1px solid #3e3e42;
+    }
+
+    .memory-table th {
+      background: #2d2d30;
+      color: #007acc;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .memory-table td {
+      color: #d4d4d4;
+    }
+
+    .memory-table tr:hover {
+      background: #2a2a2b;
+    }
+
+    /* Status Bar */
+    /*
+    .status-bar {
+      height: 22px;
+      background: #007acc;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      font-size: 12px;
+      gap: 16px;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    */
+
+    /* Line Count Display */
+    .line-count {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #ffffff;
+      padding: 2px 6px;
+      font-size: 11px;
+      border-radius: 2px;
+      z-index: 3;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+    }
+
+    /* Animations */
+    .reg-changed {
+      animation: highlight-fade 2s ease-out;
+    }
+
+    .current-instruction {
+      background-color: rgba(0, 122, 204, 0.15);
+      border-left: 2px solid #007acc;
+      padding-left: 5px;
+    }
+
+    @keyframes highlight-fade {
+      0% { background-color: rgba(255, 193, 7, 0.3); }
+      100% { background-color: transparent; }
+    }
+
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #1e1e1e;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #424242;
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4f4f4f;
+    }
+
+    body.light-theme ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    body.light-theme ::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+    }
+
+    body.light-theme ::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+
+    /* Syntax highlighting colors */
+    .syntax-r-type { color: #569cd6; } /* R-Type instructions - blue */
+    .syntax-i-type { color: #4ec9b0; } /* I-Type instructions - cyan */
+    .syntax-b-type { color: #c586c0; } /* B-Type instructions - purple */
+    .syntax-s-type { color: #ce9178; } /* S-Type instructions - orange */
+    .syntax-l-type { color: #dcdcaa; } /* L-Type instructions - yellow */
+    .syntax-j-type { color: #9cdcfe; } /* J-Type instructions - light blue */
+    .syntax-u-type { color: #b5cea8; } /* U-Type instructions - light green */
+    .syntax-sys-type { color: #f44747; } /* SYS-Type instructions - red */
+    .syntax-pseudo { color: #d7ba7d; } /* Pseudo instructions - tan */
+    .syntax-register { color: #9cdcfe; } /* Registers - light blue */
+    .syntax-immediate { color: #b5cea8; } /* Immediate values - light green */
+    .syntax-string { color: #ce9178; } /* String literals - orange */
+    .syntax-label { color: #dcdcaa; } /* Labels - yellow */
+    .syntax-comment { color: #6a9955; } /* Comments - green */
+    .syntax-directive { color: #c586c0; } /* Directives - purple */
+
+    /* Light theme syntax colors */
+    body.light-theme .syntax-r-type { color: #0000ff; }
+    body.light-theme .syntax-i-type { color: #008080; }
+    body.light-theme .syntax-b-type { color: #800080; }
+    body.light-theme .syntax-s-type { color: #a31515; }
+    body.light-theme .syntax-l-type { color: #795e26; }
+    body.light-theme .syntax-j-type { color: #0070c1; }
+    body.light-theme .syntax-u-type { color: #267f99; }
+    body.light-theme .syntax-sys-type { color: #a31515; }
+    body.light-theme .syntax-pseudo { color: #795e26; }
+    body.light-theme .syntax-register { color: #0070c1; }
+    body.light-theme .syntax-immediate { color: #09885a; }
+    body.light-theme .syntax-string { color: #a31515; }
+    body.light-theme .syntax-label { color: #795e26; }
+    body.light-theme .syntax-comment { color: #008000; }
+    body.light-theme .syntax-directive { color: #800080; }
+
+    /* Editor layout helpers for settings */
+    body.hide-line-numbers .line-numbers { display: none !important; }
+    body.hide-line-numbers .code-editor { left: 0 !important; }
+    body.hide-line-numbers .highlight-overlay { left: 0 !important; margin-left: 0 !important; padding-left: 0 !important; }
+    body.wrap-enabled .code-editor { white-space: pre-wrap !important; }
+
+    /* Removed Settings compact UI and toggle switch CSS (unused) */
+
+    /* Editor line highlighting for step mode */
+    .editor-line-highlight {
+      position: absolute;
+      left: 0;
+      right: 0;
+      background-color: rgba(0, 122, 204, 0.15);
+      border-left: 3px solid #007acc;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    /* Highlight pulse animation for step mode */
+    @keyframes highlightPulse {
+      0% {
+        background-color: rgba(0, 122, 204, 0.4);
+        border-left-color: #00aaff;
+      }
+      50% {
+        background-color: rgba(0, 122, 204, 0.3);
+        border-left-color: #007acc;
+      }
+      100% {
+        background-color: rgba(0, 122, 204, 0.2);
+        border-left-color: #007acc;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Top Panel -->
+<div class="top-panel">
+  <div class="ide-title">ZX16 IDE</div>
+  <div class="controls-container">
+    <button class="control-button success" id="run-btn" data-label="Run" aria-label="Run" title="Run">
+      <i data-lucide="play" style="width: 18px; height: 18px;"></i>
+    </button>
+    <button class="control-button warning" id="step-mode-btn" data-label="Step Mode" aria-label="Step Mode" title="Step Mode">
+      <i data-lucide="step-forward" style="width: 18px; height: 18px;"></i>
+    </button>
+    <button class="control-button" id="step-btn" data-label="Step" aria-label="Step" title="Step" disabled>
+      <i data-lucide="skip-forward" style="width: 18px; height: 18px;"></i>
+    </button>
+    <button class="control-button" id="upload-btn" data-label="Upload" aria-label="Upload" title="Upload">
+      <i data-lucide="upload" style="width: 18px; height: 18px;"></i>
+    </button>
+    <button class="control-button" id="download-btn" data-label="Download" aria-label="Download" title="Download">
+      <i data-lucide="download" style="width: 18px; height: 18px;"></i>
+    </button>
+    <button class="control-button" id="theme-toggle-btn" data-label="Toggle Theme" aria-label="Toggle Theme" title="Toggle Theme">
+      <i data-lucide="sun" style="width: 18px; height: 18px;"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <!-- Editor Area (Activity Bar and Sidebar removed) -->
+  <div class="editor-area">
+    <!-- Code Editor Panel -->
+    <div class="code-panel">
+      <div class="code-tabs" id="code-tabs">
+        <div class="code-tab active" data-tab-id="0">
+          <div class="tab-content">
+            <i data-lucide="file-text" class="tab-icon" style="width: 16px; height: 16px;"></i>
+            <input type="text" class="tab-name" value="main.zx16">
+            <button class="tab-close" onclick="closeTab(0)">×</button>
+          </div>
+        </div>
+        <button class="new-tab-btn" onclick="createNewTab()">
+          <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+        </button>
+      </div>
+      <div class="code-content">
+        <div class="editor-container">
+          <div class="line-numbers" id="line-numbers-0"></div>
+          <textarea class="code-editor active" id="editor-0" spellcheck="false" placeholder="# Enter your ZX16 assembly code here
+li s0, 5
+li s1, 0
+loop:
+  add s1, s1, s0
+  addi s0, s0, -1
+  bne s0, zero, loop
+halt"></textarea>
+          <div class="syntax-content" id="syntax-content-0"></div>
+          <div id="line-count" class="line-count"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Registers Panel -->
+    <div class="registers-panel">
+      <div class="registers-header">
+        <i data-lucide="cpu" style="width: 16px; height: 16px;"></i>
+        Registers
+      </div>
+      <div class="registers-content">
+        <table class="reg-table" id="reg-table">
+          <thead>
+          <tr>
+            <th>Register</th>
+            <th>Value</th>
+          </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Panel -->
+<div class="bottom-panel">
+  <div class="bottom-tabs">
+    <button class="bottom-tab active" data-tab="console">
+      <i data-lucide="terminal" style="width: 16px; height: 16px;"></i>
+      Console
+    </button>
+    <button class="bottom-tab" data-tab="memory">
+      <i data-lucide="hard-drive" style="width: 16px; height: 16px;"></i>
+      Memory
+    </button>
+  </div>
+  <div class="bottom-content">
+    <div class="tab-panel active" id="console-panel">
+      <div class="console-output" id="console-output">Ready to run...</div>
+    </div>
+    <div class="tab-panel" id="memory-panel">
+      <table class="memory-table" id="memory-table">
+        <thead>
+        <tr>
+          <th>Address</th>
+          <th>Bytes</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Status Bar - REMOVED for now maybe added later .. -->
+<!--
+<div class="status-bar">
+  <div class="status-item">
+    <i data-lucide="circle" style="width: 8px; height: 8px; color: #16a085;"></i>
+    ZX16 Simulator Ready
+  </div>
+  <div class="status-item" style="margin-left: auto;">
+    <i data-lucide="code" style="width: 12px; height: 12px;"></i>
+    Assembly
+  </div>
+</div>
+-->
+
+<!-- Hidden file input for upload functionality -->
+<input type="file" id="file-input" accept=".s" style="display: none;">
+
+<script>
+  // Initialize Lucide icons
+  lucide.createIcons();
+
+  // Global variables for tab management
+  let tabCounter = 1;
+  let activeTabId = 0;
+
+  // Add a flag to track if we're in step mode
+  let isStepMode = false;
+
+  // Persistent settings
+  const SETTINGS_KEY = 'zx16_settings';
+  const defaultSettings = { theme: 'dark', fontSize: 14, tabSize: 2, lineNumbers: true, wordWrap: false };
+  let settings = { ...defaultSettings };
+
+  function loadSettings() {
+    try { const raw = localStorage.getItem(SETTINGS_KEY); if (raw) settings = { ...defaultSettings, ...JSON.parse(raw) }; } catch {}
+  }
+  function saveSettings() { try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch {} }
+
+  function applySettings() {
+    // Theme
+    const light = settings.theme === 'light';
+    document.body.classList.toggle('light-theme', light);
+    // Icon for theme button
+    setThemeIcon(light);
+    // Line numbers
+    document.body.classList.toggle('hide-line-numbers', !settings.lineNumbers || settings.wordWrap);
+    // Word wrap (forces hiding line numbers)
+    document.body.classList.toggle('wrap-enabled', !!settings.wordWrap);
+    // Font size and tab size
+    document.querySelectorAll('.code-editor').forEach(ed => {
+      ed.style.fontSize = settings.fontSize + 'px';
+      // Approximate line-height for readability
+      ed.style.lineHeight = Math.round(settings.fontSize * 1.43) + 'px';
+      ed.style.tabSize = String(settings.tabSize);
+    });
+    updateLineNumbers();
+    updateLineCount();
+    addScrollSynchronization();
+    saveSettings();
+    initializeThemeButton();
+  }
+
+  // Tab creation function
+  function createNewTab() {
+    const tabId = tabCounter++;
+    const tabName = `file${tabId}.zx16`;
+
+    // Create tab element
+    const tabsContainer = document.getElementById('code-tabs');
+    const newTabBtn = tabsContainer.querySelector('.new-tab-btn');
+
+    const tabElement = document.createElement('div');
+    tabElement.className = 'code-tab';
+    tabElement.dataset.tabId = tabId;
+    tabElement.innerHTML = `
+      <div class="tab-content">
+        <i data-lucide="file-text" class="tab-icon" style="width: 16px; height: 16px;"></i>
+        <input type="text" class="tab-name" value="${tabName}">
+        <button class="tab-close" onclick="closeTab(${tabId})">×</button>
+      </div>
+    `;
+
+    // Insert before the new tab button
+    tabsContainer.insertBefore(tabElement, newTabBtn);
+
+    // Create editor elements
+    const codeContent = document.querySelector('.code-content .editor-container');
+
+    // Line numbers
+    const lineNumbersElement = document.createElement('div');
+    lineNumbersElement.className = 'line-numbers';
+    lineNumbersElement.id = `line-numbers-${tabId}`;
+    lineNumbersElement.style.display = 'none';
+    codeContent.appendChild(lineNumbersElement);
+
+    // Editor
+    const editorElement = document.createElement('textarea');
+    editorElement.className = 'code-editor';
+    editorElement.id = `editor-${tabId}`;
+    editorElement.placeholder = '# Enter your ZX16 assembly code here';
+    editorElement.setAttribute('spellcheck', 'false');
+    codeContent.appendChild(editorElement);
+
+    // Syntax content
+    const syntaxContentElement = document.createElement('div');
+    syntaxContentElement.className = 'syntax-content';
+    syntaxContentElement.id = `syntax-content-${tabId}`;
+    syntaxContentElement.style.display = 'none';
+    codeContent.appendChild(syntaxContentElement);
+
+    // Re-initialize icons for new tab
+    lucide.createIcons();
+
+    // Add click handler to tab
+    tabElement.addEventListener('click', (e) => {
+      if (!e.target.classList.contains('tab-name') && !e.target.classList.contains('tab-close')) {
+        switchTab(tabId);
+      }
+    });
+
+    // Add editing functionality to tab name
+    const tabNameInput = tabElement.querySelector('.tab-name');
+    setupTabNameEditing(tabNameInput, tabName);
+
+    // Switch to new tab
+    switchTab(tabId);
+  }
+
+  // Setup tab name editing functionality
+  function setupTabNameEditing(tabNameInput, defaultName) {
+    tabNameInput.removeAttribute('readonly');
+    tabNameInput.addEventListener('blur', () => {
+      if (tabNameInput.value.trim() === '') {
+        tabNameInput.value = defaultName;
+      }
+    });
+    tabNameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        tabNameInput.blur();
+      }
+    });
+    tabNameInput.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const tabId = parseInt(tabNameInput.closest('.code-tab').dataset.tabId);
+      switchTab(tabId);
+    });
+  }
+
+  // Tab switching function
+  function switchTab(tabId) {
+    // Remove active class from all tabs and editors
+    document.querySelectorAll('.code-tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+    document.querySelectorAll('.code-editor').forEach(editor => {
+      editor.classList.remove('active');
+      editor.style.display = 'none';
+    });
+    document.querySelectorAll('.line-numbers').forEach(lineNum => {
+      lineNum.style.display = 'none';
+    });
+    document.querySelectorAll('.syntax-content').forEach(overlay => {
+      overlay.style.display = 'none';
+    });
+
+    // Add active class to selected tab and editor
+    const selectedTab = document.querySelector(`[data-tab-id="${tabId}"]`);
+    const selectedEditor = document.getElementById(`editor-${tabId}`);
+    const selectedLineNumbers = document.getElementById(`line-numbers-${tabId}`);
+    const selectedOverlay = document.getElementById(`syntax-content-${tabId}`);
+
+    if (selectedTab && selectedEditor) {
+      selectedTab.classList.add('active');
+      selectedEditor.classList.add('active');
+      selectedEditor.style.display = 'block';
+      if (selectedLineNumbers) selectedLineNumbers.style.display = 'block';
+      if (selectedOverlay) selectedOverlay.style.display = 'block';
+      activeTabId = tabId;
+
+      // Highlight current line in step mode when switching tabs
+      if (isStepMode && window._lastStepData && (window._lastStepData.current_instruction || window._lastStepData.current_pc !== null)) {
+        highlightInstructionInEditor(window._lastStepData.current_instruction, window._lastStepData.current_pc);
+      } else {
+        clearEditorHighlight();
+      }
+      updateLineCount();
+      updateLineNumbers();
+      addScrollSynchronization();
+    }
+  }
+
+  // Tab closing function
+  function closeTab(tabId) {
+    const tabElement = document.querySelector(`[data-tab-id="${tabId}"]`);
+    const editorElement = document.getElementById(`editor-${tabId}`);
+    const lineNumbersElement = document.getElementById(`line-numbers-${tabId}`);
+    const overlayElement = document.getElementById(`syntax-content-${tabId}`);
+
+    if (!tabElement || !editorElement) return;
+
+    // Don't close if it's the last tab
+    const allTabs = document.querySelectorAll('.code-tab');
+    if (allTabs.length <= 1) {
+      alert('Cannot close the last tab!');
+      return;
+    }
+
+    // If closing the active tab, switch to another tab first
+    if (activeTabId === tabId) {
+      const otherTabs = Array.from(allTabs).filter(tab =>
+        parseInt(tab.dataset.tabId) !== tabId
+      );
+
+      if (otherTabs.length > 0) {
+        const nextTabId = parseInt(otherTabs[0].dataset.tabId);
+        switchTab(nextTabId);
+      }
+    }
+
+    // Remove tab and editor elements
+    tabElement.remove();
+    editorElement.remove();
+    if (lineNumbersElement) lineNumbersElement.remove();
+    if (overlayElement) overlayElement.remove();
+  }
+
+  // Get active editor content
+  function getActiveEditorContent() {
+    const activeEditor = document.querySelector('.code-editor.active');
+    return activeEditor ? activeEditor.value : '';
+  }
+
+  // Update line numbers
+  function updateLineNumbers() {
+    const activeEditor = document.querySelector('.code-editor.active');
+    const activeLineNumbers = document.querySelector(`#line-numbers-${activeTabId}`);
+
+    if (activeEditor && activeLineNumbers) {
+      const lines = activeEditor.value.split('\n');
+      const lineCount = lines.length;
+      let lineNumbersHTML = '';
+
+      for (let i = 1; i <= lineCount; i++) {
+        lineNumbersHTML += i + '\n';
+      }
+
+      // Remove the last newline to prevent extra spacing
+      lineNumbersHTML = lineNumbersHTML.slice(0, -1);
+      activeLineNumbers.textContent = lineNumbersHTML;
+    }
+  }
+
+  // Keep line numbers scrolled with editor content (while staying pinned left)
+  function syncLineNumbersScroll() {
+    const activeEditor = document.querySelector('.code-editor.active');
+    const activeLineNumbers = document.querySelector(`#line-numbers-${activeTabId}`);
+    const activeOverlay = document.querySelector(`#syntax-content-${activeTabId}`);
+
+    if (activeEditor && activeLineNumbers) {
+      activeLineNumbers.scrollTop = activeEditor.scrollTop;
+      activeLineNumbers.scrollLeft = 0; // Keep line numbers pinned left
+    }
+
+    // Sync syntax highlighting overlay with editor scroll - BOTH vertical AND horizontal
+    if (activeEditor && activeOverlay) {
+      activeOverlay.scrollTop = activeEditor.scrollTop;
+      activeOverlay.scrollLeft = activeEditor.scrollLeft; // This was missing!
+    }
+  }
+
+  function addScrollSynchronization() {
+    const activeEditor = document.querySelector('.code-editor.active');
+    const activeLineNumbers = document.querySelector(`#line-numbers-${activeTabId}`);
+
+    if (activeEditor && activeLineNumbers) {
+      // Avoid duplicate listeners
+      activeEditor.removeEventListener('scroll', syncLineNumbersScroll);
+      activeEditor.addEventListener('scroll', syncLineNumbersScroll);
+      // Initial sync
+      syncLineNumbersScroll();
+    }
+  }
+
+  // Tab switching for bottom panel
+  document.querySelectorAll('.bottom-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      // Remove active class from all tabs and panels
+      document.querySelectorAll('.bottom-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+      // Add active class to clicked tab and corresponding panel
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.tab + '-panel').classList.add('active');
+    });
+  });
+
+  // Update IDE state
+  async function updateIDE(data) {
+    window._lastStepData = data;
+    console.log("[Debug] updateIDE called with data:", data);
+
+    // Update console output
+    const consoleOutput = document.getElementById("console-output");
+    consoleOutput.innerHTML = "";
+
+    // Check if simulation ended
+    const simulationEnded = data.output && data.output.includes("Simulation ended.");
+
+    // Disable step button if simulation ended
+    if (simulationEnded) {
+      document.getElementById('step-btn').disabled = true;
+      document.getElementById('step-btn').dataset.label = 'Step (Done)';
+    } else {
+      document.getElementById('step-btn').disabled = false;
+      document.getElementById('step-btn').dataset.label = 'Step';
+    }
+
+    let currentInstructionText = null;
+    let currentPC = null;
+    if (data.output) {
+      const lines = data.output.split('\n');
+      if ('current_pc' in data && data.current_pc !== null && data.current_pc !== undefined) {
+        if (typeof data.current_pc === "string") {
+          currentPC = parseInt(data.current_pc, 16);
+        } else {
+          currentPC = data.current_pc;
+        }
+      }
+      if ('current_instruction' in data && data.current_instruction) {
+        currentInstructionText = data.current_instruction;
+      }
+      if (currentPC === null || currentInstructionText === null) {
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          if (line.match(/^\[\w+\]\s+0x\w+\s+\w+/)) {
+            const instMatch = line.match(/(?:\[\w+\]\s+0x\w+\s+)(.+)$/);
+            if (instMatch && instMatch[1]) {
+              currentInstructionText = instMatch[1].trim();
+              if (i + 1 < lines.length && lines[i + 1].includes("Executed:")) {
+                const pcMatch = line.match(/^\[(\w+)\]/);
+                if (pcMatch) {
+                  currentPC = parseInt(pcMatch[1], 16);
+                }
+                break;
+              }
+            }
+          }
+        }
+      }
+      for (const line of lines) {
+        const lineDiv = document.createElement("div");
+        lineDiv.textContent = line;
+        // Remove highlighting from console output
+        // if (line.includes("Executed:")) {
+        //   lineDiv.classList.add("current-instruction");
+        // }
+        consoleOutput.appendChild(lineDiv);
+      }
+    } else {
+      consoleOutput.textContent = "Ready to run...";
+    }
+
+    // Update registers with highlighting
+    const regTableBody = document.getElementById("reg-table").querySelector("tbody");
+    regTableBody.innerHTML = "";
+
+    if (data.registers) {
+      const changedRegs = data.changed_registers || [];
+
+      Object.entries(data.registers).forEach(([reg, val]) => {
+        const row = document.createElement("tr");
+        if (changedRegs.includes(reg)) {
+          row.classList.add("reg-changed");
+        }
+        let signedVal = val;
+        if (typeof signedVal === "string") signedVal = parseInt(signedVal, 10);
+        if (signedVal > 32767) signedVal -= 65536;
+        row.innerHTML = `<td>${reg}</td><td>${signedVal} <span style="color:#888;">(0x${(val & 0xFFFF).toString(16).padStart(4, '0')})</span></td>`;
+        regTableBody.appendChild(row);
+      });
+
+      // Update memory
+      const memTableBody = document.getElementById("memory-table").querySelector("tbody");
+      memTableBody.innerHTML = "";
+      if (data.memory && data.memory.length > 0) {
+        data.memory.forEach((memRow, index) => {
+          const row = document.createElement("tr");
+          const bytesFormatted = memRow.bytes.map(b => b.toString(16).padStart(2, '0')).join(' ');
+          row.innerHTML = `<td>${memRow.address}</td><td>${bytesFormatted}</td>`;
+          memTableBody.appendChild(row);
+        });
+      }
+
+      console.log("Calling highlightInstructionInEditor? isStepMode =", isStepMode, "currentInstructionText =", currentInstructionText, "currentPC =", currentPC, "simulationEnded =", simulationEnded);
+
+      // If we're in step mode and found a current instruction, highlight it in the editor
+      if (isStepMode && (currentInstructionText || currentPC !== null) && !simulationEnded) {
+        highlightInstructionInEditor(currentInstructionText);
+      } else {
+        clearEditorHighlight();
+      }
+      highlightInstructionInEditor(currentInstructionText);
+      if (simulationEnded) {
+        clearEditorHighlight();
+        isStepMode = false;
+      }
+    }
+
+    console.log("updateIDE: isStepMode =", isStepMode, "simulationEnded =", simulationEnded);
+    console.log("updateIDE: currentInstructionText =", currentInstructionText, "currentPC =", currentPC);
+
+    if (isStepMode && !simulationEnded) {
+      console.log("updateIDE: Forcing call to highlightInstructionInEditor");
+      highlightInstructionInEditor(currentInstructionText || "");
+    } else {
+      clearEditorHighlight();
+    }
+
+    // Re-initialize icons after content update
+    lucide.createIcons();
+  }
+
+  // Function to clear editor highlight
+  function clearEditorHighlight() {
+    document.querySelectorAll('.highlight-overlay').forEach(overlay => overlay.innerHTML = '');
+    // Also remove any existing line highlights
+    document.querySelectorAll('.editor-line-highlight').forEach(highlight => highlight.remove());
+  }
+
+  // Function to ensure highlight overlay exists for the active editor
+  function ensureHighlightOverlay(editor) {
+    const overlayId = `highlight-overlay-${activeTabId}`;
+    let overlay = document.getElementById(overlayId);
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.className = 'highlight-overlay';
+      overlay.id = overlayId;
+      overlay.style.position = 'absolute';
+      overlay.style.top = '0';
+      overlay.style.left = '40px'; // Same as editor left position
+      overlay.style.right = '0';
+      overlay.style.bottom = '0';
+      overlay.style.padding = '16px'; // Same as editor padding
+      overlay.style.margin = '0';
+      overlay.style.pointerEvents = 'none';
+      overlay.style.zIndex = '3'; // Above syntax content
+      overlay.style.fontFamily = "'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace";
+      overlay.style.fontSize = '14px';
+      overlay.style.lineHeight = '20px';
+      overlay.style.whiteSpace = 'pre';
+      overlay.style.overflow = 'hidden'; // Don't let it scroll independently
+      editor.parentElement.appendChild(overlay);
+    }
+    return overlay;
+  }
+
+  // Highlight instruction in editor - DISABLED FOR NOW
+  function highlightInstructionInEditor(executedInstruction) {
+    // HIGHLIGHTING DISABLED - Remove the return statement below to re-enable
+    return;
+
+    // Clear any existing highlights first
+    clearEditorHighlight();
+
+    if (!executedInstruction || executedInstruction.trim() === "") {
+      console.log("[Debug] highlightInstructionInEditor: executedInstruction is empty.");
+      return;
+    }
+
+    const content = editor.value;
+    const lines = content.split('\n');
+
+    // Improved instruction matching with multiple strategies
+    const normalize = s => s.replace(/[,\s]+/g, ' ').trim().toLowerCase();
+    const normInst = normalize(executedInstruction);
+    console.log("[Debug] Normalized Executed Instruction:", normInst);
+
+    let highlightLine = -1;
+    let bestMatch = { line: -1, score: 0 };
+
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i];
+
+      // Skip placeholder text
+      if (line.includes("Enter your ZX16 assembly code here")) continue;
+
+      // Remove comments
+      let code = line.split('#')[0];
+
+      // Remove labels
+      if (code.includes(':')) {
+        code = code.split(':').slice(1).join(':');
+      }
+
+      const normCode = normalize(code);
+      if (!normCode) continue;
+
+      console.log(`[Debug] Line ${i}:`, normCode);
+
+      // Try exact match first
+      if (normCode === normInst) {
+        highlightLine = i;
+        console.log(`[Debug] Exact match found on line ${i}:`, normCode);
+        break;
+      }
+
+      // Try instruction-only match (first word)
+      const instWords = normInst.split(' ');
+      const codeWords = normCode.split(' ');
+      if (instWords.length > 0 && codeWords.length > 0 && instWords[0] === codeWords[0]) {
+        const score = calculateMatchScore(normInst, normCode);
+        if (score > bestMatch.score) {
+          bestMatch = { line: i, score: score };
+        }
+      }
+
+      // Try partial match
+      if (normCode.includes(normInst) || normInst.includes(normCode)) {
+        const score = calculateMatchScore(normInst, normCode);
+        if (score > bestMatch.score) {
+          bestMatch = { line: i, score: score };
+        }
+      }
+    }
+
+    // Use best match if no exact match found
+    if (highlightLine === -1 && bestMatch.line !== -1) {
+      highlightLine = bestMatch.line;
+      console.log(`[Debug] Best match found on line ${highlightLine} with score:`, bestMatch.score);
+    }
+
+    if (highlightLine !== -1) {
+      createLineHighlight(highlightLine, editor);
+      scrollToLine(highlightLine, editor);
+      console.log(`[Debug] Highlight applied on line ${highlightLine}`);
+    } else {
+      console.log("[Debug] No matching line found for the executed instruction.");
+    }
+  }
+
+  // Calculate match score between two normalized instruction strings
+  function calculateMatchScore(inst1, inst2) {
+    const words1 = inst1.split(' ');
+    const words2 = inst2.split(' ');
+    let score = 0;
+
+    // Score based on matching words
+    for (let i = 0; i < Math.min(words1.length, words2.length); i++) {
+      if (words1[i] === words2[i]) {
+        score += (words1.length - i); // Earlier matches get higher scores
+      }
+    }
+
+    return score;
+  }
+
+  // Create a visible line highlight
+  function createLineHighlight(lineNumber, editor) {
+    const overlay = ensureHighlightOverlay(editor);
+
+    const style = getComputedStyle(editor);
+    const paddingTop = parseFloat(style.paddingTop) || 16;
+    const fontSize = parseFloat(style.fontSize) || 14;
+    const lineHeight = parseFloat(style.lineHeight) || 20;
+    const highlightY = paddingTop + lineNumber * lineHeight;
+
+    const highlight = document.createElement('div');
+    highlight.className = 'editor-line-highlight';
+    highlight.style.position = 'absolute';
+    highlight.style.top = `${highlightY}px`;
+    highlight.style.left = '0';
+    highlight.style.right = '0';
+    highlight.style.height = `${lineHeight}px`;
+    highlight.style.backgroundColor = 'rgba(0, 122, 204, 0.2)';
+    highlight.style.borderLeft = '3px solid #007acc';
+    highlight.style.pointerEvents = 'none';
+    highlight.style.zIndex = '4';
+    highlight.style.animation = 'highlightPulse 0.5s ease-in-out';
+
+    overlay.appendChild(highlight);
+  }
+
+  // Update line count
+  function updateLineCount() {
+    const activeEditor = document.querySelector('.code-editor.active');
+    const lineCountDiv = document.getElementById('line-count');
+    if (activeEditor && lineCountDiv) {
+      const lines = activeEditor.value.split('\n').length;
+      lineCountDiv.textContent = `Lines: ${lines}`;
+    }
+  }
+
+  // Render the theme toggle icon using Lucide by rebuilding <i data-lucide>
+  function setThemeIcon(isLightTheme) {
+    const btn = document.getElementById('theme-toggle-btn');
+    if (!btn || !window.lucide) return;
+    btn.innerHTML = '';
+    const i = document.createElement('i');
+    i.setAttribute('data-lucide', isLightTheme ? 'moon' : 'sun');
+    i.style.width = '18px';
+    i.style.height = '18px';
+    btn.appendChild(i);
+    // Render the icon inside the button
+    lucide.createIcons();
+  }
+
+  // Set button icon dynamically
+  function setButtonIcon(buttonId, iconName) {
+    const btn = document.getElementById(buttonId);
+    if (!btn || !window.lucide) return;
+    btn.innerHTML = '';
+    const i = document.createElement('i');
+    i.setAttribute('data-lucide', iconName);
+    i.style.width = '18px';
+    i.style.height = '18px';
+    btn.appendChild(i);
+    // Render the icon inside the button
+    lucide.createIcons();
+  }
+
+  // Set button state (icon, label, disabled)
+  function setButtonState(buttonId, iconName, label, disabled = false) {
+    const btn = document.getElementById(buttonId);
+    if (!btn) return;
+
+    // Set icon
+    setButtonIcon(buttonId, iconName);
+
+    // Set label and disabled state
+    btn.dataset.label = label;
+    btn.disabled = disabled;
+  }
+  // Initialize theme button icon based on current theme
+  function initializeThemeButton() {
+    const isLightTheme = document.body.classList.contains('light-theme');
+    setThemeIcon(isLightTheme);
+    const themeButton = document.getElementById('theme-toggle-btn');
+    if (themeButton) themeButton.dataset.label = isLightTheme ? 'Switch to Dark Theme' : 'Switch to Light Theme';
+  }
+
+  // Apply settings at startup (no sidebar/activity init)
+  document.addEventListener('DOMContentLoaded', () => {
+    loadSettings();
+    applySettings();
+    // Apply syntax highlighting to initial tab
+    highlightSyntax();
+  });
+
+  // Event listeners
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize icons
+    lucide.createIcons();
+
+    // Add input event listeners for line numbers and count
+    document.addEventListener('input', function(e) {
+      if (e.target.classList.contains('code-editor')) {
+        updateLineNumbers();
+        updateLineCount();
+        syncLineNumbersScroll();
+        // Trigger syntax highlighting on code changes
+        highlightSyntax();
+      }
+    });
+
+    // Add highlighting on tab switches
+    document.addEventListener('keyup', function(e) {
+      if (e.target.classList.contains('code-editor')) {
+        highlightSyntax();
+      }
+    });
+
+    // Add highlighting on paste events
+    document.addEventListener('paste', function(e) {
+      if (e.target.classList.contains('code-editor')) {
+        setTimeout(() => {
+          highlightSyntax();
+          updateLineNumbers();
+          updateLineCount();
+        }, 10);
+      }
+    });
+
+    // Setup initial tab
+    const initialTab = document.querySelector('[data-tab-id="0"]');
+    if (initialTab) {
+      initialTab.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('tab-name') && !e.target.classList.contains('tab-close')) {
+          switchTab(0);
+        }
+      });
+      const initialTabName = initialTab.querySelector('.tab-name');
+      if (initialTabName) {
+        setupTabNameEditing(initialTabName, 'main.zx16');
+      }
+    }
+
+    // Initialize initial tab properly
+    const initialEditor = document.getElementById('editor-0');
+    const initialSyntaxContent = document.getElementById('syntax-content-0');
+    if (initialEditor && initialSyntaxContent) {
+      // Make sure the syntax content overlay is active for the initial tab
+      initialSyntaxContent.classList.add('active');
+      initialSyntaxContent.style.display = 'block';
+
+      // Apply syntax highlighting to initial tab content
+      setTimeout(() => {
+        highlightSyntax();
+      }, 100);
+    }
+
+    // Run button
+    document.getElementById('run-btn').addEventListener('click', async function() {
+      const code = getActiveEditorContent();
+      if (!code.trim()) return;
+      try {
+        // Set running state
+        setButtonState('run-btn', 'square', 'Running...', true);
+        setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+        setButtonState('step-btn', 'skip-forward', 'Step', true);
+
+        const response = await fetch('http://localhost:8000/simulate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ code: code }),
+        });
+        const data = await response.json();
+        isStepMode = false;
+        updateIDE(data, code);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        // Reset to normal state
+        setButtonState('run-btn', 'play', 'Run', false);
+        setButtonState('step-mode-btn', 'step-forward', 'Step Mode', false);
+      }
+    });
+
+    // Step Mode button
+    document.getElementById('step-mode-btn').addEventListener('click', async function() {
+      const code = getActiveEditorContent();
+      if (!code.trim()) return;
+      try {
+        // Set initializing step mode state
+        setButtonState('run-btn', 'play', 'Run', true);
+        setButtonState('step-mode-btn', 'loader', 'Initializing Step Mode...', true);
+        setButtonState('step-btn', 'skip-forward', 'Step', true);
+
+        const response = await fetch('http://localhost:8000/simulate_step', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ code: code }),
+        });
+        const data = await response.json();
+        isStepMode = true;
+
+        // Set step mode active state
+        setButtonState('step-mode-btn', 'pause', 'Step Mode Active', false);
+        setButtonState('step-btn', 'skip-forward', 'Step', false);
+
+        updateIDE(data, code);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setButtonState('run-btn', 'play', 'Run', false);
+      }
+    });
+
+    // Step button
+    document.getElementById('step-btn').addEventListener('click', async function() {
+      if (!isStepMode || this.disabled) return;
+
+      // Set stepping state
+      setButtonState('step-btn', 'loader', 'Stepping...', true);
+
+      try {
+        const response = await fetch('http://localhost:8000/step', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({})
+        });
+        const data = await response.json();
+        updateIDE(data);
+        const simulationEnded = data.output && data.output.includes("Simulation ended.");
+        if (simulationEnded) {
+          setButtonState('step-btn', 'check', 'Step (Done)', true);
+          setButtonState('step-mode-btn', 'step-forward', 'Step Mode', false);
+        } else {
+          setButtonState('step-btn', 'skip-forward', 'Step', false);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        setButtonState('step-btn', 'skip-forward', 'Step', false);
+      }
+      switchTab(activeTabId);
+    });
+
+    // Upload file functionality
+    document.getElementById('upload-btn').addEventListener('click', function() {
+      document.getElementById('file-input').click();
+    });
+
+    document.getElementById('file-input').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file && file.name.endsWith('.s')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const content = e.target.result;
+          const activeEditor = document.querySelector('.code-editor.active');
+          if (activeEditor) {
+            activeEditor.value = content;
+            updateLineNumbers();
+            updateLineCount();
+            // Apply syntax highlighting to uploaded file
+            highlightSyntax();
+          }
+          const activeTab = document.querySelector('.code-tab.active');
+          if (activeTab) {
+            const tabNameInput = activeTab.querySelector('.tab-name');
+            tabNameInput.value = file.name;
+          }
+        };
+        reader.readAsText(file);
+      } else {
+        alert('Please select a valid .s file');
+      }
+      event.target.value = '';
+    });
+
+    // Download file functionality
+    document.getElementById('download-btn').addEventListener('click', function() {
+      const activeEditor = document.querySelector('.code-editor.active');
+      const activeTab = document.querySelector('.code-tab.active');
+
+      if (activeEditor && activeTab) {
+        const content = activeEditor.value;
+        const tabNameInput = activeTab.querySelector('.tab-name');
+        let fileName = tabNameInput.value;
+
+        if (!fileName.endsWith('.s')) {
+          fileName += '.s';
+        }
+
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    });
+
+    // Theme toggle button
+    document.getElementById('theme-toggle-btn').addEventListener('click', function() {
+      const isLightTheme = document.body.classList.contains('light-theme');
+
+      if (isLightTheme) {
+        // Switch to dark theme
+        document.body.classList.remove('light-theme');
+        this.dataset.label = 'Switch to Light Theme';
+      } else {
+        // Switch to light theme
+        document.body.classList.add('light-theme');
+        this.dataset.label = 'Switch to Dark Theme';
+      }
+
+      // Persist theme setting
+      settings.theme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+      saveSettings();
+
+      // Update the icon directly without relying on createIcons
+      setThemeIcon(!isLightTheme);
+    });
+
+    // Initialize
+    updateLineCount();
+    updateLineNumbers();
+    addScrollSynchronization();
+    initializeThemeButton(); // Initialize theme button icon
+
+    // Re-initialize icons
+    lucide.createIcons();
+  });
+
+  // Syntax highlighting for ZX16 assembly
+  function highlightSyntax() {
+    const activeEditor = document.querySelector('.code-editor.active');
+    const activeOverlay = document.querySelector(`#syntax-content-${activeTabId}`);
+
+    if (!activeEditor || !activeOverlay) return;
+
+    const code = activeEditor.value;
+    const lines = code.split('\n');
+
+    // Clear previous highlighting
+    activeOverlay.innerHTML = '';
+
+    // Create highlighted content
+    let highlightedContent = '';
+
+    lines.forEach((line, lineIndex) => {
+      const highlightedLine = highlightLine(line);
+      highlightedContent += highlightedLine + '\n';
+    });
+
+    // Remove the last newline
+    highlightedContent = highlightedContent.slice(0, -1);
+    activeOverlay.innerHTML = highlightedContent;
+
+    // Enable syntax-active mode to make editor text transparent
+    const editorContainer = activeEditor.parentElement;
+    if (editorContainer) {
+      editorContainer.classList.add('syntax-active');
+    }
+
+    // Immediately sync scroll positions to prevent offset issues
+    syncLineNumbersScroll();
+  }
+
+  function highlightLine(line) {
+    // Handle comments first (everything after #)
+    const commentIndex = line.indexOf('#');
+    let codePartOriginal = commentIndex !== -1 ? line.substring(0, commentIndex) : line;
+    let commentPart = commentIndex !== -1 ? line.substring(commentIndex) : '';
+
+    let codePart = codePartOriginal;
+
+    // Handle labels (text followed by colon)
+    const labelMatch = codePart.match(/^(\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:\s*(.*)/);
+    if (labelMatch) {
+      const [, leadingWhitespace, labelName, restOfLine] = labelMatch;
+      const highlightedLabel = `${leadingWhitespace}<span class="syntax-label">${labelName}:</span> `;
+      const highlightedRest = highlightCodeTokens(restOfLine);
+      const highlightedComment = commentPart ? `<span class="syntax-comment">${escapeHtml(commentPart)}</span>` : '';
+      return highlightedLabel + highlightedRest + highlightedComment;
+    }
+
+    // Handle directives (lines starting with .)
+    const directiveMatch = codePart.match(/^(\s*)(\.[a-zA-Z_][a-zA-Z0-9_]*)(.*)/);
+    if (directiveMatch) {
+      const [, leadingWhitespace, directive, restOfLine] = directiveMatch;
+      const highlightedDirective = `${leadingWhitespace}<span class="syntax-directive">${directive}</span>`;
+      const highlightedRest = highlightDirectiveArguments(restOfLine);
+      const highlightedComment = commentPart ? `<span class="syntax-comment">${escapeHtml(commentPart)}</span>` : '';
+      return highlightedDirective + highlightedRest + highlightedComment;
+    }
+
+    // Handle regular instructions
+    const highlightedCode = highlightCodeTokens(codePart);
+    const highlightedComment = commentPart ? `<span class="syntax-comment">${escapeHtml(commentPart)}</span>` : '';
+
+    return highlightedCode + highlightedComment;
+  }
+
+  function highlightCodeTokens(codeLine) {
+    if (!codeLine.trim()) return codeLine;
+
+    // Split on whitespace and commas, but preserve them
+    const tokens = codeLine.split(/(\s+|,|\(|\))/);
+    let result = '';
+    let isFirstToken = true;
+
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+
+      if (!token.trim()) {
+        result += token;
+        continue;
+      }
+
+      if (token === ',' || token === '(' || token === ')') {
+        result += token;
+        continue;
+      }
+
+      // First non-whitespace token is likely the instruction
+      if (isFirstToken && token.trim()) {
+        result += highlightInstruction(token);
+        isFirstToken = false;
+      } else {
+        result += highlightOperand(token);
+      }
+    }
+
+    return result;
+  }
+
+  function highlightInstruction(instruction) {
+    const inst = instruction.toLowerCase().trim();
+
+    // R-Type instructions
+    const rTypeInstructions = ['add', 'sub', 'slt', 'sltu', 'sll', 'srl', 'sra', 'or', 'and', 'xor', 'mv', 'jr', 'jalr'];
+    if (rTypeInstructions.includes(inst)) {
+      return `<span class="syntax-r-type">${escapeHtml(instruction)}</span>`;
+    }
+
+    // I-Type instructions
+    const iTypeInstructions = ['addi', 'slti', 'sltui', 'ori', 'andi', 'xori', 'li', 'slli', 'srli', 'srai'];
+    if (iTypeInstructions.includes(inst)) {
+      return `<span class="syntax-i-type">${escapeHtml(instruction)}</span>`;
+    }
+
+    // B-Type instructions (branch)
+    const bTypeInstructions = ['beq', 'bne', 'bz', 'bnz', 'blt', 'bge', 'bltu', 'bgeu'];
+    if (bTypeInstructions.includes(inst)) {
+      return `<span class="syntax-b-type">${escapeHtml(instruction)}</span>`;
+    }
+
+    // S-Type instructions (store)
+    const sTypeInstructions = ['sb', 'sw'];
+    if (sTypeInstructions.includes(inst)) {
+      return `<span class="syntax-s-type">${escapeHtml(instruction)}</span>`;
+    }
+
+    // L-Type instructions (load)
+    const lTypeInstructions = ['lb', 'lw', 'lbu'];
+    if (lTypeInstructions.includes(inst)) {
+      return `<span class="syntax-l-type">${escapeHtml(instruction)}</span>`;
+    }
+
+    // J-Type instructions (jump)
+    const jTypeInstructions = ['j', 'jal'];
+    if (jTypeInstructions.includes(inst)) {
+      return `<span class="syntax-j-type">${escapeHtml(instruction)}</span>`;
+    }
+
+    // U-Type instructions
+    const uTypeInstructions = ['lui', 'auipc'];
+    if (uTypeInstructions.includes(inst)) {
+      return `<span class="syntax-u-type">${escapeHtml(instruction)}</span>`;
+    }
+
+    // SYS-Type instructions
+    const sysTypeInstructions = ['ecall', 'halt'];
+    if (sysTypeInstructions.includes(inst)) {
+      return `<span class="syntax-sys-type">${escapeHtml(instruction)}</span>`;
+    }
+
+    // Pseudo instructions
+    const pseudoInstructions = ['li16', 'la', 'push', 'pop', 'call', 'ret', 'inc', 'dec', 'neg', 'not', 'clr', 'nop'];
+    if (pseudoInstructions.includes(inst)) {
+      return `<span class="syntax-pseudo">${escapeHtml(instruction)}</span>`;
+    }
+
+    // Unknown instruction - just return as is
+    return escapeHtml(instruction);
+  }
+
+  function highlightOperand(operand) {
+    const trimmed = operand.trim();
+
+    // Register names
+    const registers = ['x0', 'x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 't0', 'ra', 'sp', 's0', 's1', 't1', 'a0', 'a1', 'zero'];
+    if (registers.includes(trimmed.toLowerCase())) {
+      return `<span class="syntax-register">${escapeHtml(operand)}</span>`;
+    }
+
+    // Immediate values (numbers, hex, binary, octal)
+    if (/^-?\d+$/.test(trimmed) ||
+        /^0x[0-9a-fA-F]+$/.test(trimmed) ||
+        /^0b[01]+$/.test(trimmed) ||
+        /^0o[0-7]+$/.test(trimmed)) {
+      return `<span class="syntax-immediate">${escapeHtml(operand)}</span>`;
+    }
+
+    // String literals
+    if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
+      return `<span class="syntax-string">${escapeHtml(operand)}</span>`;
+    }
+
+    // Labels/symbols (alphanumeric identifiers)
+    if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(trimmed)) {
+      return `<span class="syntax-label">${escapeHtml(operand)}</span>`;
+    }
+
+    // Default - no highlighting
+    return escapeHtml(operand);
+  }
+
+  function highlightDirectiveArguments(args) {
+    if (!args.trim()) return args;
+
+    // Split on whitespace and commas, but preserve them
+    const tokens = args.split(/(\s+|,)/);
+    let result = '';
+
+    for (let i = 0; i < tokens.length; i++) {
+      const token = tokens[i];
+
+      if (!token.trim() || token === ',') {
+        result += token;
+        continue;
+      }
+
+      // Highlight directive arguments
+      result += highlightDirectiveArgument(token);
+    }
+
+    return result;
+  }
+
+  function highlightDirectiveArgument(arg) {
+    const trimmed = arg.trim();
+
+    // Numbers
+    if (/^-?\d+$/.test(trimmed) ||
+        /^0x[0-9a-fA-F]+$/.test(trimmed) ||
+        /^0b[01]+$/.test(trimmed) ||
+        /^0o[0-7]+$/.test(trimmed)) {
+      return `<span class="syntax-immediate">${escapeHtml(arg)}</span>`;
+    }
+
+    // String literals
+    if (trimmed.startsWith('"') && trimmed.endsWith('"')) {
+      return `<span class="syntax-string">${escapeHtml(arg)}</span>`;
+    }
+
+    // Symbols
+    if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(trimmed)) {
+      return `<span class="syntax-label">${escapeHtml(arg)}</span>`;
+    }
+
+    return escapeHtml(arg);
+  }
+
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+</script>
+</body>
+</html>
