@@ -64,7 +64,13 @@ async def simulate_code(request: Request):
 
         output = ""
         if result.returncode != 0:
-            output = f"Assembly failed.\n{filter_output(result.stderr)}\n{filter_output(result.stdout)}"
+            # Don't filter assembly errors - show them in full detail
+            error_output = "Assembly failed.\n"
+            if result.stderr.strip():
+                error_output += f"Errors:\n{result.stderr.strip()}\n"
+            if result.stdout.strip():
+                error_output += f"Output:\n{result.stdout.strip()}\n"
+            output = error_output
             if os.path.exists(asm_file):
                 os.remove(asm_file)
             return {"output": output, "registers": None, "memory": None}
@@ -191,10 +197,15 @@ async def simulate_step(request: Request):
             os.remove(asm_file)
 
         if result.returncode != 0:
-            output = f"Assembly failed.\nStderr:\n{result.stderr}\nStdout:\n{result.stdout}"
+            # Don't filter assembly errors - show them in full detail
+            error_output = "Assembly failed.\n"
+            if result.stderr.strip():
+                error_output += f"Errors:\n{result.stderr.strip()}\n"
+            if result.stdout.strip():
+                error_output += f"Output:\n{result.stdout.strip()}\n"
             if os.path.exists(bin_file):
                 os.remove(bin_file)
-            return {"output": output, "registers": None, "memory": None}
+            return {"output": error_output, "registers": None, "memory": None}
 
         # Terminate previous process if running
         if step_proc and step_proc.poll() is None:
@@ -396,11 +407,47 @@ def filter_output(text):
     if not text:
         return ""
     filtered_lines = []
-    for line in text.split('\n'):
-        if (
-            'simulation' in line.lower() or
-            'ECALL' in line):
+    lines = text.split('\n')
+
+    # Track if we're in an ECALL context
+    in_ecall_context = False
+    simulation_ended = False
+
+    for line in lines:
+        line_lower = line.lower()
+
+        # Check if simulation has ended - stop processing after this
+        if 'simulation ended' in line_lower:
             filtered_lines.append(line)
+            simulation_ended = True
+            break  # Don't process any more lines after "Simulation ended."
+
+        # Skip processing if simulation has already ended
+        if simulation_ended:
+            continue
+
+        # Check if this line starts an ECALL context
+        if 'ecall executed' in line_lower:
+            in_ecall_context = True
+            filtered_lines.append(line)
+            continue
+
+        # Check if ECALL context ends
+        if 'ecall done' in line_lower:
+            filtered_lines.append(line)
+            in_ecall_context = False
+            continue
+
+        # Only show lines that are between "ECALL executed" and "ECALL done"
+        if in_ecall_context:
+            filtered_lines.append(line)
+            continue
+
+        # Show general simulation messages (outside ECALL context)
+        if ('simulation' in line_lower):
+            filtered_lines.append(line)
+            continue
+
     return '\n'.join(filtered_lines)
 
 @app.post("/step")
@@ -416,13 +463,37 @@ async def step_code(request: Request):
 
         # Read output until we get a complete step
         output = ""
+        seen_ecall = False
+        start_time = time.time()
+        timeout = 5.0
         while True:
             line = step_proc.stdout.readline()
             if not line:
-                break
+                # Prevent tight loop if no data; break on timeout
+                if time.time() - start_time > timeout:
+                    break
+                continue
             output += line
-            # Check if we've reached the end of the step
-            if "Executed" in line or "ecall" in line.lower():
+            low = line.lower()
+
+            if 'ecall executed' in low:
+                seen_ecall = True
+                continue
+
+            # When ECALL, keep reading until 'ECALL done' (to capture svc 3 output)
+            if seen_ecall and 'ecall done' in low:
+                break
+
+            # Stop if simulation ended
+            if 'simulation ended' in low or 'pc out of program bounds' in low:
+                break
+
+            # For non-ECALL instructions, stop after first Executed line to keep per-step output small
+            if not seen_ecall and 'executed' in low:
+                break
+
+            # Safety timeout
+            if time.time() - start_time > timeout:
                 break
 
         # Filter the output

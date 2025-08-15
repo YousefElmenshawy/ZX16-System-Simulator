@@ -365,6 +365,14 @@
       opacity: 0.7;
     }
 
+    .tab-name-container {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+
     .tab-name {
       flex: 1;
       background: transparent;
@@ -383,6 +391,12 @@
 
     .tab-name:focus {
       cursor: text;
+    }
+
+    .tab-extension {
+      color: #858585;
+      font-size: 12px;
+      white-space: nowrap;
     }
 
     .tab-close {
@@ -885,7 +899,10 @@
         <div class="code-tab active" data-tab-id="0">
           <div class="tab-content">
             <i data-lucide="file-text" class="tab-icon" style="width: 16px; height: 16px;"></i>
-            <input type="text" class="tab-name" value="main.zx16">
+            <span class="tab-name-container">
+              <input type="text" class="tab-name" value="main">
+              <span class="tab-extension">.s</span>
+            </span>
             <button class="tab-close" onclick="closeTab(0)">×</button>
           </div>
         </div>
@@ -1030,7 +1047,7 @@ halt"></textarea>
   // Tab creation function
   function createNewTab() {
     const tabId = tabCounter++;
-    const tabName = `file${tabId}.zx16`;
+    const tabName = `file${tabId}`;  // Remove .zx16 extension
 
     // Create tab element
     const tabsContainer = document.getElementById('code-tabs');
@@ -1042,7 +1059,10 @@ halt"></textarea>
     tabElement.innerHTML = `
       <div class="tab-content">
         <i data-lucide="file-text" class="tab-icon" style="width: 16px; height: 16px;"></i>
-        <input type="text" class="tab-name" value="${tabName}">
+        <span class="tab-name-container">
+          <input type="text" class="tab-name" value="${tabName}">
+          <span class="tab-extension">.s</span>
+        </span>
         <button class="tab-close" onclick="closeTab(${tabId})">×</button>
       </div>
     `;

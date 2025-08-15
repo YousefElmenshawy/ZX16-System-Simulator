@@ -428,11 +428,33 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             return false;
         }
         case 3: {
-            char* str = reinterpret_cast<char*>(&memory[registers[6]]);
-            while (*str != '\0') {
-                std::cout << *str;
-                ++str;
+            std::cout << "DEBUG: ECALL 3 - String output service called" << std::endl;
+            uint16_t addr = registers[6];
+            std::cout << "DEBUG: Address in a0: 0x" << std::hex << addr << std::dec << std::endl;
+
+            if (addr >= MEMORY_SIZE) {
+                std::cerr << "Error: Invalid memory address in a0 (0x" << std::hex << addr << ")\n";
+                running = true;
+                return false;
             }
+
+            // Debug: Show memory content at the address
+            std::cout << "DEBUG: Memory content starting at address 0x" << std::hex << addr << ": ";
+            for (int i = 0; i < 10 && (addr + i) < MEMORY_SIZE; i++) {
+                std::cout << "0x" << std::hex << (int)memory[addr + i] << " ";
+            }
+            std::cout << std::dec << std::endl;
+
+            // Print the string with proper line separation
+            std::cout << std::endl; // Start on a new line for better visibility
+            std::cout << "STRING OUTPUT: ";
+            while (addr < MEMORY_SIZE && memory[addr] != '\0') {
+                std::cout << static_cast<char>(memory[addr]);
+                addr++;
+            }
+            std::cout << " :END STRING" << std::endl; // End with a newline for proper line separation
+            std::cout.flush(); // Ensure output is displayed immediately
+
             std::cout << "ECALL done. Continuing the simulator." << std::endl;
             running = true;
             return false;
