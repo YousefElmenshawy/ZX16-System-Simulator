@@ -22,7 +22,7 @@ void ZX16_Simulator::reset() {
     for (int i = 0; i < 8; i++) {
         registers[i] = 0;
     }
-    pc = 0;
+    pc = 0x0020;
     running = true;
     // Optionally clear memory if needed
     // std::fill(std::begin(memory), std::end(memory), 0);
@@ -34,8 +34,6 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
         std::cerr << "Failed to open file: " << filename << std::endl;
         return;
     }
-
-    file.seekg(0x20);  // Skip header
 
     uint16_t address = 0;
     uint8_t bytes[2];
@@ -404,22 +402,24 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
 
     switch (svc) {
         case 1: {
+            std::cout << "Enter string:" << std::endl;
+            std::cout << std::flush;
             char* buffer = reinterpret_cast<char*>(&memory[registers[6]]);
             int maxLength = registers[7];
             std::cin.getline(buffer, maxLength);
             registers[6] = std::cin.gcount();
-
             if (registers[6] < maxLength) {
                 buffer[registers[6]] = '\0';
             } else {
                 buffer[maxLength - 1] = '\0';
             }
-
             std::cout << "ECALL done. Continuing the simulator." << std::endl;
             running = true;
             return false;
         }
         case 2: {
+            std::cout << "Enter number:" << std::endl;
+            std::cout << std::flush;
             int value;
             std::cin >> value;
             registers[6] = value;
@@ -428,9 +428,8 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             return false;
         }
         case 3: {
-            std::cout << "DEBUG: ECALL 3 - String output service called" << std::endl;
+
             uint16_t addr = registers[6];
-            std::cout << "DEBUG: Address in a0: 0x" << std::hex << addr << std::dec << std::endl;
 
             if (addr >= MEMORY_SIZE) {
                 std::cerr << "Error: Invalid memory address in a0 (0x" << std::hex << addr << ")\n";
@@ -438,21 +437,14 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
                 return false;
             }
 
-            // Debug: Show memory content at the address
-            std::cout << "DEBUG: Memory content starting at address 0x" << std::hex << addr << ": ";
-            for (int i = 0; i < 10 && (addr + i) < MEMORY_SIZE; i++) {
-                std::cout << "0x" << std::hex << (int)memory[addr + i] << " ";
-            }
-            std::cout << std::dec << std::endl;
-
             // Print the string with proper line separation
             std::cout << std::endl; // Start on a new line for better visibility
-            std::cout << "STRING OUTPUT: ";
+
             while (addr < MEMORY_SIZE && memory[addr] != '\0') {
                 std::cout << static_cast<char>(memory[addr]);
                 addr++;
             }
-            std::cout << " :END STRING" << std::endl; // End with a newline for proper line separation
+
             std::cout.flush(); // Ensure output is displayed immediately
 
             std::cout << "ECALL done. Continuing the simulator." << std::endl;
@@ -489,6 +481,8 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             return false;
         }
         case 7: { // Read Keyboard
+            std::cout << "Press key:" << std::endl;
+            std::cout << std::flush;
             char key;
             if (std::cin.peek() != EOF) {
                 key = std::cin.get();
@@ -497,7 +491,6 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             } else {
                 registers[7] = 0;   // Set a1 to 0 (nothing pressed)
             }
-
             std::cout << "ECALL done. Continuing the simulator." << std::endl;
             running = true;
             return false;
@@ -536,7 +529,7 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
 void ZX16_Simulator::run() {
     reset(); // Ensure state is reset before running
 
-    pc = 0;
+    pc = 20;
     running = true;
 
     while (running && pc < programEnd) {
@@ -673,7 +666,7 @@ bool ZX16_Simulator::step() {
         std::cout << "Simulation ended.\n";
         running = false;
         printState();
-        std::cout << std::flush; // Flush after state print
+       std::cout << std::flush; // Flush after state print
         dumpMemory(0, 0x10000); // Dump full memory when simulation ends
         std::cout << std::flush; // Flush after memory dump
         return false; // End simulation immediately

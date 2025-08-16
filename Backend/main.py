@@ -25,6 +25,7 @@ step_proc = None
 step_output_buffer = ""
 prev_registers = {}  # Store previous register values to detect changes
 prev_memory = []  # Store previous memory for run/step mode
+instruction_log = []  # Global instruction log that persists across steps
 
 @app.get("/state")
 def get_default_state():
@@ -172,7 +173,7 @@ async def simulate_code(request: Request):
 
 @app.post("/simulate_step")
 async def simulate_step(request: Request):
-    global latest_step_bin, step_proc, step_output_buffer, step_count, prev_registers, prev_memory
+    global latest_step_bin, step_proc, step_output_buffer, step_count, prev_registers, prev_memory, instruction_log
     try:
         data = await request.json()
         code = data["code"]
@@ -228,6 +229,7 @@ async def simulate_step(request: Request):
         step_count = 0  # Reset step count on new code
         prev_registers = {}  # Reset previous registers
         prev_memory = []  # Reset previous memory
+        instruction_log = []  # Reset instruction log for new program
 
         return {"output": "Assembly succeeded. Ready for step mode.", "registers": None, "memory": None}
     except Exception as e:
@@ -235,7 +237,7 @@ async def simulate_step(request: Request):
 
 @app.post("/step")
 async def step_simulation():
-    global latest_step_bin, step_count, prev_registers, prev_memory, step_proc
+    global latest_step_bin, step_count, prev_registers, prev_memory, step_proc, instruction_log
     try:
         if not step_proc or step_proc.poll() is not None:
             return {"output": "Step mode not active or process ended.", "registers": None, "memory": None}
@@ -269,6 +271,24 @@ async def step_simulation():
                     inst_match = re.search(r"Executed:\s*(.+)", line)
                     if inst_match:
                         current_instruction = inst_match.group(1).strip()
+                        # Add to global instruction log with PC and instruction
+                        if current_pc:
+                            instruction_log.append({
+                                "pc": current_pc,
+                                "instruction": current_instruction,
+                                "step": step_count + 1
+                            })
+                elif line.strip().startswith("[") and "0x" in line and not "Executed:" in line:
+                    # Parse disassembly line format: [0020]  0x1234  ADD t0, t1
+                    disasm_match = re.match(r'\[([0-9a-fA-F]+)\]\s+0x([0-9a-fA-F]+)\s+(.+)', line.strip())
+                    if disasm_match:
+                        pc_addr = disasm_match.group(1)
+                        instruction_text = disasm_match.group(3).strip()
+                        instruction_log.append({
+                            "pc": pc_addr,
+                            "instruction": instruction_text,
+                            "step": step_count + 1
+                        })
                 elif "Memory Dump" in line:
                     memory_dump_started = True
                 elif memory_dump_started and line.strip() == "":
@@ -292,6 +312,8 @@ async def step_simulation():
                     break
             except:
                 break
+
+        step_count += 1  # Increment step counter
 
         # Filter the output to show only important lines
         filtered_output = filter_output(output)
@@ -388,13 +410,14 @@ async def step_simulation():
                     current_instruction = inst_match.group(1).strip()
 
         return {
-            "output": filtered_output,  # Return filtered output
+            "output": filtered_output,
             "registers": registers,
             "memory": memory,
             "changed_registers": changed_registers,
             "changed_memory": changed_memory,
             "current_pc": current_pc,
             "current_instruction": current_instruction,
+            "instruction_log": instruction_log,  # Return the global accumulated log
             "simulationEnded": simulation_ended
         }
     except Exception as e:
@@ -421,6 +444,11 @@ def filter_output(text):
             filtered_lines.append(line)
             simulation_ended = True
             break  # Don't process any more lines after "Simulation ended."
+
+        # Check if program is exiting - stop processing after this line
+        if 'program exiting' in line_lower:
+            filtered_lines.append(line)
+            break  # Don't process any more lines after "Program exiting..."
 
         # Skip processing if simulation has already ended
         if simulation_ended:
@@ -481,7 +509,7 @@ async def step_code(request: Request):
                 continue
 
             # When ECALL, keep reading until 'ECALL done' (to capture svc 3 output)
-            if seen_ecall and 'ecall done' in low:
+            if seen_ecall and ('ecall done' in low or  'program exiting...' in low):
                 break
 
             # Stop if simulation ended

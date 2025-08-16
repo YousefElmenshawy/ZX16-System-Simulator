@@ -959,6 +959,10 @@ halt"></textarea>
       <i data-lucide="hard-drive" style="width: 16px; height: 16px;"></i>
       Memory
     </button>
+    <button class="bottom-tab" data-tab="instructions">
+      <i data-lucide="list" style="width: 16px; height: 16px;"></i>
+      Instruction Log
+    </button>
   </div>
   <div class="bottom-content">
     <div class="tab-panel active" id="console-panel">
@@ -970,6 +974,18 @@ halt"></textarea>
         <tr>
           <th>Address</th>
           <th>Bytes</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="tab-panel" id="instructions-panel">
+      <table class="memory-table" id="instructions-table">
+        <thead>
+        <tr>
+          <th>Step</th>
+          <th>PC</th>
+          <th>Instruction</th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -1373,6 +1389,31 @@ halt"></textarea>
           row.innerHTML = `<td>${memRow.address}</td><td>${bytesFormatted}</td>`;
           memTableBody.appendChild(row);
         });
+      }
+
+      // Update instruction log
+      const instructionsTableBody = document.getElementById("instructions-table").querySelector("tbody");
+      instructionsTableBody.innerHTML = "";
+      if (data.instruction_log && data.instruction_log.length > 0) {
+        data.instruction_log.forEach((inst, index) => {
+          const row = document.createElement("tr");
+          // Check if this is the current instruction being executed
+          const isCurrentInstruction = (isStepMode && inst.pc === data.current_pc);
+          if (isCurrentInstruction) {
+            row.classList.add("current-instruction");
+          }
+          row.innerHTML = `<td>${inst.step || index + 1}</td><td>0x${inst.pc}</td><td>${escapeHtml(inst.instruction)}</td>`;
+          instructionsTableBody.appendChild(row);
+        });
+
+        // Auto-scroll to the latest instruction
+        if (data.instruction_log.length > 0) {
+          const table = document.getElementById("instructions-table");
+          const tableContainer = table.closest('.tab-panel');
+          if (tableContainer) {
+            tableContainer.scrollTop = tableContainer.scrollHeight;
+          }
+        }
       }
 
       // Handle highlighting in the editor
