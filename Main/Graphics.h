@@ -7,6 +7,7 @@
 
 #include <SFML/Graphics.hpp>
 #include "GraphicsMemory.h"
+
 class Graphics {
 public:
     Graphics(int width = 320, int height = 240, int tileSize = 16);

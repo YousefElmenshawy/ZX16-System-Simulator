@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- Dark techy background -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#0b2f54"/>
+    </linearGradient>
+    <!-- Bolt gradient -->
+    <linearGradient id="bolt" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <!-- Mask to add tiny side notches (chip pins hint) -->
+    <mask id="chipMask">
+      <rect width="64" height="64" rx="12" fill="#fff"/>
+      <!-- left notches -->
+      <rect x="0" y="18" width="3" height="4" fill="#000"/>
+      <rect x="0" y="30" width="3" height="4" fill="#000"/>
+      <rect x="0" y="42" width="3" height="4" fill="#000"/>
+      <!-- right notches -->
+      <rect x="61" y="18" width="3" height="4" fill="#000"/>
+      <rect x="61" y="30" width="3" height="4" fill="#000"/>
+      <rect x="61" y="42" width="3" height="4" fill="#000"/>
+    </mask>
+  </defs>
+
+  <!-- Background with subtle notches -->
+  <rect width="64" height="64" rx="12" fill="url(#bg)" mask="url(#chipMask)"/>
+
+  <!-- Angular lightning "Z" -->
+  <path d="M18 16 H46 L18 48 H46" fill="none" stroke="url(#bolt)" stroke-width="8" stroke-linecap="square" stroke-linejoin="miter"/>
+  <!-- Add bolt tips for a sharper, energetic feel -->
+  <polygon points="46,12 54,16 46,20" fill="#0ea5e9"/>
+  <polygon points="18,44 10,48 18,52" fill="#22d3ee"/>
+</svg>

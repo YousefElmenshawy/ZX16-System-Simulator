@@ -16,6 +16,7 @@ static const std::string regs[8] = {
     "t0", "ra", "sp", "s0", "s1", "t1", "a0", "a1"
 };
 ZX16_Simulator::ZX16_Simulator() {
+    reset();
     volume = 100;
     for (int i = 0; i < 8; i++) {
         registers[i] = 0;
@@ -26,9 +27,18 @@ ZX16_Simulator::ZX16_Simulator() {
     if (!loseBuffer.loadFromFile("balllose.wav"))
         cerr << "Error loading lose sound file.\n";
     else loseSound.setBuffer(loseBuffer);
-
 }
 
+// Add a reset method
+void ZX16_Simulator::reset() {
+    for (int i = 0; i < 8; i++) {
+        registers[i] = 0;
+    }
+    pc = 0x0020;
+    running = true;
+    // Optionally clear memory if needed
+    // std::fill(std::begin(memory), std::end(memory), 0);
+}
 
 void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
     std::ifstream file(filename, std::ios::binary);
@@ -37,30 +47,25 @@ void ZX16_Simulator::loadBinaryFile(const std::string &filename) {
         return;
     }
 
-   //file.seekg(0x20);  // Skip header
-
     uint16_t address = 0;
     uint8_t bytes[2];
     std::vector<Instruction> tempProgram;
     std::vector<uint16_t> rawInstructions;
 
     while (file.read(reinterpret_cast<char*>(bytes), 2)) {
-        if (address >= MEMORY_SIZE-2 ) {
+        if (address >= MEMORY_SIZE - 2) {
             std::cerr << "Error: Program exceeds memory bounds.\n";
             break;
         }
 
-uint16_t value = bytes[0] | (bytes[1] << 8);  // Little endian
+        uint16_t value = bytes[0] | (bytes[1] << 8);  // Little endian
+
         memory[address]     = bytes[0];
-            memory[address + 1] = bytes[1];
+        memory[address + 1] = bytes[1];
 
-if (address>20&&address<0xF000) {
-    // Skip first 20 bytes and tile map area
-    Instruction inst(value);
-    tempProgram.push_back(inst);
-    rawInstructions.push_back(value);
-}
-
+        Instruction inst(value);
+        tempProgram.push_back(inst);
+        rawInstructions.push_back(value);
 
         address += 2;
     }
@@ -409,6 +414,9 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
 
     switch (svc) {
         case 1: {
+            std::cout << "Enter string:" << std::endl;
+            std::cout << std::flush;
+
             char* buffer = reinterpret_cast<char*>(&memory[registers[6]]);
             int maxLength = registers[7];
             std::cin.getline(buffer, maxLength);
@@ -419,45 +427,62 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             } else {
                 buffer[maxLength - 1] = '\0';
             }
-
-            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            std::cout << "\nECALL done. Continuing the simulator." << std::endl;
             running = true;
+            printState();
+            dumpMemory(0, 0x10000);
             return false;
         }
         case 2: {
+            std::cout << "Enter number:" << std::endl;
+            std::cout << std::flush;
             int value;
             std::cin >> value;
             registers[6] = value;
-            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            std::cout << "\nECALL done. Continuing the simulator." << std::endl;
             running = true;
+            // Output state after ECALL completion for backend parsing
+            printState();
+            dumpMemory(0, 0x10000);
             return false;
         }
-        case 3: { // Print null-terminated string
+        case 3: {
+
             uint16_t addr = registers[6];
+
             if (addr >= MEMORY_SIZE) {
                 std::cerr << "Error: Invalid memory address in a0 (0x" << std::hex << addr << ")\n";
                 running = true;
                 return false;
             }
 
+            // Print the string with proper line separation
+            std::cout << std::endl; // Start on a new line for better visibility
+
             while (addr < MEMORY_SIZE && memory[addr] != '\0') {
                 std::cout << static_cast<char>(memory[addr]);
                 addr++;
             }
+
             std::cout.flush(); // Ensure output is displayed immediately
 
-            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            std::cout << "\nECALL done. Continuing the simulator." << std::endl;
             running = true;
+            // Output state after ECALL completion for backend parsing
+            printState();
+            dumpMemory(0, 0x10000);
             return false;
         }
         case 4: {
             int frequency = registers[6];
             int duration = registers[7];
             std::cout << "Playing tone: Frequency=" << frequency << " Hz, Duration=" << duration << " ms\n";
-            if (frequency >= 10) {
-                playHitSound();  // for hitting the ball
+            if (frequency >= 40) {
+              playLoseSound();// for losing
+
+
             } else {
-                playLoseSound(); // for losing
+                  playHitSound();  // for hitting the ball
             }
             std::cout << "ECALL done. Continuing the simulator." << std::endl;
             running = true;
@@ -493,32 +518,41 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             return false;
         }
         case 7: { // Read Keyboard
+            std::cout << "Press key:" << std::endl;
+            std::cout << std::flush;
+            char key;
+            if (graphics) {
+                if (graphics->hasKeyPressed()) {
 
+                    // Map SFML key code to a simple value (e.g., just use the code)
+                    registers[6] = static_cast<int>(graphics->getLastKeyPressed()); // a0 = key code
+                    registers[7] = 1; // a1 = key pressed
 
-                if (graphics) {
-                    if (graphics->hasKeyPressed()) {
-
-                        // Map SFML key code to a simple value (e.g., just use the code)
-                        registers[6] = static_cast<int>(graphics->getLastKeyPressed()); // a0 = key code
-                        registers[7] = 1; // a1 = key pressed
-
-                        graphics->resetKeyFlag(); // clear flag after reading
-                    } else {
-                        registers[7] = 0; // a1 = no key pressed
-                    }
+                    graphics->resetKeyFlag(); // clear flag after reading
                 } else {
                     registers[7] = 0; // a1 = no key pressed
                 }
-
-                std::cout << "ECALL done. Continuing the simulator." << std::endl;
-                running = true;
-
+            }
+else{
+            if (std::cin.peek() != EOF) {
+                key = std::cin.get();
+                registers[6] = key; // Set a0 to the key code
+                registers[7] = 1;   // Set a1 to 1 (key pressed)
+            } else {
+                registers[7] = 0;   // Set a1 to 0 (nothing pressed)
+            }
+}
+            std::cout << "\nECALL done. Continuing the simulator." << std::endl;
+            running = true;
+            // Output state after ECALL completion for backend parsing
+            printState();
+            dumpMemory(0, 0x10000);
             return false;
         }
         case 8: { // Registers Dump
             dumpRegisters();
 
-            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            std::cout << "\nECALL done. Continuing the simulator." << std::endl;
             running = true;
             return false;
         }
@@ -527,23 +561,14 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
             uint16_t size = registers[7];
             dumpMemory(address, size);
 
-            std::cout << "ECALL done. Continuing the simulator." << std::endl;
+            std::cout << "\nECALL done. Continuing the simulator." << std::endl;
             running = true;
             return false;
         }
         case 10: { // Program Exit
-            std::cout << "Program exiting...\n";
+            std::cout << "\nProgram exiting...\n";
             running = false;
             return false;
-        }
-        case 11: { //render the screen
-            if (graphics) {
-                graphics->tick();  // Trigger screen update
-            }
-            std::cout << "ECALL done. Continuing the simulator." << std::endl;
-            running = true;
-            return false;
-            break;
         }
         default:
             std::cerr << "Unknown service number: " << svc << "\n";
@@ -556,8 +581,9 @@ bool ZX16_Simulator::executeSysType(const Instruction& inst) {
 
 
 void ZX16_Simulator::run() {
+    reset(); // Ensure state is reset before running
 
-    pc = 0;
+    pc = 20;
     running = true;
 
     while (running && pc < programEnd) {
@@ -568,13 +594,17 @@ void ZX16_Simulator::run() {
         bool jumped = executeInstruction(inst);
 
 
-        //inst.generateAssemblyString();
-
         if (!jumped) pc += 2;
         if (pc >= programEnd) {
             std::cerr << "PC out of program bounds at 0x" << std::hex << pc << ". Halting execution.\n";
             running = false;
         }
+
+        // Output state after each instruction (like step mode does)
+       /* printState();
+        std::cout << std::flush;
+        dumpMemory(0, 0x10000);
+        std::cout << std::flush;*/
     }
 }
 
@@ -588,7 +618,8 @@ void ZX16_Simulator::dumpRegisters() const {
 }
 
 void ZX16_Simulator::PrintDynamicDiassembley(uint16_t binary) {
-    Instruction inst(binary);
+  std::cout << std::flush; // <- ADD THIS
+  Instruction inst(binary);
     inst.readPC(pc);  // To handle PC-relative instructions properly
 
     std::cout << "["
@@ -651,14 +682,14 @@ bool ZX16_Simulator::executeInstruction(Instruction& inst) {
 }
 
 
-void ZX16_Simulator::dumpMemory(uint16_t address, uint16_t size) const {
+void ZX16_Simulator::dumpMemory(uint32_t address, uint32_t size) const {
     if (address + size > MEMORY_SIZE) {
         std::cerr << "Memory dump out of bounds: address=" << address << ", size=" << size << "\n";
         return;
     }
 
     std::cout << "Memory Dump (address=" << address << ", size=" << size << "):\n";
-    for (uint16_t i = 0; i < size; ++i) {
+    for (uint32_t i = 0; i < size; ++i) {
         if (i % 16 == 0) {
             std::cout << std::hex << std::setw(4) << std::setfill('0') << (address + i) << ": ";
         }
@@ -670,42 +701,42 @@ void ZX16_Simulator::dumpMemory(uint16_t address, uint16_t size) const {
     std::cout << std::dec << std::endl;
 }
 uint8_t* ZX16_Simulator::getMemoryPtr() { return memory; }
-
-void ZX16_Simulator::step() {
-    if (!running) {
-        std::cout << "Simulator is halted.\n";
-        return;
+void ZX16_Simulator::printState() const {
+    std::cout << "Current PC: 0x" << std::hex << pc << std::dec << "\n";
+    for (int i = 0; i < NUM_REGISTERS; ++i) {
+        std::cout << regs[i] << " = " << std::dec << registers[i] << "\n";
     }
-
-    if (halted) return;
-
-    if (pc >= programEnd) {
-        std::cerr << "PC out of program bounds at 0x" << std::hex << pc << ". Halting execution.\n";
-        running = false;
-        return;
-    }
-
-    // Fetch 16-bit instruction from memory (little-endian)
-    uint16_t binaryInstruction = memory[pc] | (memory[pc + 1] << 8);
-
-    // Decode instruction
-    Instruction inst(binaryInstruction);
-    PrintDynamicDiassembley(binaryInstruction);
-
-    // Execute instruction
-    bool jumped = executeInstruction(inst);
-
-    // If instruction didn't jump, increment PC normally
-    if (!jumped) {
-        pc += 2;
-    }
-
-    // Check bounds again
-    if (pc >= programEnd) {
-        std::cerr << "PC out of program bounds at 0x" << std::hex << pc << ". Halting execution.\n";
-        running = false;
-    }
+    std::cout << std::flush;
 }
+bool ZX16_Simulator::step() {
+    if (!running || pc >= programEnd) {
+        return false;
+    }
+    uint16_t BinaryInstruction = memory[pc] | (memory[pc + 1] << 8);
+    Instruction inst(BinaryInstruction);
+    PrintDynamicDiassembley(BinaryInstruction);
+    bool jumped = executeInstruction(inst);
+    std::cout << std::flush; // Flush after instruction execution
+    if (!jumped) pc += 2;
+
+    // Check if simulation should end AFTER this instruction
+    if (pc >= programEnd) {
+        std::cout << "Simulation ended.\n";
+        running = false;
+        printState();
+       std::cout << std::flush; // Flush after state print
+        dumpMemory(0, 0x10000); // Dump full memory when simulation ends
+        std::cout << std::flush; // Flush after memory dump
+        return false; // End simulation immediately
+    }
+
+    printState();
+    std::cout << std::flush; // Flush after state print
+    dumpMemory(0, 0x10000); // Dump full memory after each step
+    std::cout << std::flush; // Flush after memory dump
+    return running;
+}
+
 void ZX16_Simulator::runInteractive(Graphics* g) {
     graphics = g;
     if (!graphics) return;
@@ -738,7 +769,7 @@ void ZX16_Simulator::runInteractive(Graphics* g) {
             graphics->render();
             frameCounter = 0;
         }
-       //dumpTileMap(0xF000, 20, 15);
+        //dumpTileMap(0xF000, 20, 15);
         dumpRegisters();
         // Tiny sleep to prevent 100% CPU usage
         std::this_thread::sleep_for(std::chrono::microseconds(1));

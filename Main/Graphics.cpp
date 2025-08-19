@@ -12,7 +12,7 @@ Graphics::Graphics(int width, int height, int tileSize)
 {
     //calculate no. of tiles horizontally & vertically
     // Allocate a new window using a pointer
-    window = new sf::RenderWindow(sf::VideoMode(width, height), "Tile Grid");
+    window = new sf::RenderWindow(sf::VideoMode(width, height), "Game");
     //calculate no. of tiles horizontally & vertically
     tilesX = width / tileSize;
     tilesY = height / tileSize;

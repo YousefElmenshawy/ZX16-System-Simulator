@@ -15,7 +15,7 @@ void GraphicsMemory::setMemory(uint8_t* mem){
 void GraphicsMemory::setTileAt(int x, int y, uint8_t tile) {
     if(!memory) return; // if memory is clean / not in the bound range
     if (x < 0 || x >= tilesPerRow || y < 0 || y >= tilesPerCol){
-        cerr << "Tile position out of bounds: (" << x << ", " << y << ")\n";
+        std::cerr << "Tile position out of bounds: (" << x << ", " << y << ")\n";
         return;
     }
     // row major index calculations
@@ -26,7 +26,7 @@ void GraphicsMemory::setTileAt(int x, int y, uint8_t tile) {
 uint8_t GraphicsMemory::getTileAt(int x, int y) const {
     if(!memory) return 0;
     if (x < 0 || x >= tilesPerRow || y < 0 || y >= tilesPerCol) {
-        cerr << "Tile position out of bounds: (" << x << ", " << y << ")\n";
+        std::cerr << "Tile position out of bounds: (" << x << ", " << y << ")\n";
         return 0;
     }
 
@@ -38,8 +38,8 @@ const uint8_t* GraphicsMemory :: getTileDefinition(int tileIndex) const {
     if(!memory|| tileIndex < 0 || tileIndex >= TILE_COUNT) return 0;
     return &memory[TILE_DEFS_BASE + tileIndex * TILE_SIZE_BYTES];
 }
-vector <vector<uint8_t>> GraphicsMemory::decodeTile(const uint8_t* TileData) {
-    vector <vector<uint8_t>> pixels(16, vector<uint8_t>(16));
+std::vector<std::vector<uint8_t>> GraphicsMemory::decodeTile(const uint8_t* TileData) {
+    std::vector<std::vector<uint8_t>> pixels(16, std::vector<uint8_t>(16));
     for(int y = 0; y < 16; y++) { //row
         for(int x = 0; x < 16; x+=2) {  //column
             int byteIndex = y * 8 + x/2;

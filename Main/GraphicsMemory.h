@@ -6,6 +6,7 @@
 #define GRAPHICSMEMORY_H
 #include <regex>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <vector>
 
 // #include "ZX16_Simulator.h"
 // #include "Instruction.h"
@@ -16,7 +17,6 @@
 #define TILE_DEFS_BASE 0xF200
 #define TILE_SIZE_BYTES 128
 #define TILE_COUNT 16
-using namespace std;
 
 class GraphicsMemory {
 private:
@@ -36,7 +36,7 @@ public:
     uint8_t getTileAt(int x, int y) const;
     //For tile definition
     const uint8_t* getTileDefinition(int tileIndex) const;
-    vector <vector<uint8_t>> decodeTile(const uint8_t* TileData);
+    std::vector<std::vector<uint8_t>> decodeTile(const uint8_t* TileData);
     //For color Palette
     sf::Color colorPalette(uint8_t index) const;
 
