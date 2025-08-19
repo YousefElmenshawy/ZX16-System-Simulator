@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Web_based_IDE.iml" filepath="$PROJECT_DIR$/.idea/Web_based_IDE.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/ZX16-System-Simulator.iml" filepath="$PROJECT_DIR$/.idea/ZX16-System-Simulator.iml" />
     </modules>
   </component>
 </project>

@@ -8,6 +8,8 @@
 #include <cstdint>
 #include <fstream>
 #include "Instruction.h"
+#include "Graphics.h"
+#include <SFML/Audio.hpp>
 using namespace std;
 
 class ZX16_Simulator {
@@ -34,9 +36,20 @@ private:
     bool executeSysType(const Instruction& inst);
     bool executeInstruction( Instruction& inst);
     void PrintDynamicDiassembley(uint16_t PC);
+    void playHitSound();
+    void playLoseSound();
+    void dumpTileMap(uint16_t start, uint16_t width, uint16_t height) const ;
 
+    Graphics* graphics= nullptr;
+    // for sound
+    sf::SoundBuffer hitBuffer;  // Sound buffers for hit
+    sf::SoundBuffer loseBuffer; // Sound buffers for lose
+    sf::Sound hitSound; // Sound objects for hit
+    sf::Sound loseSound; // Sound objects for lose
 public:
     void printState() const;
+    void runInteractive(Graphics* g);
+    uint8_t* getMemoryPtr();
     void reset();
     bool step();
     void dumpRegisters() const;

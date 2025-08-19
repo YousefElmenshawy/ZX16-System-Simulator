@@ -9,6 +9,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="mask-icon" href="favicon.svg" color="#007acc">
+  <meta name="theme-color" content="#007acc">
   <style>
     * {
       margin: 0;
@@ -111,6 +115,7 @@
       color: #333333;
     }
     body.light-theme .reg-table th {
+
       background: #f3f3f3;
       color: #007acc;
     }
@@ -245,6 +250,21 @@
       position: relative;
       transition: all 0.15s ease;
     }
+    #run-btn,
+    #run-btn:hover,
+    #run-btn:disabled { color: #22c55e; } /* emerald-500 */
+    /* Make the run icon a filled triangle */
+    #run-btn svg path,
+    #run-btn svg polygon {  }
+
+    /* Step controls = blue */
+    #step-mode-btn,
+    #step-mode-btn:hover,
+    #step-mode-btn:disabled,
+    #step-btn,
+    #step-btn:hover,
+    #step-btn:disabled { color: #3b82f6; } /* blue-500 */
+
 
     /* Icon size inside buttons */
     .control-button i[data-lucide] {
@@ -511,6 +531,7 @@
       display: none;
       /* Force exact positioning match */
       box-sizing: border-box;
+      tab-size: 2; /* Ensure tabs render same width as the textarea to align caret */
     }
 
     /* Hide the textarea when syntax highlighting is active */
@@ -861,6 +882,147 @@
       background-color: rgba(0, 122, 204, 0.1);
       border-left: 3px solid #007acc;
     }
+
+    /* Console Input Interface for ECALL services */
+    .console-input-container {
+      margin-top: 12px;
+      background: #2d2d30;
+      border: 1px solid #3e3e42;
+      border-radius: 4px;
+      padding: 12px;
+    }
+
+    .input-prompt {
+      color: #dcdcaa;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .console-input {
+      flex: 1;
+      background: #1e1e1e;
+      border: 1px solid #3e3e42;
+      border-radius: 3px;
+      color: #d4d4d4;
+      padding: 6px 10px;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .console-input:focus {
+      border-color: #007acc;
+      box-shadow: 0 0 0 1px #007acc;
+    }
+
+    .console-submit-btn, .console-cancel-btn {
+      background: #007acc;
+      border: none;
+      border-radius: 3px;
+      color: #ffffff;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .console-submit-btn:hover {
+      background: #005a9e;
+    }
+
+    .console-cancel-btn {
+      background: #6c757d;
+    }
+
+    .console-cancel-btn:hover {
+      background: #545b62;
+    }
+
+    .console-submit-btn:active, .console-cancel-btn:active {
+      transform: translateY(0.5px);
+    }
+
+    /* Light theme styles for console input */
+    body.light-theme .console-input-container {
+      background: #f8f8f8;
+      border: 1px solid #e5e5e5;
+    }
+
+    body.light-theme .input-prompt {
+      color: #795e26;
+    }
+
+    body.light-theme .console-input {
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      color: #333333;
+    }
+
+    body.light-theme .console-input:focus {
+      border-color: #007acc;
+      box-shadow: 0 0 0 1px #007acc;
+    }
+
+    /* Inline console prompt inside console area */
+    .console-prompt {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 13px;
+      color: #d4d4d4;
+    }
+    .console-prompt .prompt-label { color: #9ca3af; user-select: none; }
+    .console-prompt-input {
+      min-width: 12px;
+      outline: none;
+      border: none;
+      padding: 2px 4px;
+      background: transparent;
+      color: inherit;
+      border-bottom: 1px dashed #3e3e42;
+    }
+    .console-prompt-input:focus { border-bottom-color: #007acc; }
+    body.light-theme .console-prompt { color: #333333; }
+    body.light-theme .console-prompt .prompt-label { color: #6b7280; }
+    body.light-theme .console-prompt-input { border-bottom-color: #e5e7eb; }
+    body.light-theme .console-prompt-input:focus { border-bottom-color: #007acc; }
+
+    /* Keep syntax overlay visually in sync with the textarea (caret alignment with tabs) */
+    .syntax-content {
+      position: absolute;
+      top: 0;
+      left: 40px;
+      right: 0;
+      bottom: 0;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      line-height: 20px;
+      padding: 16px;
+      margin: 0;
+      border: none;
+      white-space: pre;
+      overflow: hidden; /* Don't scroll independently */
+      background: transparent;
+      color: #d4d4d4;
+      pointer-events: none;
+      z-index: 2;
+      display: none;
+      /* Force exact positioning match */
+      box-sizing: border-box;
+      tab-size: 2; /* Ensure tabs render same width as the textarea to align caret */
+    }
   </style>
 </head>
 <body>
@@ -870,6 +1032,10 @@
   <div class="controls-container">
     <button class="control-button success" id="run-btn" data-label="Run" aria-label="Run" title="Run">
       <i data-lucide="play" style="width: 18px; height: 18px;"></i>
+    </button>
+    <!-- New: Run with Graphics button -->
+    <button class="control-button" id="run-graphics-btn" data-label="Run Graphics" aria-label="Run with Graphics" title="Run with Graphics">
+      <i data-lucide="monitor" style="width: 18px; height: 18px;"></i>
     </button>
     <button class="control-button warning" id="step-mode-btn" data-label="Step Mode" aria-label="Step Mode" title="Step Mode">
       <i data-lucide="step-forward" style="width: 18px; height: 18px;"></i>
@@ -967,6 +1133,15 @@ halt"></textarea>
   <div class="bottom-content">
     <div class="tab-panel active" id="console-panel">
       <div class="console-output" id="console-output">Ready to run...</div>
+      <!-- Interactive input interface for ECALL services -->
+      <div class="console-input-container" id="console-input-container" style="display: none;">
+        <div class="input-prompt" id="input-prompt"></div>
+        <div class="input-area">
+          <input type="text" class="console-input" id="console-input" placeholder="Enter value...">
+          <button class="console-submit-btn" id="console-submit-btn">Submit</button>
+          <button class="console-cancel-btn" id="console-cancel-btn">Cancel</button>
+        </div>
+      </div>
     </div>
     <div class="tab-panel" id="memory-panel">
       <table class="memory-table" id="memory-table">
@@ -1021,10 +1196,18 @@ halt"></textarea>
 
   // Add a flag to track if we're in step mode
   let isStepMode = false;
+  // Add a flag to track ECALL input waiting state (prevents stepping while simulator awaits input)
+  let awaitingEcall = false;
+  // NEW: track if normal Run mode is active (program running)
+  let isRunModeActive = false;
 
   // Add PC mapping for editor lines
   let lineToPCMap = new Map();
   let currentPC = 0x0002;
+
+  // Session counters for console history
+  let runSession = 0;
+  let stepSession = 0;
 
   // Persistent settings
   const SETTINGS_KEY = 'zx16_settings';
@@ -1052,6 +1235,13 @@ halt"></textarea>
       // Approximate line-height for readability
       ed.style.lineHeight = Math.round(settings.fontSize * 1.43) + 'px';
       ed.style.tabSize = String(settings.tabSize);
+      ed.style.whiteSpace = settings.wordWrap ? 'pre-wrap' : 'pre';
+    });
+    document.querySelectorAll('.syntax-content').forEach(ov => {
+      ov.style.fontSize = settings.fontSize + 'px';
+      ov.style.lineHeight = Math.round(settings.fontSize * 1.43) + 'px';
+      ov.style.tabSize = String(settings.tabSize);
+      ov.style.whiteSpace = settings.wordWrap ? 'pre-wrap' : 'pre';
     });
     updateLineNumbers();
     updateLineCount();
@@ -1298,25 +1488,102 @@ halt"></textarea>
     });
   });
 
+  // Append to console like a terminal (insert above prompt if present)
+  function appendToConsole(text) {
+    const consoleOutput = document.getElementById('console-output');
+    if (!text) return;
+    const promptEl = consoleOutput.querySelector('.console-prompt');
+    const lines = ('' + text).split('\n');
+    for (const line of lines) {
+      const div = document.createElement('div');
+      div.textContent = line;
+      if (promptEl) {
+        consoleOutput.insertBefore(div, promptEl);
+      } else {
+        consoleOutput.appendChild(div);
+      }
+    }
+    // Auto scroll to bottom
+    consoleOutput.scrollTop = consoleOutput.scrollHeight;
+  }
+
+  function sessionHeader(mode, id) {
+    const now = new Date();
+    const ts = now.toLocaleTimeString();
+    return `\n——— ${mode} Session #${id} — ${ts} ———`;
+  }
+
   // Update IDE state
   async function updateIDE(data) {
     window._lastStepData = data;
     console.log("[Debug] updateIDE called with data:", data);
 
-    // Update console output
-    const consoleOutput = document.getElementById("console-output");
-    consoleOutput.innerHTML = "";
+    // Determine if simulation ended as early as possible
+    const simulationEnded = !!(data && (data.simulationEnded || (data.output && data.output.includes("Simulation ended"))));
 
-    // Check if simulation ended
-    const simulationEnded = data.output && data.output.includes("Simulation ended.");
-
-    // Disable step button if simulation ended
+    // If simulation ended, clear any lingering ECALL prompts before anything else
     if (simulationEnded) {
-      document.getElementById('step-btn').disabled = true;
-      document.getElementById('step-btn').dataset.label = 'Step (Done)';
+      try { hideInputInterface(); } catch {}
+      try { hideConsolePrompt(); } catch {}
+      awaitingEcall = false;
+    }
+
+    // Only check for ECALL prompts if simulation is not ended
+    if (!simulationEnded && data.output) {
+      checkForEcallInput(data.output);
+    }
+
+    // Update console output: APPEND instead of clearing
+    const consoleOutput = document.getElementById("console-output");
+
+    // Check if we have input prompts
+    const hasPrompt = (document.getElementById('console-input-container').style.display !== 'none') || !!document.querySelector('#console-output .console-prompt');
+    const isAwaiting = awaitingEcall || hasPrompt;
+
+    // IMPROVED: Get mode from backend response to properly manage button states
+    const currentMode = data.mode || (isStepMode ? 'step' : 'run');
+
+    // Handle button states based on current mode and simulation state
+    if (simulationEnded) {
+      // Simulation has ended - reset all buttons to normal state
+      setButtonState('run-btn', 'play', 'Run', false);
+      setButtonState('step-mode-btn', 'step-forward', 'Step Mode', false);
+      setButtonState('step-btn', 'check', 'Step (Done)', true);
+
+      // Reset mode flags when simulation ends
+      isStepMode = false;
+      awaitingEcall = false;
+      isRunModeActive = false;
+
+      // Ensure no prompt elements linger in the UI after end
+      try { hideInputInterface(); } catch {}
+      try { hideConsolePrompt(); } catch {}
+    } else if (isAwaiting) {
+      // Waiting for ECALL input - handle based on active mode
+      if (currentMode === 'step' || isStepMode) {
+        setButtonState('run-btn', 'play', 'Run', true);
+        setButtonState('step-mode-btn', 'pause', 'Step Mode Active', true);
+        setButtonState('step-btn', 'pause', 'Waiting for input…', true);
+      } else {
+        // In run mode waiting for input - keep RUN as square and clickable to stop
+        setButtonState('run-btn', 'square', 'Stop', false);
+        setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+        setButtonState('step-btn', 'pause', 'Waiting for input…', true);
+        isRunModeActive = true;
+      }
     } else {
-      document.getElementById('step-btn').disabled = false;
-      document.getElementById('step-btn').dataset.label = 'Step';
+      // Normal execution state
+      if (currentMode === 'step' || isStepMode) {
+        setButtonState('run-btn', 'play', 'Run', true);
+        setButtonState('step-mode-btn', 'pause', 'Step Mode Active', false);
+        setButtonState('step-btn', 'skip-forward', 'Step', false);
+      } else {
+        // RUN mode active: keep square and make it clickable to stop
+        setButtonState('run-btn', 'square', 'Stop', false);
+        setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+        setButtonState('step-btn', 'skip-forward', 'Step', true);
+        isRunModeActive = true;
+      }
     }
 
     let currentInstructionText = null;
@@ -1351,13 +1618,8 @@ halt"></textarea>
           }
         }
       }
-      for (const line of lines) {
-        const lineDiv = document.createElement("div");
-        lineDiv.textContent = line;
-        consoleOutput.appendChild(lineDiv);
-      }
-    } else {
-      consoleOutput.textContent = "Ready to run...";
+      // Append new output lines
+      appendToConsole(data.output);
     }
 
     // Update registers with highlighting
@@ -1378,51 +1640,51 @@ halt"></textarea>
         row.innerHTML = `<td>${reg}</td><td>${signedVal} <span style="color:#888;">(0x${(val & 0xFFFF).toString(16).padStart(4, '0')})</span></td>`;
         regTableBody.appendChild(row);
       });
+    }
 
-      // Update memory
-      const memTableBody = document.getElementById("memory-table").querySelector("tbody");
-      memTableBody.innerHTML = "";
-      if (data.memory && data.memory.length > 0) {
-        data.memory.forEach((memRow, index) => {
-          const row = document.createElement("tr");
-          const bytesFormatted = memRow.bytes.map(b => b.toString(16).padStart(2, '0')).join(' ');
-          row.innerHTML = `<td>${memRow.address}</td><td>${bytesFormatted}</td>`;
-          memTableBody.appendChild(row);
-        });
-      }
+    // Update memory (independent of registers)
+    const memTableBody = document.getElementById("memory-table").querySelector("tbody");
+    memTableBody.innerHTML = "";
+    if (data.memory && data.memory.length > 0) {
+      data.memory.forEach((memRow, index) => {
+        const row = document.createElement("tr");
+        const bytesFormatted = memRow.bytes.map(b => b.toString(16).padStart(2, '0')).join(' ');
+        row.innerHTML = `<td>${memRow.address}</td><td>${bytesFormatted}</td>`;
+        memTableBody.appendChild(row);
+      });
+    }
 
-      // Update instruction log
-      const instructionsTableBody = document.getElementById("instructions-table").querySelector("tbody");
-      instructionsTableBody.innerHTML = "";
-      if (data.instruction_log && data.instruction_log.length > 0) {
-        data.instruction_log.forEach((inst, index) => {
-          const row = document.createElement("tr");
-          // Check if this is the current instruction being executed
-          const isCurrentInstruction = (isStepMode && inst.pc === data.current_pc);
-          if (isCurrentInstruction) {
-            row.classList.add("current-instruction");
-          }
-          row.innerHTML = `<td>${inst.step || index + 1}</td><td>0x${inst.pc}</td><td>${escapeHtml(inst.instruction)}</td>`;
-          instructionsTableBody.appendChild(row);
-        });
+    // Update instruction log (independent of registers)
+    const instructionsTableBody = document.getElementById("instructions-table").querySelector("tbody");
+    instructionsTableBody.innerHTML = "";
+    if (data.instruction_log && data.instruction_log.length > 0) {
+      data.instruction_log.forEach((inst, index) => {
+        const row = document.createElement("tr");
+        // Check if this is the current instruction being executed
+        const isCurrentInstruction = (isStepMode && inst.pc === data.current_pc);
+        if (isCurrentInstruction) {
+          row.classList.add("current-instruction");
+        }
+        row.innerHTML = `<td>${inst.step || index + 1}</td><td>0x${inst.pc}</td><td>${escapeHtml(inst.instruction)}</td>`;
+        instructionsTableBody.appendChild(row);
+      });
 
-        // Auto-scroll to the latest instruction
-        if (data.instruction_log.length > 0) {
-          const table = document.getElementById("instructions-table");
-          const tableContainer = table.closest('.tab-panel');
-          if (tableContainer) {
-            tableContainer.scrollTop = tableContainer.scrollHeight;
-          }
+      // Auto-scroll to the latest instruction
+      if (data.instruction_log.length > 0) {
+        const table = document.getElementById("instructions-table");
+        const tableContainer = table.closest('.tab-panel');
+        if (tableContainer) {
+          tableContainer.scrollTop = tableContainer.scrollHeight;
         }
       }
+    }
 
-      // Handle highlighting in the editor
-      if (isStepMode && !simulationEnded && currentPC !== null) {
-        console.log("Highlighting instruction at PC:", currentPC);
-        highlightInstructionInEditor(window._lastStepData.current_instruction, currentPC);
-      } else {
-        clearEditorHighlight();
-      }
+    // Handle highlighting in the editor (independent of registers)
+    if (isStepMode && !simulationEnded && currentPC !== null) {
+      console.log("Highlighting instruction at PC:", currentPC);
+      highlightInstructionInEditor(window._lastStepData.current_instruction, currentPC);
+    } else {
+      clearEditorHighlight();
     }
 
     // Re-initialize icons after content update
@@ -1683,35 +1945,102 @@ halt"></textarea>
 
     // Run button
     document.getElementById('run-btn').addEventListener('click', async function() {
+      // If currently running, clicking the square acts as Stop
+      if (isRunModeActive) {
+        try {
+          setButtonState('run-btn', 'loader', 'Stopping...', true);
+          const response = await fetch('http://localhost:8000/stop', { method: 'POST' });
+          const data = await response.json();
+          isRunModeActive = false; // ensure cleared
+          updateIDE(data);
+        } catch (e) {
+          console.error('Stop failed:', e);
+          // Fallback: reset UI
+          setButtonState('run-btn', 'play', 'Run', false);
+          isRunModeActive = false;
+        }
+        return;
+      }
+
+      // Starting a new run: ensure no stale prompts persist from a previous session
+      try { hideInputInterface(); } catch {}
+      try { hideConsolePrompt(); } catch {}
+      awaitingEcall = false;
+
+      // Otherwise, start a new run
       const code = getActiveEditorContent();
       if (!code.trim()) return;
+      let lastData = null;
       try {
-        // Set running state
-        setButtonState('run-btn', 'square', 'Running...', true);
+        appendToConsole(sessionHeader('Run', ++runSession));
+
+        // Set running state (square and clickable to stop)
+        setButtonState('run-btn', 'square', 'Stop', false);
         setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
         setButtonState('step-btn', 'skip-forward', 'Step', true);
+        isRunModeActive = true;
 
         const response = await fetch('http://localhost:8000/simulate', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ code: code }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code })
         });
         const data = await response.json();
+        lastData = data;
         isStepMode = false;
         updateIDE(data, code);
       } catch (error) {
         console.error('Error:', error);
-      } finally {
-        // Reset to normal state
+        isRunModeActive = false;
         setButtonState('run-btn', 'play', 'Run', false);
-        setButtonState('step-mode-btn', 'step-forward', 'Step Mode', false);
+      }
+    });
+
+    // New: Run with Graphics button
+    document.getElementById('run-graphics-btn').addEventListener('click', async function() {
+      const code = getActiveEditorContent();
+      if (!code.trim()) return;
+      try {
+        appendToConsole(sessionHeader('Interactive', ++runSession));
+        // Temporarily disable controls while starting
+        setButtonState('run-graphics-btn', 'loader', 'Starting...', true);
+        setButtonState('run-btn', 'play', 'Run', true);
+        setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+        setButtonState('step-btn', 'skip-forward', 'Step', true);
+
+        const response = await fetch('http://localhost:8000/run_interactive', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code })
+        });
+        const data = await response.json();
+        if (data && data.output) appendToConsole(data.output);
+        // No streaming output expected in interactive mode
+      } catch (error) {
+        console.error('Error:', error);
+        appendToConsole('Failed to start interactive graphics run.');
+      } finally {
+        // Re-enable controls; interactive process is managed by backend
+        setButtonState('run-graphics-btn', 'monitor', 'Run Graphics', false);
+        if (isStepMode) {
+          setButtonState('step-mode-btn', 'pause', 'Step Mode Active', false);
+          setButtonState('step-btn', 'skip-forward', 'Step', false);
+          setButtonState('run-btn', 'play', 'Run', true);
+        } else {
+          setButtonState('run-btn', 'play', 'Run', false);
+          setButtonState('step-mode-btn', 'step-forward', 'Step Mode', false);
+          setButtonState('step-btn', 'skip-forward', 'Step', true);
+        }
       }
     });
 
     // Step Mode button
     document.getElementById('step-mode-btn').addEventListener('click', async function() {
+      // Proactively clear any lingering ECALL prompts from a previous run/stop
+      try { hideInputInterface(); } catch {}
+      try { hideConsolePrompt(); } catch {}
+      awaitingEcall = false;
+
       const code = getActiveEditorContent();
       if (!code.trim()) return;
 
@@ -1758,6 +2087,9 @@ halt"></textarea>
         const data = await response.json();
         isStepMode = true;
 
+        // Add session header after entering step mode
+        appendToConsole(sessionHeader('Step', ++stepSession));
+
         // Set step mode active state
         setButtonState('step-mode-btn', 'pause', 'Step Mode Active', false);
         setButtonState('step-btn', 'skip-forward', 'Step', false);
@@ -1772,7 +2104,7 @@ halt"></textarea>
 
     // Step button
     document.getElementById('step-btn').addEventListener('click', async function() {
-      if (!isStepMode || this.disabled) return;
+      if (!isStepMode || this.disabled || awaitingEcall) return;
 
       // Set stepping state
       setButtonState('step-btn', 'loader', 'Stepping...', true);
@@ -1792,7 +2124,13 @@ halt"></textarea>
           setButtonState('step-btn', 'check', 'Step (Done)', true);
           setButtonState('step-mode-btn', 'step-forward', 'Step Mode', false);
         } else {
-          setButtonState('step-btn', 'skip-forward', 'Step', false);
+          // Check if we're now awaiting input after this step
+          const hasPrompt = (document.getElementById('console-input-container').style.display !== 'none') || !!document.querySelector('#console-output .console-prompt');
+          if (awaitingEcall || hasPrompt) {
+            setButtonState('step-btn', 'pause', 'Waiting for input…', true);
+          } else {
+            setButtonState('step-btn', 'skip-forward', 'Step', false);
+          }
         }
       } catch (error) {
         console.error('Error:', error);
@@ -1886,6 +2224,21 @@ halt"></textarea>
     updateLineNumbers();
     addScrollSynchronization();
     initializeThemeButton(); // Initialize theme button icon
+
+    // Console input event listeners
+    document.getElementById('console-submit-btn').addEventListener('click', submitInput);
+    document.getElementById('console-cancel-btn').addEventListener('click', cancelInput);
+
+    // Handle Enter key for input submission
+    document.getElementById('console-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitInput();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        cancelInput();
+      }
+    });
 
     // Re-initialize icons
     lucide.createIcons();
@@ -2137,6 +2490,498 @@ halt"></textarea>
     div.textContent = text;
     return div.innerHTML;
   }
+
+  // ECALL Input Handling Functions
+  function checkForEcallInput(output) {
+    const lines = output.split('\n');
+
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+
+      // Check for ECALL service 1 (string input)
+      if (trimmedLine === "Enter string:") {
+        showInputInterface("Enter a string:", "text", 1);
+        return;
+      }
+
+      // Check for ECALL service 2 (number input)
+      if (trimmedLine === "Enter number:") {
+        showInputInterface("Enter a number:", "number", 2);
+        return;
+      }
+
+      // Check for ECALL service 7 (keyboard input)
+      if (trimmedLine === "Press key:") {
+        showInputInterface("Press a key:", "char", 7);
+        return;
+      }
+    }
+  }
+
+  function showInputInterface(promptText, inputType, serviceNumber) {
+    const inputContainer = document.getElementById('console-input-container');
+    const inputPrompt = document.getElementById('input-prompt');
+    const consoleInput = document.getElementById('console-input');
+
+    // Set the prompt text
+    inputPrompt.textContent = promptText;
+
+    // Configure input field based on type
+    if (inputType === "number") {
+      consoleInput.type = "number";
+      consoleInput.placeholder = "Enter a number...";
+    } else if (inputType === "char") {
+      consoleInput.type = "text";
+      consoleInput.placeholder = "Press a key...";
+      consoleInput.maxLength = 1;
+    } else {
+      consoleInput.type = "text";
+      consoleInput.placeholder = "Enter text...";
+      consoleInput.maxLength = null;
+    }
+
+    // Clear previous input and show the interface
+    consoleInput.value = "";
+    inputContainer.style.display = "block";
+
+    // Mark awaiting ECALL input and disable controls while waiting
+    awaitingEcall = true;
+    setButtonState('step-btn', 'pause', 'Waiting for input…', true);
+    if (isStepMode) {
+      setButtonState('run-btn', 'play', 'Run', true);
+      setButtonState('step-mode-btn', 'pause', 'Step Mode Active', true);
+    } else {
+      setButtonState('run-btn', 'square', 'Stop', false);
+      setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+      isRunModeActive = true;
+    }
+
+    // Focus the input field
+    setTimeout(() => {
+      consoleInput.focus();
+    }, 100);
+
+    // Store service number for later use
+    inputContainer.dataset.serviceNumber = serviceNumber;
+    inputContainer.dataset.inputType = inputType;
+
+    // Automatically switch to console tab if not already active
+    const consoleTab = document.querySelector('[data-tab="console"]');
+    if (consoleTab && !consoleTab.classList.contains('active')) {
+      consoleTab.click();
+    }
+  }
+
+  function hideInputInterface() {
+    const inputContainer = document.getElementById('console-input-container');
+    inputContainer.style.display = "none";
+  }
+
+  async function submitInput() {
+    const inputContainer = document.getElementById('console-input-container');
+    const consoleInput = document.getElementById('console-input');
+    const serviceNumber = parseInt(inputContainer.dataset.serviceNumber);
+    const inputType = inputContainer.dataset.inputType;
+    const inputValue = consoleInput.value;
+
+    // Validate input based on type
+    if (inputType === "number" && (isNaN(inputValue) || inputValue.trim() === "")) {
+      alert("Please enter a valid number");
+      consoleInput.focus();
+      return;
+    }
+
+    if (inputType === "char" && inputValue.length !== 1) {
+      alert("Please enter exactly one character");
+      consoleInput.focus();
+      return;
+    }
+
+    if (inputType === "text" && inputValue.trim() === "") {
+      alert("Please enter some text");
+      consoleInput.focus();
+      return;
+    }
+
+    // Hide the input interface but keep awaitingEcall=true until backend confirms processing
+    hideInputInterface();
+
+    // Maintain consistent "running" state for run mode during input submission
+    if (!isStepMode) {
+      setButtonState('run-btn', 'square', 'Stop', false);
+      setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+      setButtonState('step-btn', 'pause', 'Running...', true);
+      isRunModeActive = true;
+    }
+    try {
+      // Send the input to the backend
+      const response = await fetch('http://localhost:8000/ecall_input', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ service: serviceNumber, input: inputValue })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        // Check simulation state
+        const ended = !!(data.output && (data.output.includes('Simulation ended.') || data.simulationEnded));
+        const hasPromptNow = (document.getElementById('console-input-container').style.display !== 'none') || !!document.querySelector('#console-output .console-prompt');
+        const canContinue = !ended && !!data.ecall_completed && !hasPromptNow;
+
+        if (ended) {
+          // Simulation ended - reset all buttons
+          awaitingEcall = false;
+          isStepMode = false; // Clear step mode flag when simulation ends
+          setButtonState('run-btn', 'play', 'Run', false);
+          setButtonState('step-mode-btn', 'step-forward', 'Step Mode', false);
+          setButtonState('step-btn', 'check', 'Step (Done)', true);
+        } else if (canContinue) {
+          // ECALL completed, can continue execution
+          awaitingEcall = false;
+          if (isStepMode) {
+            // Step mode can continue stepping
+            setButtonState('run-btn', 'play', 'Run', false);
+            setButtonState('step-mode-btn', 'pause', 'Step Mode Active', false);
+            setButtonState('step-btn', 'skip-forward', 'Step', false);
+          } else {
+            // Run mode continues running - keep showing running state until truly done
+            setButtonState('run-btn', 'square', 'Running...', true);
+            setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+            setButtonState('step-btn', 'pause', 'Running...', true);
+          }
+        } else {
+          // Still waiting for more input or other conditions
+          if (isStepMode) {
+            setButtonState('step-btn', 'pause', 'Waiting for input…', true);
+            setButtonState('step-mode-btn', 'pause', 'Step Mode Active', true);
+            setButtonState('run-btn', 'play', 'Run', true);
+          } else {
+            setButtonState('run-btn', 'square', 'Running (waiting for input)...', true);
+            setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+            setButtonState('step-btn', 'pause', 'Waiting for input…', true);
+          }
+        }
+
+        // Update IDE with new data
+        if (data.registers || data.memory || data.instruction_log || data.output) {
+          updateIDE(data);
+        }
+      } else {
+        console.error('Failed to send ECALL input:', response.statusText);
+        alert('Failed to send input to simulator');
+        // Keep current waiting state on error
+      }
+    } catch (error) {
+      console.error('Error sending ECALL input:', error);
+      alert('Error communicating with simulator');
+      // Keep current waiting state on error
+    }
+  }
+
+  function cancelInput() {
+    hideInputInterface();
+    // Reset awaiting state but keep simulator in its current state
+    awaitingEcall = false;
+
+    // Reset button states based on current mode
+    if (isStepMode) {
+      setButtonState('run-btn', 'play', 'Run', false);
+      setButtonState('step-mode-btn', 'pause', 'Step Mode Active', false);
+      setButtonState('step-btn', 'skip-forward', 'Step', false);
+    } else {
+      // In run mode, keep running state until program exits
+      setButtonState('run-btn', 'square', 'Running...', true);
+      setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+      setButtonState('step-btn', 'skip-forward', 'Step', true);
+    }
+  }
+
+  // Also adjust the (older) input UI helper to reflect correct run-mode state
+  function showInputInterface(promptText, inputType, serviceNumber) {
+    const inputContainer = document.getElementById('console-input-container');
+    const inputPrompt = document.getElementById('input-prompt');
+    const consoleInput = document.getElementById('console-input');
+
+    // Set the prompt text
+    inputPrompt.textContent = promptText;
+
+    // Configure input field based on type
+    if (inputType === "number") {
+      consoleInput.type = "number";
+      consoleInput.placeholder = "Enter a number...";
+    } else if (inputType === "char") {
+      consoleInput.type = "text";
+      consoleInput.placeholder = "Press a key...";
+      consoleInput.maxLength = 1;
+    } else {
+      consoleInput.type = "text";
+      consoleInput.placeholder = "Enter text...";
+      consoleInput.maxLength = null;
+    }
+
+    // Clear previous input and show the interface
+    consoleInput.value = "";
+    inputContainer.style.display = "block";
+
+    // Mark awaiting ECALL input and disable controls while waiting
+    awaitingEcall = true;
+    setButtonState('step-btn', 'pause', 'Waiting for input…', true);
+    if (isStepMode) {
+      setButtonState('run-btn', 'play', 'Run', true);
+      setButtonState('step-mode-btn', 'pause', 'Step Mode Active', true);
+    } else {
+      setButtonState('run-btn', 'square', 'Stop', false);
+      setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+      isRunModeActive = true;
+    }
+
+    // Focus the input field
+    setTimeout(() => {
+      consoleInput.focus();
+    }, 100);
+
+    // Store service number for later use
+    inputContainer.dataset.serviceNumber = serviceNumber;
+    inputContainer.dataset.inputType = inputType;
+
+    // Automatically switch to console tab if not already active
+    const consoleTab = document.querySelector('[data-tab="console"]');
+    if (consoleTab && !consoleTab.classList.contains('active')) {
+      consoleTab.click();
+    }
+  }
+
+  // Inline console prompt helpers
+  function hideConsolePrompt() {
+    const prompt = document.querySelector('#console-output .console-prompt');
+    if (prompt) prompt.remove();
+  }
+  function cancelInlinePrompt() {
+    hideConsolePrompt();
+    // Keep awaitingEcall=true; simulator is still waiting
+    awaitingEcall = true;
+    setButtonState('step-btn', 'pause', 'Waiting for input…', true);
+    setButtonState('run-btn', 'play', 'Run', true);
+    setButtonState('step-mode-btn', 'pause', 'Step Mode Active', true);
+  }
+  function showConsolePrompt(promptText, serviceNumber) {
+    const consoleOutput = document.getElementById('console-output');
+    hideConsolePrompt();
+    const prompt = document.createElement('div');
+    prompt.className = 'console-prompt';
+    const label = document.createElement('span');
+    label.className = 'prompt-label';
+    label.textContent = promptText || 'Input:';
+    const input = document.createElement('span');
+    input.className = 'console-prompt-input';
+    input.setAttribute('contenteditable', 'true');
+    input.setAttribute('spellcheck', 'false');
+    input.dataset.service = String(serviceNumber);
+    input.addEventListener('keydown', async (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const value = input.textContent || '';
+        if (serviceNumber === 2 && (value.trim() === '' || isNaN(value))) { alert('Please enter a valid number'); return; }
+        if (serviceNumber === 7 && value.length < 1) { alert('Please press a key'); return; }
+        await sendEcallInput(serviceNumber, value);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        cancelInlinePrompt();
+      } else if (serviceNumber === 7) {
+        // limit to single character
+        setTimeout(() => { if ((input.textContent || '').length > 1) { input.textContent = input.textContent.charAt(0); placeCaretAtEnd(input); } }, 0);
+      }
+    });
+    prompt.appendChild(label);
+    prompt.appendChild(input);
+    consoleOutput.appendChild(prompt);
+
+    // Mark awaiting ECALL input and disable controls while waiting
+    awaitingEcall = true;
+    setButtonState('step-btn', 'pause', 'Waiting for input…', true);
+    if (isStepMode) {
+      setButtonState('run-btn', 'play', 'Run', true);
+      setButtonState('step-mode-btn', 'pause', 'Step Mode Active', true);
+    } else {
+      // Keep Stop clickable during input
+      setButtonState('run-btn', 'square', 'Stop', false);
+      setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+      isRunModeActive = true;
+    }
+
+    setTimeout(() => { input.focus(); placeCaretAtEnd(input); consoleOutput.scrollTop = consoleOutput.scrollHeight; }, 0);
+  }
+  async function sendEcallInput(serviceNumber, inputValue) {
+    try {
+      const consoleOutput = document.getElementById('console-output');
+      const prompt = consoleOutput.querySelector('.console-prompt');
+      if (prompt) {
+        const echo = document.createElement('div');
+        echo.textContent = prompt.querySelector('.console-prompt-input')?.textContent || '';
+        consoleOutput.insertBefore(echo, prompt);
+      }
+      hideConsolePrompt();
+      const response = await fetch('http://localhost:8000/ecall_input', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ service: serviceNumber, input: inputValue })
+      });
+      if (!response.ok) {
+        alert('Failed to send input to simulator');
+        // Keep awaitingEcall=true and keep controls disabled
+        setButtonState('step-btn', 'pause', 'Waiting for input…', true);
+        if (isStepMode) {
+          setButtonState('run-btn', 'play', 'Run', true);
+          setButtonState('step-mode-btn', 'pause', 'Step Mode Active', true);
+        } else {
+          setButtonState('run-btn', 'square', 'Running (waiting for input)...', true);
+          setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+        }
+        return;
+      }
+      const data = await response.json();
+      const ended = !!(data.output && data.output.includes('Simulation ended.'));
+      const hasPromptNow = (document.getElementById('console-input-container').style.display !== 'none') || !!document.querySelector('#console-output .console-prompt');
+      const canStep = !ended && !!data.ecall_completed && !hasPromptNow;
+
+      if (canStep) {
+        awaitingEcall = false;
+        if (isStepMode) {
+          setButtonState('step-btn', 'skip-forward', 'Step', false);
+          setButtonState('step-mode-btn', 'pause', 'Step Mode Active', false);
+          setButtonState('run-btn', 'play', 'Run', false);
+        } else {
+          // Stay in running state
+          setButtonState('run-btn', 'square', 'Stop', false);
+          setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+          setButtonState('step-btn', 'skip-forward', 'Step', true);
+          isRunModeActive = true;
+        }
+      } else {
+        // Still waiting for input or ended
+        setButtonState('step-btn', 'pause', 'Waiting for input…', true);
+        if (!ended && !isStepMode) {
+          setButtonState('run-btn', 'square', 'Stop', false);
+          setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+          isRunModeActive = true;
+        }
+      }
+
+      // UPDATE: Apply state in run mode as well
+      if (data.registers || data.memory || data.instruction_log) {
+        updateIDE(data);
+      }
+    } catch (err) {
+      console.error('Error sending ECALL input:', err);
+      alert('Error communicating with simulator');
+      // Keep awaitingEcall=true; do not re-enable step to prevent crashes
+      setButtonState('step-btn', 'pause', 'Waiting for input…', true);
+      if (isStepMode) {
+        setButtonState('run-btn', 'play', 'Run', true);
+        setButtonState('step-mode-btn', 'pause', 'Step Mode Active', true);
+      } else {
+        setButtonState('run-btn', 'square', 'Running (waiting for input)...', true);
+        setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
+      }
+    }
+  }
+
+  // Detect ECALL prompts and show inline prompt (fallback to existing UI if needed)
+  function checkForEcallInput(output) {
+    const lines = output.split('\n');
+    for (const line of lines) {
+      const t = line.trim();
+      if (t === 'Enter string:') { showConsolePrompt('Enter string:', 1); return; }
+      if (t === 'Enter number:') { showConsolePrompt('Enter number:', 2); return; }
+      if (t === 'Press key:') { showConsolePrompt('Press key:', 7); return; }
+    }
+  }
+
+  // Add Tab key support in the code editor (indent/unindent), without breaking Ctrl/Arrow keys
+  function handleEditorTab(editor, isShift) {
+    const value = editor.value;
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const hasSelection = start !== end;
+
+    // Single-caret case: insert/remove indent on current line
+    if (!hasSelection) {
+      if (!isShift) {
+        const newValue = value.slice(0, start) + "\t" + value.slice(end);
+        editor.value = newValue;
+        const caret = start + 1;
+        editor.setSelectionRange(caret, caret);
+      } else {
+        // Unindent current line if it starts with a tab or two spaces
+        const lineStart = value.lastIndexOf('\n', Math.max(0, start - 1)) + 1;
+        let remove = 0;
+        if (value.slice(lineStart, lineStart + 1) === '\t') remove = 1;
+        else if (value.slice(lineStart, lineStart + 2) === '  ') remove = 2;
+        if (remove > 0) {
+          const newValue = value.slice(0, lineStart) + value.slice(lineStart + remove);
+          const delta = -remove;
+          const newCaret = Math.max(lineStart, start + delta);
+          editor.value = newValue;
+          editor.setSelectionRange(newCaret, newCaret);
+        }
+      }
+      // Refresh views
+      updateLineNumbers();
+      updateLineCount();
+      highlightSyntax();
+      syncLineNumbersScroll();
+      return;
+    }
+
+    // Block selection: indent/unindent each line in the selection
+    const selStartLine = value.lastIndexOf('\n', Math.max(0, start - 1)) + 1;
+    // End of selection: include full last line if caret sits at its start? keep as-is
+    const before = value.slice(0, selStartLine);
+    const block = value.slice(selStartLine, end);
+    const after = value.slice(end);
+
+    let changedBlock = block;
+    if (!isShift) {
+      // Indent every line in block
+      changedBlock = block.replace(/^/gm, '\t');
+      const newStart = start + 1; // first line gained 1 char
+      const added = (block.match(/\n/g) || []).length + 1; // lines in block
+      const newEnd = end + added;
+      editor.value = before + changedBlock + after;
+      editor.setSelectionRange(newStart, newEnd);
+    } else {
+      // Unindent: remove one leading tab or up to two spaces per line
+      let removedOnFirst = 0;
+      const unindented = block.replace(/^(\t| {1,2})/gm, (m, p1, offset) => {
+        if (offset === 0) removedOnFirst = p1.length;
+        return '';
+      });
+      // Count how many lines had something removed (for end position)
+      const removedPerLine = (block.match(/^(\t| {1,2})/gm) || []).length;
+      editor.value = before + unindented + after;
+      const newStart = Math.max(selStartLine, start - removedOnFirst);
+      const newEnd = Math.max(newStart, end - removedPerLine); // approximate
+      editor.setSelectionRange(newStart, newEnd);
+    }
+
+    updateLineNumbers();
+    updateLineCount();
+    highlightSyntax();
+    syncLineNumbersScroll();
+  }
+
+  // Global keydown handler to capture Tab in code editors only
+  document.addEventListener('keydown', function(e) {
+    const target = e.target;
+    if (!target || !target.classList || !target.classList.contains('code-editor')) return;
+    // Let OS/browser shortcuts work (copy/paste/arrows/undo/redo)
+    if (e.ctrlKey || e.metaKey) return;
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      handleEditorTab(target, e.shiftKey);
+    }
+  });
 </script>
 </body>
 </html>
+

@@ -3,11 +3,31 @@ project(ZX16_System_Simulator)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(ZX16_System_Simulator main.cpp
-        Instruction.cpp
-        Instruction.h
-        ZX16_Simulator.cpp
-        ZX16_Simulator.h)
+
+# Set correct SFML location for macOS + Homebrew
+set(SFML_DIR "D:/Web_Based_IDE/Main/SFML-2.5.1-windows-gcc-7.3.0-mingw-64-bit/SFML-2.5.1/lib/cmake/SFML")
+find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+
+include_directories("SFML-2.5.1-windows-gcc-7.3.0-mingw-64-bit/SFML-2.5.1/include")
+link_directories("SFML-2.5.1-windows-gcc-7.3.0-mingw-64-bit/SFML-2.5.1/lib")
+
+
+
+add_executable(ZX16_System_Simulator
+        main.cpp
+        Instruction.cpp Instruction.h
+        ZX16_Simulator.cpp ZX16_Simulator.h
+        Graphics.cpp Graphics.h
+        GraphicsMemory.cpp GraphicsMemory.h
+
+)
+
+target_link_libraries(ZX16_System_Simulator
+        sfml-graphics
+        sfml-window
+        sfml-system
+        sfml-audio
+)
 
 # GoogleTest via FetchContent (portable, recommended)
 include(FetchContent)
@@ -21,41 +41,60 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(zx16_gtest
         Instruction.cpp
-    ZX16_Simulator.cpp
+        ZX16_Simulator.cpp
+        Graphics.cpp
+        Graphics.h
+        GraphicsMemory.cpp
+        GraphicsMemory.h
 )
 add_dependencies(ZX16_System_Simulator zx16_gtest)
 
-target_link_libraries(zx16_gtest gtest gtest_main pthread)
+#target_link_libraries(zx16_gtest gtest gtest_main pthread)
 add_test(NAME zx16_gtest COMMAND zx16_gtest)
-
 add_executable(zx16_disasm_gtest
         Instruction.cpp
-    ZX16_Simulator.cpp
+        ZX16_Simulator.cpp
+        Graphics.cpp
+        Graphics.h
+        GraphicsMemory.cpp
+        GraphicsMemory.h
 )
-target_link_libraries(zx16_disasm_gtest gtest gtest_main pthread)
-add_test(NAME zx16_disasm_gtest COMMAND zx16_disasm_gtest)
 
+#target_link_libraries(zx16_disasm_gtest gtest gtest_main pthread)
+add_test(NAME zx16_disasm_gtest COMMAND zx16_disasm_gtest)
 add_executable(zx16_exec_gtest
         Instruction.cpp
-    ZX16_Simulator.cpp
+        ZX16_Simulator.cpp
+        Graphics.cpp
+        Graphics.h
+        GraphicsMemory.cpp
+        GraphicsMemory.h
 )
-target_link_libraries(zx16_exec_gtest gtest gtest_main pthread)
+#target_link_libraries(zx16_exec_gtest gtest gtest_main pthread)
 add_test(NAME zx16_exec_gtest COMMAND zx16_exec_gtest)
 
 add_executable(disassembly_tests
-    TestCases/Disassembly\ Tests.cpp
-    Instruction.cpp
-    ZX16_Simulator.cpp
+        Instruction.cpp
+        ZX16_Simulator.cpp
+        Graphics.cpp
+        Graphics.h
+        GraphicsMemory.cpp
+        GraphicsMemory.h
 )
-target_link_libraries(disassembly_tests gtest gtest_main pthread)
-add_test(NAME disassembly_tests COMMAND disassembly_tests)
 
+#target_link_libraries(disassembly_tests gtest gtest_main pthread)
+add_test(NAME disassembly_tests COMMAND disassembly_tests)
 add_executable(execution_tests
-    TestCases/Execution\ Tests.cpp
-    Instruction.cpp
-    ZX16_Simulator.cpp
+        TestCases/Execution\ Tests.cpp
+        Instruction.cpp
+        ZX16_Simulator.cpp
+        Graphics.cpp
+        Graphics.h
+        GraphicsMemory.cpp
+        GraphicsMemory.h
 )
-target_link_libraries(execution_tests gtest gtest_main pthread)
+
+#target_link_libraries(execution_tests gtest gtest_main pthread)
 add_test(NAME execution_tests COMMAND execution_tests)
 
 # Copy test data files to build directory for all test targets
@@ -71,3 +110,8 @@ foreach(test_file ${TEST_BIN_FILES} ${TEST_ASM_FILES})
     add_custom_command(TARGET execution_tests PRE_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${test_file} $<TARGET_FILE_DIR:execution_tests>)
 endforeach()
+target_link_libraries(zx16_gtest gtest gtest_main sfml-graphics sfml-window sfml-system sfml-audio)
+target_link_libraries(zx16_disasm_gtest gtest gtest_main sfml-graphics sfml-window sfml-system sfml-audio)
+target_link_libraries(zx16_exec_gtest gtest gtest_main sfml-graphics sfml-window sfml-system sfml-audio)
+target_link_libraries(disassembly_tests gtest gtest_main sfml-graphics sfml-window sfml-system sfml-audio)
+target_link_libraries(execution_tests gtest gtest_main sfml-graphics sfml-window sfml-system sfml-audio)
