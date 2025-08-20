@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import subprocess
 import uuid
@@ -8,7 +9,7 @@ import time
 import re
 
 app = FastAPI()
-
+app.mount("/", StaticFiles(directory="Frontend", html=True), name="frontend")
 # Add CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
