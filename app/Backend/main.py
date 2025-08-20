@@ -251,13 +251,21 @@ async def simulate_step(request: Request):
         code = data["code"]
 
         uid = str(uuid.uuid4())
-        asm_file = f"temp_{uid}.s"
-        bin_file = f"temp_{uid}.bin"
+        current_dir = os.path.dirname(os.path.abspath(__file__))
 
+        # Create a dedicated temp folder
+        temp_dir = os.path.join(current_dir, "temp")
+        os.makedirs(temp_dir, exist_ok=True)
+
+        asm_file = os.path.join(temp_dir, f"temp_{uid}.s")
+        bin_file = os.path.join(temp_dir, f"temp_{uid}.bin")
+
+        # Write assembly code safely
         with open(asm_file, "w") as f:
             f.write(code)
+            f.flush()
+            os.fsync(f.fileno())
 
-        current_dir = os.path.dirname(os.path.abspath(__file__))
         assemble_cmd = ["python", os.path.join(current_dir, "zx16asm.py"), asm_file, "-o", bin_file]
         try:
             result = subprocess.run(assemble_cmd, capture_output=True, text=True, cwd=current_dir, timeout=30)
@@ -266,11 +274,11 @@ async def simulate_step(request: Request):
                 os.remove(asm_file)
             return {"output": "Assembly process timed out!"}
 
+        # Remove the assembly file immediately; keep bin file for step mode
         if os.path.exists(asm_file):
             os.remove(asm_file)
 
         if result.returncode != 0:
-            # Don't filter assembly errors - show them in full detail
             error_output = "Assembly failed.\n"
             if result.stderr.strip():
                 error_output += f"Errors:\n{result.stderr.strip()}\n"
@@ -283,6 +291,10 @@ async def simulate_step(request: Request):
         # Terminate previous process if running
         if step_proc and step_proc.poll() is None:
             step_proc.terminate()
+            # Optionally remove old bin file
+            if latest_step_bin and os.path.exists(latest_step_bin):
+                os.remove(latest_step_bin)
+
         step_proc = None
         step_output_buffer = ""
 
