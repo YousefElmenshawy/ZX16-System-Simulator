@@ -19,9 +19,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dc67842b-799e-4a4f-979d-424592c7bf85" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/app/Backend/ZX16_System_Simulator.exe" beforeDir="false" />
-    </list>
+    <list default="true" id="dc67842b-799e-4a4f-979d-424592c7bf85" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -81,7 +79,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1755649178653</updated>
-      <workItem from="1755649179921" duration="7144000" />
+      <workItem from="1755649179921" duration="7634000" />
     </task>
     <servers />
   </component>
