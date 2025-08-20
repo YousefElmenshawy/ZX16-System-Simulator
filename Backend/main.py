@@ -9,7 +9,7 @@ import time
 import re
 
 app = FastAPI()
-app.mount("/", StaticFiles(directory="Frontend", html=True), name="frontend")
+
 # Add CORS middleware configuration
 app.add_middleware(
     CORSMiddleware,
@@ -1221,4 +1221,4 @@ async def stop_simulation():
         }
     except Exception as e:
         return {"output": f"Stop error: {str(e)}", "registers": None, "memory": None, "simulationEnded": True}
-
+app.mount("/", StaticFiles(directory="Frontend", html=True), name="frontend")
