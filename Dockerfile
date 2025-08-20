@@ -18,8 +18,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Build your simulator
-RUN g++ -O2 -std=c++17 -o app/Backend/ZX16_System_Simulator src/*.cpp \
-    -lsfml-graphics -lsfml-window -lsfml-system
+RUN g++ -O2 -std=c++17 -o app/Backend/ZX16_System_Simulator Src/*.cpp \
+    -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 # Make it executable
 RUN chmod +x app/Backend/ZX16_System_Simulator
