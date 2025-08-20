@@ -27,4 +27,4 @@ RUN chmod +x app/Backend/ZX16_System_Simulator
 # Start Xvfb, VNC, and backend
 CMD Xvfb :0 -screen 0 1024x768x24 & \
     x11vnc -display :0 -nopw -listen 0.0.0.0 -xkb -forever -shared & \
-    uvicorn app.Backend.main:app --host 0.0.0.0 --port 8000
+    uvicorn app.Backend.main:app --host 0.0.0.0 --port ${PORT:-8000}
