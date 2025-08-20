@@ -1949,7 +1949,7 @@ halt"></textarea>
       if (isRunModeActive) {
         try {
           setButtonState('run-btn', 'loader', 'Stopping...', true);
-          const response = await fetch('http://localhost:8000/stop', { method: 'POST' });
+          const response = await fetch('/stop', { method: 'POST' });
           const data = await response.json();
           isRunModeActive = false; // ensure cleared
           updateIDE(data);
@@ -1980,7 +1980,7 @@ halt"></textarea>
         setButtonState('step-btn', 'skip-forward', 'Step', true);
         isRunModeActive = true;
 
-        const response = await fetch('http://localhost:8000/simulate', {
+        const response = await fetch('/simulate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code })
@@ -2008,7 +2008,7 @@ halt"></textarea>
         setButtonState('step-mode-btn', 'step-forward', 'Step Mode', true);
         setButtonState('step-btn', 'skip-forward', 'Step', true);
 
-        const response = await fetch('http://localhost:8000/run_interactive', {
+        const response = await fetch('/run_interactive', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ code })
@@ -2077,7 +2077,7 @@ halt"></textarea>
         setButtonState('step-mode-btn', 'loader', 'Initializing Step Mode...', true);
         setButtonState('step-btn', 'skip-forward', 'Step', true);
 
-        const response = await fetch('http://localhost:8000/simulate_step', {
+        const response = await fetch('/simulate_step', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -2110,7 +2110,7 @@ halt"></textarea>
       setButtonState('step-btn', 'loader', 'Stepping...', true);
 
       try {
-        const response = await fetch('http://localhost:8000/step', {
+        const response = await fetch('/step', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -2615,7 +2615,7 @@ halt"></textarea>
     }
     try {
       // Send the input to the backend
-      const response = await fetch('http://localhost:8000/ecall_input', {
+      const response = await fetch('/ecall_input', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ service: serviceNumber, input: inputValue })
@@ -2822,7 +2822,7 @@ halt"></textarea>
         consoleOutput.insertBefore(echo, prompt);
       }
       hideConsolePrompt();
-      const response = await fetch('http://localhost:8000/ecall_input', {
+      const response = await fetch('/ecall_input', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ service: serviceNumber, input: inputValue })
       });
