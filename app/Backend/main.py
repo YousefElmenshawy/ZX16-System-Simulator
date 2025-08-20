@@ -1221,4 +1221,4 @@ async def stop_simulation():
         }
     except Exception as e:
         return {"output": f"Stop error: {str(e)}", "registers": None, "memory": None, "simulationEnded": True}
-app.mount("/", StaticFiles(directory="Frontend", html=True), name="frontend")
+app.mount("/", StaticFiles(directory="../Frontend", html=True), name="frontend")
