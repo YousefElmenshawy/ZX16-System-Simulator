@@ -7,18 +7,91 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aa9d181b-13ee-4d33-830e-7ba32cedd4e4" name="Changes" comment="" />
+    <list default="true" id="aa9d181b-13ee-4d33-830e-7ba32cedd4e4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Games/Game.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../Games/Game.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Procfile" beforeDir="false" afterPath="$PROJECT_DIR$/../../Procfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Src/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../../Src/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Src/Game.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../Src/Game.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Src/Graphics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Src/Graphics.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Src/Graphics.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Src/Graphics.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Src/GraphicsMemory.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Src/GraphicsMemory.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Src/GraphicsMemory.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Src/GraphicsMemory.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Src/RecursiveSum.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../Src/RecursiveSum.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Src/ZX16_Simulator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Src/ZX16_Simulator.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Src/ZX16_Simulator.h" beforeDir="false" afterPath="$PROJECT_DIR$/../../Src/ZX16_Simulator.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../Src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Src/testA.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../Src/testA.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TestCases/Disassembly Tests.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../TestCases/Disassembly Tests.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TestCases/Execution Tests.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../../TestCases/Execution Tests.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TestCases/TC-ZX16-01.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../TestCases/TC-ZX16-01.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TestCases/TC-ZX16-02.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../TestCases/TC-ZX16-02.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TestCases/TC-ZX16-03.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../TestCases/TC-ZX16-03.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TestCases/TC-ZX16-04.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../TestCases/TC-ZX16-04.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TestCases/TC-ZX16-05.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../TestCases/TC-ZX16-05.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TestCases/TC-ZX16-06.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../TestCases/TC-ZX16-06.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TestCases/TC-ZX16-07.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../TestCases/TC-ZX16-07.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TestCases/TC-ZX16-08.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../TestCases/TC-ZX16-08.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TestCases/TC-ZX16-09.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../TestCases/TC-ZX16-09.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../TestCases/TC-ZX16-10.s" beforeDir="false" afterPath="$PROJECT_DIR$/../../TestCases/TC-ZX16-10.s" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ZX16_System_Simulator" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/zx16asm.py" beforeDir="false" afterPath="$PROJECT_DIR$/zx16asm.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/favicon.svg" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/favicon.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../requirements.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 4
+}]]></component>
+  <component name="ProjectId" id="31Ydp9fhcbaQ3VYCTQ1h0rj611y" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "node.js.selected.package.tslint": "(autodetect)"
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-b26f3e71634d-JavaScript-PY-251.26094.141" />
+        <option value="bundled-python-sdk-9f8e2b94138c-36ea0e71a18c-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.26094.141" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="aa9d181b-13ee-4d33-830e-7ba32cedd4e4" name="Changes" comment="" />
+      <created>1755705121352</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1755705121352</updated>
+      <workItem from="1755705122950" duration="5000" />
+    </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>
