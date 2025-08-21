@@ -342,7 +342,7 @@ TestCases/
 - **Assembly Programming**: Low-level programming concepts
 - **Operating Systems**: System call interfaces
 - **Computer Graphics**: 2D graphics programming
-- **Embedded Systems**: Real-time programming concepts
+
 
 ### **Learning Outcomes**
 - Understanding of RISC architecture principles
