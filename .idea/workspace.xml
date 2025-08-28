@@ -20,9 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dc67842b-799e-4a4f-979d-424592c7bf85" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Backend/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/Backend/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Backend/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/Backend/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Frontend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/Frontend/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +67,7 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/ZX16-System-Simulator&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Web_based_IDE&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -86,7 +87,8 @@
       <workItem from="1755649179921" duration="8226000" />
       <workItem from="1755703968209" duration="2433000" />
       <workItem from="1755728738023" duration="2182000" />
-      <workItem from="1755796464907" duration="378000" />
+      <workItem from="1755796464907" duration="1458000" />
+      <workItem from="1756409116993" duration="194000" />
     </task>
     <servers />
   </component>
