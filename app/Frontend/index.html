@@ -1996,8 +1996,8 @@ halt"></textarea>
       }
     });
 
-    // New: Run with Graphics button
-    document.getElementById('run-graphics-btn').addEventListener('click', async function() {
+    // New: Run with Graphics button (disabled for now)
+   /* document.getElementById('run-graphics-btn').addEventListener('click', async function() {
       const code = getActiveEditorContent();
       if (!code.trim()) return;
       try {
@@ -2032,7 +2032,7 @@ halt"></textarea>
           setButtonState('step-btn', 'skip-forward', 'Step', true);
         }
       }
-    });
+    });*/
 
     // Step Mode button
     document.getElementById('step-mode-btn').addEventListener('click', async function() {
