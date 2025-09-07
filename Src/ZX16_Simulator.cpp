@@ -590,7 +590,7 @@ void ZX16_Simulator::run() {
         uint16_t BinaryInstruction = memory[pc] | (memory[pc + 1] << 8);
 
         Instruction inst(BinaryInstruction);
-        PrintDynamicDiassembley(BinaryInstruction);
+        //PrintDynamicDiassembley(BinaryInstruction);
         bool jumped = executeInstruction(inst);
 
 
@@ -714,7 +714,7 @@ bool ZX16_Simulator::step() {
     }
     uint16_t BinaryInstruction = memory[pc] | (memory[pc + 1] << 8);
     Instruction inst(BinaryInstruction);
-    PrintDynamicDiassembley(BinaryInstruction);
+    //PrintDynamicDiassembley(BinaryInstruction);
     bool jumped = executeInstruction(inst);
     std::cout << std::flush; // Flush after instruction execution
     if (!jumped) pc += 2;
@@ -723,17 +723,17 @@ bool ZX16_Simulator::step() {
     if (pc >= programEnd) {
         std::cout << "Simulation ended.\n";
         running = false;
-        printState();
-       std::cout << std::flush; // Flush after state print
-        dumpMemory(0, 0x10000); // Dump full memory when simulation ends
-        std::cout << std::flush; // Flush after memory dump
+        //printState();
+       //std::cout << std::flush; // Flush after state print
+        //dumpMemory(0, 0x10000); // Dump full memory when simulation ends
+       // std::cout << std::flush; // Flush after memory dump
         return false; // End simulation immediately
     }
 
     printState();
-    std::cout << std::flush; // Flush after state print
+   // std::cout << std::flush; // Flush after state print
     dumpMemory(0, 0x10000); // Dump full memory after each step
-    std::cout << std::flush; // Flush after memory dump
+    //std::cout << std::flush; // Flush after memory dump
     return running;
 }
 
