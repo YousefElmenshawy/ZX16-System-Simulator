@@ -7,23 +7,15 @@ services:
     env: docker
     region: frankfurt
     plan: free
-
     dockerfilePath: ./Dockerfile
-
     envVars:
       - key: PORT
         value: 8000
 
-
+staticSites:
   # ----------------------------
   # Frontend Static Site
   # ----------------------------
-  - type: web
-    name: zx16-frontend
-    env: static
-    region: frankfurt
-    plan: free
-
-    staticPublishPath: app/Frontend
-
+  - name: zx16-frontend
     buildCommand: ""
+    publishPath: app/Frontend
