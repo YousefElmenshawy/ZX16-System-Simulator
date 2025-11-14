@@ -12,10 +12,10 @@ services:
       - key: PORT
         value: 8000
 
-staticSites:
   # ----------------------------
   # Frontend Static Site
   # ----------------------------
-  - name: zx16-frontend
+  - type: static
+    name: zx16-frontend
     buildCommand: ""
-    publishPath: app/Frontend
+    staticPublishPath: app/Frontend
