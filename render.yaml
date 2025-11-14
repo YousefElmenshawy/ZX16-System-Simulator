@@ -1,0 +1,29 @@
+services:
+  # ----------------------------
+  # Backend Service (Docker)
+  # ----------------------------
+  - type: web
+    name: zx16-backend
+    env: docker
+    region: frankfurt
+    plan: free
+
+    dockerfilePath: ./Dockerfile
+
+    envVars:
+      - key: PORT
+        value: 8000
+
+
+  # ----------------------------
+  # Frontend Static Site
+  # ----------------------------
+  - type: web
+    name: zx16-frontend
+    env: static
+    region: frankfurt
+    plan: free
+
+    staticPublishPath: app/Frontend
+
+    buildCommand: ""
